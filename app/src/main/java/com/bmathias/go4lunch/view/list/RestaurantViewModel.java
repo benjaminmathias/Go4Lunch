@@ -1,6 +1,8 @@
 package com.bmathias.go4lunch.view.list;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,15 +26,15 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 @HiltViewModel
-public class RestaurantListViewModel extends ViewModel {
+public class RestaurantViewModel extends ViewModel {
 
-    private static final String TAG = "RestaurantsListViewModel";
+    private static final String TAG = "RestaurantsViewModel";
 
     private RestaurantsRepository repository;
     private MutableLiveData<ArrayList<Restaurant>> restaurantList = new MutableLiveData<>();
 
     @Inject
-    public RestaurantListViewModel(RestaurantsRepository repository) {
+    public RestaurantViewModel(RestaurantsRepository repository) {
         this.repository = repository;
     }
 
@@ -40,13 +42,8 @@ public class RestaurantListViewModel extends ViewModel {
         return restaurantList;
     }
 
-   /* public void getRestaurants(){
-        repository.streamFetchRestaurants();
-    }*/
-
     public void getRestaurants(){
         repository.streamFetchRestaurants();
-
     }
 
 }

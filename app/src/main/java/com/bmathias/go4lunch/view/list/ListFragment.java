@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,50 +17,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bmathias.go4lunch.data.model.Restaurant;
-import com.bmathias.go4lunch.network.model.RestaurantPlaceResponse.RestaurantAPI;
-import com.bmathias.go4lunch.network.model.RestaurantPlaceResponse.ResultsAPI;
 import com.bmathias.go4lunch.databinding.FragmentListBinding;
-import com.bmathias.go4lunch.data.repositories.RestaurantsRepository;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import dagger.hilt.android.WithFragmentBindings;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
+
 @AndroidEntryPoint
 public class ListFragment extends Fragment {
 
-    private RestaurantListViewModel restaurantViewModel;
+    private RestaurantViewModel restaurantViewModel;
 
     private ArrayList<Restaurant> restaurantItemsList;
     private RestaurantListAdapter adapter;
 
     private FragmentListBinding binding;
 
-    // Declare Subscription
-    private Disposable disposable;
-
-    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentListBinding.inflate(inflater, container, false);
 
-       // recyclerView = binding.fragmentRestaurantlistRecyclerView;
-        //    this.restaurantItemsList = new ArrayList<>();
-/*
-        this.adapter = new RestaurantListAdapter(this.restaurantItemsList, this.getActivity(), Glide.with(this));
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        this.recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-*/
-       // this.executeHttpRequestWithRetrofit();
         return binding.getRoot();
     }
 
@@ -69,7 +47,7 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        restaurantViewModel = new ViewModelProvider(this).get(RestaurantListViewModel.class);
+        restaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
 
         initRecyclerView();
         observeData();
@@ -89,7 +67,7 @@ public class ListFragment extends Fragment {
 
     private void initRecyclerView(){
         binding.fragmentRestaurantlistRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new RestaurantListAdapter(this.restaurantItemsList, this.getActivity(), Glide.with(this));
+        adapter = new RestaurantListAdapter(restaurantItemsList, getActivity(), Glide.with(this));
         binding.fragmentRestaurantlistRecyclerView.setAdapter(adapter);
     }
     @Override

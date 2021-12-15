@@ -1,6 +1,7 @@
 package com.bmathias.go4lunch.data.repositories;
 
 
+import com.bmathias.go4lunch.BuildConfig;
 import com.bmathias.go4lunch.data.model.Restaurant;
 import com.bmathias.go4lunch.network.model.RestaurantPlaceDetailsResponse.DetailsResultAPI;
 import com.bmathias.go4lunch.network.model.RestaurantPlaceResponse.RestaurantAPI;
@@ -22,19 +23,22 @@ public class RestaurantsRepository {
 
     private final PlaceAPIService apiService;
 
+    // place/nearbysearch/json?location=43.80812051168388,4.638306531512217&radius=1000&type=restaurant&key=AIzaSyDKVEFMvGvHtXCQeWzF1_xYjVDHLuikiCE
+
+
     @Inject
     public RestaurantsRepository(PlaceAPIService apiService) {
         this.apiService = apiService;
     }
-/*
-    public Observable<ResultsAPI> getRestaurants(){
-        return apiService.getRestaurantsResult();
-    }
-*/
+
+    String location = "43.80812051168388,4.638306531512217";
+    String radius = "1000";
+    String type = "restaurant";
+
     public Observable<List<Restaurant>> streamFetchRestaurants(){
         //PlaceAPIService placeAPIService = PlaceAPIService.retrofit.create(PlaceAPIService.class);
 
-        return apiService.getRestaurantsResult()
+        return apiService.getRestaurantsResult(location, radius, type, BuildConfig.MAPS_API_KEY)
                 .map(resultsAPI -> restaurantsConverter(resultsAPI.getResults()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
