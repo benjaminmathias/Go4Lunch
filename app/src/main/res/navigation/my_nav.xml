@@ -7,17 +7,23 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.bmathias.go4lunch.MapFragment"
-        android:label="Map"
+        android:name="com.bmathias.go4lunch.view.map.MapFragment"
+        android:label="I'm Hungry!"
         tools:layout="@layout/fragment_map" />
     <fragment
         android:id="@+id/listFragment"
-        android:name="com.bmathias.go4lunch.ListFragment"
-        android:label="Restaurant List"
+        android:name="com.bmathias.go4lunch.view.list.ListFragment"
+        android:label="I'm Hungry!"
         tools:layout="@layout/fragment_list" />
     <fragment
         android:id="@+id/workmatesFragment"
-        android:name="com.bmathias.go4lunch.WorkmatesFragment"
-        android:label="Workmates"
+        android:name="com.bmathias.go4lunch.view.workmates.WorkmatesFragment"
+        android:label="Available workmates"
         tools:layout="@layout/fragment_workmates" />
+
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.bmathias.go4lunch.view.details.DetailsFragment"
+        tools:layout="@layout/fragment_details"/>
+
 </navigation>
