@@ -1,5 +1,7 @@
 package com.bmathias.go4lunch_.data.repositories;
 
+import static com.bmathias.go4lunch_.data.network.PlacesApiService.retrofit;
+
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
@@ -19,26 +21,29 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+
 public class RestaurantRepository {
 
-    private static final RestaurantRepository instance = new RestaurantRepository();
+    private final PlacesApiService placesAPIService;
+
+    private static volatile RestaurantRepository INSTANCE;
 
     private static String location = "43.80812051168388,4.638306531512217";
     private static final String radius = "1000";
     private static final String type = "restaurant";
 
-    public RestaurantRepository() {
-
+    public static RestaurantRepository getInstance(PlacesApiService placesAPIService) {
+        return INSTANCE == null ? new RestaurantRepository(placesAPIService) : INSTANCE;
     }
 
-    public static RestaurantRepository getInstance(Context context) {
-        return instance == null ? new RestaurantRepository() : instance;
+    public RestaurantRepository(PlacesApiService placesAPIService) {
+        this.placesAPIService = placesAPIService;
     }
 
     public LiveData<DataResult<List<RestaurantApi>>> streamFetchRestaurants() {
         MutableLiveData<DataResult<List<RestaurantApi>>> _restaurants = new MutableLiveData<>();
 
-        PlacesApiService placesAPIService = PlacesApiService.retrofit.create(PlacesApiService.class);
+      //  PlacesApiService placesAPIService = retrofit.create(PlacesApiService.class);
         placesAPIService.getRestaurants(location, radius, type, BuildConfig.MAPS_API_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

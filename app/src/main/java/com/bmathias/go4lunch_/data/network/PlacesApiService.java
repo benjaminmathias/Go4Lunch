@@ -11,17 +11,18 @@ import retrofit2.http.Query;
 
 public interface PlacesApiService {
 
-   @GET("place/nearbysearch/json")
-   Observable<RestaurantsApiResult> getRestaurants(
-           @Query("location") String location,
-           @Query("radius") String radius,
-           @Query("type") String type,
-           @Query("key") String api_key
-   );
+    @GET("place/nearbysearch/json")
+    Observable<RestaurantsApiResult> getRestaurants(
+            @Query("location") String location,
+            @Query("radius") String radius,
+            @Query("type") String type,
+            @Query("key") String api_key
+    );
 
-   public static final Retrofit retrofit = new Retrofit.Builder()
-           .baseUrl("https://maps.googleapis.com/maps/api/")
-           .addConverterFactory(GsonConverterFactory.create())
-           .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-           .build();
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("https://maps.googleapis.com/maps/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build();
+
 }

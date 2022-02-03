@@ -37,7 +37,7 @@ public class ListFragment extends Fragment {
     }
 
     private void setupViewModel(){
-        ViewModelFactory viewModelFactory = Injection.provideViewModelFactory(getContext());
+        ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.listViewModel = new ViewModelProvider(this, viewModelFactory).get(ListViewModel.class);
         this.listViewModel.observeRestaurants();
     }
