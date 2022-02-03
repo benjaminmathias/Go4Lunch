@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Go4Lunch_</string>
+    <string name="title_home">Home</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_menu_map">Map View</string>
+    <string name="nav_menu_list">List View</string>
+    <string name="nav_menu_workmates">Workmates</string>
+</resources>
