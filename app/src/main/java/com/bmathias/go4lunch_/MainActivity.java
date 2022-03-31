@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.bmathias.go4lunch_.ui.workmates.WorkmatesFragment;
 import com.bmathias.go4lunch_.ui.list.ListFragment;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new ListFragment()).commit();
+
+        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
 
     }
 

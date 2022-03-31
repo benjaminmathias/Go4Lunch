@@ -1,6 +1,7 @@
 package com.bmathias.go4lunch_.data.network;
 
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantsApiResult;
+import com.bmathias.go4lunch_.data.network.model.placesDetails.DetailsResultAPI;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
@@ -16,6 +17,12 @@ public interface PlacesApiService {
             @Query("location") String location,
             @Query("radius") String radius,
             @Query("type") String type,
+            @Query("key") String api_key
+    );
+
+    @GET("place/details/json")
+    Observable<DetailsResultAPI> getRestaurantDetails(
+            @Query("place_id") String place_id,
             @Query("key") String api_key
     );
 

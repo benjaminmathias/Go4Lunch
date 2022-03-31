@@ -3,6 +3,7 @@ package com.bmathias.go4lunch_.ui.list;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -24,16 +25,22 @@ import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
-    private final List<RestaurantApi> restaurantItemsList;
+    private List<RestaurantApi> restaurantItemsList;
+    private final OnRestaurantListener mOnRestaurantListener;
 
-    public ListAdapter(List<RestaurantApi> restaurantItemsList) {
+    public ListAdapter(List<RestaurantApi> restaurantItemsList, OnRestaurantListener onRestaurantListener) {
         this.restaurantItemsList = restaurantItemsList;
+        this.mOnRestaurantListener = onRestaurantListener;
+    }
+
+    public void setRestaurantItems(List<RestaurantApi> restaurantItems){
+        this.restaurantItemsList = restaurantItems;
     }
 
     @NonNull
     @Override
     public ListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(FragmentListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(FragmentListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false), mOnRestaurantListener);
     }
 
     @Override
@@ -55,12 +62,21 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
 
         // Setup ImageView
+
+        // For testing purpose
+        holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnRestaurantListener.onRestaurantClick(restaurant.getPlaceId());
+            }
+        });
+       /*
         if (restaurant.getPhotos() != null) {
             String photoAttribute = restaurant.getPhotos().get(0).getPhotoReference();
 
             String apiUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
-
-          //  https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=Aap_uEBx7o06Lk6lOjzJs-xBiMDsavziD8CgOAuVzRWqx-5x3_&key=AIzaSyDKVEFMvGvHtXCQeWzF1_xYjVDHLuikiCE
 
             String photoUrl = apiUrl + photoAttribute + "&key=" + BuildConfig.MAPS_API_KEY;
             Glide.with(holder.binding.getRoot())
@@ -71,16 +87,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         } else {
             holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
         }
+*/
+    }
 
-        // Setup onClickListener
-        holder.binding.restaurantListLayout.setOnClickListener(view -> {
-            Intent intent = new Intent(view.getContext(), DetailsActivity.class);
-            Toast.makeText(view.getContext(), "Click on " + restaurant.getName(), Toast.LENGTH_SHORT).show();
-            Bundle bundle = new Bundle();
-            bundle.putString("placeId", restaurant.getPlaceId());
-            view.getContext().startActivity(intent);
-        });
-
+    public interface OnRestaurantListener {
+        void onRestaurantClick(String placeId);
     }
 
     @Override
@@ -90,10 +101,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final FragmentListItemBinding binding;
+        OnRestaurantListener onRestaurantListener;
 
-        public ViewHolder(FragmentListItemBinding binding) {
+        public ViewHolder(FragmentListItemBinding binding, OnRestaurantListener onRestaurantListener) {
             super(binding.getRoot());
             this.binding = binding;
+            this.onRestaurantListener = onRestaurantListener;
+
         }
+
     }
 }

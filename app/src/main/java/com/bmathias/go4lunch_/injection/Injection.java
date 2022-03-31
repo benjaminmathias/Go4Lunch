@@ -7,16 +7,13 @@ import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 
 public class Injection {
 
-    public static RestaurantRepository provideRestaurantRepository(){
-        PlacesApiService placesAPIService = PlacesApiService.retrofit.create(PlacesApiService.class);
-        return RestaurantRepository.getInstance(placesAPIService);
+    public static RestaurantRepository provideRestaurantRepository() {
+        return RestaurantRepository.getInstance(provideApiService());
     }
 
-
-    /*
-    private static RestaurantRepository provideRestaurantRepository(Context context) {
-        return RestaurantRepository.getInstance(context);
-    }*/
+    private static PlacesApiService provideApiService() {
+        return PlacesApiService.retrofit.create(PlacesApiService.class);
+    }
 
     public static ViewModelFactory provideViewModelFactory() {
         return new ViewModelFactory(provideRestaurantRepository());

@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/restaurant_details_picture"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,12 +19,11 @@
         tools:srcCompat="@tools:sample/avatars[2]" />
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/restaurant_details"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/purple_500"
+        android:layout_height="wrap_content"
+        android:background="@color/orange_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/restaurant_details_picture">
@@ -33,25 +32,34 @@
             android:id="@+id/restaurant_details_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="12dp"
-            android:textSize="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="88dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Restaurant_name"
             android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/restaurant_details"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="Restaurant_name" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/restaurant_details_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Restaurant_address"
             android:textColor="@color/white"
-            android:textSize="15sp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/restaurant_details"
             app:layout_constraintTop_toBottomOf="@id/restaurant_details_name"
-            android:text="Restaurant_address" />
+            app:layout_constraintVertical_bias="1.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -67,28 +75,40 @@
 
         <Button
             android:id="@+id/restaurant_details_phone"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:layout_weight="1"
-            android:text="CALL" />
+            android:backgroundTint="@color/white"
+            android:drawableTop="@drawable/ic_baseline_phone_24"
+            android:text="CALL"
+            android:textColor="@color/orange_500"
+            android:tint="@color/orange_500"
+            app:drawableTint="@color/orange_500" />
 
         <Button
             android:id="@+id/restaurant_details_like"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:drawableTop="@drawable/ic_baseline_star_24"
             android:text="LIKE"
-            />
+            android:textColor="@color/orange_500"
+            app:drawableTint="@color/orange_500" />
 
         <Button
             android:id="@+id/restaurant_details_website"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"
-            android:text="WEBSITE" />
+            android:backgroundTint="@color/white"
+            android:drawableTop="@drawable/ic_baseline_open_in_browser_24"
+            android:text="WEBSITE"
+            android:textColor="@color/orange_500"
+            app:drawableTint="@color/orange_500" />
     </LinearLayout>
 
 
@@ -101,26 +121,46 @@
         android:background="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/purple_500" />
+        app:tint="@color/orange_500" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/restaurant_details_buttonbar">
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/restaurant_details_workmates_recyclerview"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            app:layout_constrainedHeight="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginEnd="16dp"
+        android:background="@color/white"
+        android:src="@drawable/ic_baseline_group_24"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/restaurant_details_picture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/restaurant_details_picture"
+        app:tint="@color/teal_200" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

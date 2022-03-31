@@ -13,6 +13,9 @@ import com.bmathias.go4lunch_.data.network.PlacesApiService;
 import com.bmathias.go4lunch_.data.network.model.DataResult;
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantsApiResult;
+import com.bmathias.go4lunch_.data.network.model.placesDetails.DetailsResultAPI;
+import com.bmathias.go4lunch_.data.network.model.placesDetails.RestaurantDetailsAPI;
+import com.bmathias.go4lunch_.ui.list.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,6 @@ public class RestaurantRepository {
     public LiveData<DataResult<List<RestaurantApi>>> streamFetchRestaurants() {
         MutableLiveData<DataResult<List<RestaurantApi>>> _restaurants = new MutableLiveData<>();
 
-      //  PlacesApiService placesAPIService = retrofit.create(PlacesApiService.class);
         placesAPIService.getRestaurants(location, radius, type, BuildConfig.MAPS_API_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -62,6 +64,29 @@ public class RestaurantRepository {
                 });
 
         return _restaurants;
+    }
+
+    public LiveData<DataResult<RestaurantDetailsAPI>> streamFetchRestaurantDetails(String placeId) {
+        MutableLiveData<DataResult<RestaurantDetailsAPI>> _restaurantDetails = new MutableLiveData<>();
+
+        placesAPIService.getRestaurantDetails(placeId, BuildConfig.MAPS_API_KEY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<DetailsResultAPI>() {
+                    @Override
+                    public void accept(DetailsResultAPI detailsResultAPI) throws Exception {
+                        DataResult<RestaurantDetailsAPI> dataResult = new DataResult<>(detailsResultAPI.getResult());
+                        _restaurantDetails.postValue(dataResult);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        DataResult<RestaurantDetailsAPI> dataResult = new DataResult<>(throwable);
+                        _restaurantDetails.postValue(dataResult);
+                    }
+                });
+
+        return _restaurantDetails;
     }
 
     private static List<Restaurant> restaurantsConverter(List<RestaurantApi> restaurantAPIS) {
