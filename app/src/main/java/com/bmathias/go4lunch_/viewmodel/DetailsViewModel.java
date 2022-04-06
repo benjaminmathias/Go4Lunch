@@ -9,6 +9,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.bmathias.go4lunch_.R;
+import com.bmathias.go4lunch_.data.model.RestaurantDetails;
 import com.bmathias.go4lunch_.data.network.model.DataResult;
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
 import com.bmathias.go4lunch_.data.network.model.placesDetails.RestaurantDetailsAPI;
@@ -32,7 +33,7 @@ public class DetailsViewModel extends ViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>();
     public LiveData<String> error = _error;
 
-    private LiveData<RestaurantDetailsAPI> restaurantDetails;
+    private LiveData<RestaurantDetails> restaurantDetails;
 
     public DetailsViewModel(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
@@ -40,7 +41,7 @@ public class DetailsViewModel extends ViewModel {
     }
 
     public void observeRestaurantDetails(String placeId) {
-        LiveData<RestaurantDetailsAPI> _restaurantDetails = Transformations.map(restaurantRepository.streamFetchRestaurantDetails(placeId), result -> {
+        LiveData<RestaurantDetails> _restaurantDetails = Transformations.map(restaurantRepository.streamFetchRestaurantDetails(placeId), result -> {
             _showProgress.postValue(false);
 
             if (result.isSuccess()) {
@@ -54,7 +55,7 @@ public class DetailsViewModel extends ViewModel {
         restaurantDetails = _restaurantDetails;
     }
 
-    public LiveData<RestaurantDetailsAPI> getRestaurantDetails() {
+    public LiveData<RestaurantDetails> getRestaurantDetails() {
         return restaurantDetails;
     }
 }

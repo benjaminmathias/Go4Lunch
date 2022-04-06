@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new ListFragment()).commit();
 
-        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-
     }
 
     @SuppressLint("NonConstantResourceId")

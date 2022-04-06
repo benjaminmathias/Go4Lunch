@@ -3,7 +3,7 @@ package com.bmathias.go4lunch_.data.model;
 import com.bmathias.go4lunch_.data.network.model.places.Location;
 import com.bmathias.go4lunch_.data.network.model.places.OpeningHours;
 
-public class Restaurant {
+public class RestaurantItem {
 
     private String name;
 
@@ -66,7 +66,6 @@ public class Restaurant {
     }
 
     public static class Builder {
-        private Restaurant restaurant;
         private String name;
         private String address;
         private Location location;
@@ -104,34 +103,34 @@ public class Restaurant {
             return this;
         }
 
-        public Restaurant build() {
-            Restaurant restaurant = new Restaurant();
+        public RestaurantItem build() {
+            RestaurantItem restaurantItem = new RestaurantItem();
 
             if (name != null) {
-                restaurant.setName(name);
+                restaurantItem.setName(name);
             }
 
             if (address != null) {
-                restaurant.setAddress(address);
+                restaurantItem.setAddress(address);
             }
 
             if (location != null){
-                restaurant.setLocation(location);
+                restaurantItem.setLocation(location);
             }
 
             if (isOpen != null){
-                restaurant.setIsOpen(isOpen);
+                restaurantItem.setIsOpen(isOpen);
             }
 
             if (placeId != null){
-                restaurant.setPlaceId(placeId);
+                restaurantItem.setPlaceId(placeId);
             }
 
             if (photo != null){
-                restaurant.setPhoto(photo);
+                restaurantItem.setPhoto(photo);
             }
 
-            return restaurant;
+            return restaurantItem;
         }
     }
 }

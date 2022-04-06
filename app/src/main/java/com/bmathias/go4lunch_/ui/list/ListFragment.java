@@ -21,6 +21,7 @@ import com.bmathias.go4lunch_.injection.ViewModelFactory;
 import com.bmathias.go4lunch_.viewmodel.ListViewModel;
 import com.bmathias.go4lunch_.databinding.FragmentListBinding;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -52,15 +53,12 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
 
     private void setupRecyclerView(){
         binding.fragmentListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ListAdapter(Collections.emptyList(), this);
+        adapter = new ListAdapter(new ArrayList<>(), this);
         binding.fragmentListRecyclerView.setAdapter(adapter);
 
         listViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurantItems -> {
             adapter.setRestaurantItems(restaurantItems);
             adapter.notifyDataSetChanged();
-//            binding.fragmentListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//            adapter = new ListAdapter(restaurantItems, this);
-//            binding.fragmentListRecyclerView.setAdapter(adapter);
         });
     }
 
