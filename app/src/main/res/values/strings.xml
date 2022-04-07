@@ -16,4 +16,12 @@
     <string name="connection_succeed">Authentification réussie !</string>
     <string name="button_login_text_logged">Afficher le profil</string>
     <string name="button_login_text_not_logged">Connexion</string>
+
+    <!-- DRAWER -->
+    <string name="info_no_email_found">NO MAIL</string>
+    <string name="info_no_username_found">NO USERNAME</string>
+    <string name="popup_message_informations_account">Souhaitez vous vous déconnecter ou supprimer votre compte ?</string>
+    <string name="popup_message_choice_disconnect">Se déconnecter</string>
+    <string name="popup_message_choice_delete">Supprimer le compte</string>
+    <string name="popup_message_choice_no">Annuler</string>
 </resources>

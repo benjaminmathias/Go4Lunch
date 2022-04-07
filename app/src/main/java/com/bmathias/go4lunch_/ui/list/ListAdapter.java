@@ -11,6 +11,9 @@ import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.RestaurantItem;
 import com.bmathias.go4lunch_.data.network.model.places.OpeningHours;
 import com.bmathias.go4lunch_.databinding.FragmentListItemBinding;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -58,7 +61,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
 
         holder.itemView.setOnClickListener(view -> mOnRestaurantListener.onRestaurantClick(restaurant.getPlaceId()));
-/*
+
         if (restaurant.getPhoto() != null) {
             Glide.with(holder.binding.getRoot())
                     .load(restaurant.getPhoto())
@@ -68,7 +71,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         } else {
             holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
         }
-*/
+
     }
 
     public interface OnRestaurantListener {
@@ -77,8 +80,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-       // return restaurantItemsList == null ? 0 : restaurantItemsList.size();
-        return restaurantItemsList.size();
+       return restaurantItemsList == null ? 0 : restaurantItemsList.size();
+        // return restaurantItemsList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

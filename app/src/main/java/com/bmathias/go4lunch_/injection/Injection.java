@@ -5,6 +5,7 @@ import android.content.Context;
 import com.bmathias.go4lunch_.BuildConfig;
 import com.bmathias.go4lunch_.data.network.PlacesApiService;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
+import com.bmathias.go4lunch_.data.repositories.UserRepository;
 
 public class Injection {
 
@@ -18,6 +19,14 @@ public class Injection {
 
     public static ViewModelFactory provideViewModelFactory() {
         return new ViewModelFactory(provideRestaurantRepository());
+    }
+
+    public static UserRepository provideUserRepository() {
+        return UserRepository.getInstance();
+    }
+
+    public static UserViewModelFactory provideUserViewModelFactory() {
+        return new UserViewModelFactory(provideUserRepository());
     }
 
 }

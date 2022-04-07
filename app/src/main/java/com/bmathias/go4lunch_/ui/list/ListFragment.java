@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
@@ -52,9 +53,11 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
     }
 
     private void setupRecyclerView(){
-        binding.fragmentListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ListAdapter(new ArrayList<>(), this);
         binding.fragmentListRecyclerView.setAdapter(adapter);
+        binding.fragmentListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.fragmentListRecyclerView.addItemDecoration(new DividerItemDecoration(binding.fragmentListRecyclerView.getContext(),
+                DividerItemDecoration.VERTICAL));
 
         listViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurantItems -> {
             adapter.setRestaurantItems(restaurantItems);

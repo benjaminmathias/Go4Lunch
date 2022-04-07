@@ -13,14 +13,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Le nom"
+        android:textAppearance="?attr/textAppearanceSubtitle2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/restaurant_type_and_address_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="84dp"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:text="Le type et l'adresse"
+        android:textAppearance="?attr/textAppearanceBody2"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_image_view"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_name_text_view" />
 
@@ -28,27 +36,42 @@
         android:id="@+id/restaurant_open_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
         android:text="Horaires"
+        android:textAppearance="?attr/textAppearanceCaption"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_type_and_address_text_view" />
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/restaurant_distance_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Distance"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/restaurant_image_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/restaurant_image_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:contentDescription="TODO"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="TODO" />
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/distance_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Distance"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_image_view"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/restaurant_name_text_view"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

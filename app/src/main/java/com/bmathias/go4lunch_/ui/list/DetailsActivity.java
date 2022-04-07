@@ -40,8 +40,8 @@ public class DetailsActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         binding = ActivityDetailsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        setContentView(view);
         this.setupDetailsView();
+        setContentView(view);
     }
 
     private void setupDetailsViewModel(String placeId) {
@@ -52,14 +52,15 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void setupDetailsView() {
         detailsViewModel.getRestaurantDetails().observe(this, restaurantDetails -> {
+            if (restaurantDetails == null) {
+                return;
+            }
 
-            restaurantDetailsTextViews(restaurantDetails);
             restaurantDetailsPhoneDialog(restaurantDetails);
             restaurantDetailsWebsiteDialog(restaurantDetails);
             restaurantDetailsImageView(restaurantDetails);
-
+            restaurantDetailsTextViews(restaurantDetails);
         });
-
     }
 
     private void restaurantDetailsTextViews(RestaurantDetails restaurantDetails){

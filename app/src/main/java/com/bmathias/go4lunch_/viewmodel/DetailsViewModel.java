@@ -41,7 +41,7 @@ public class DetailsViewModel extends ViewModel {
     }
 
     public void observeRestaurantDetails(String placeId) {
-        LiveData<RestaurantDetails> _restaurantDetails = Transformations.map(restaurantRepository.streamFetchRestaurantDetails(placeId), result -> {
+        restaurantDetails = Transformations.map(restaurantRepository.streamFetchRestaurantDetails(placeId), result -> {
             _showProgress.postValue(false);
 
             if (result.isSuccess()) {
@@ -51,8 +51,6 @@ public class DetailsViewModel extends ViewModel {
                 return null;
             }
         });
-
-        restaurantDetails = _restaurantDetails;
     }
 
     public LiveData<RestaurantDetails> getRestaurantDetails() {

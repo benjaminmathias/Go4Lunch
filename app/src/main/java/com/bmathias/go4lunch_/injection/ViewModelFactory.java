@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
+import com.bmathias.go4lunch_.data.repositories.UserRepository;
 import com.bmathias.go4lunch_.viewmodel.DetailsViewModel;
 import com.bmathias.go4lunch_.viewmodel.ListViewModel;
 
