@@ -62,8 +62,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         holder.itemView.setOnClickListener(view -> mOnRestaurantListener.onRestaurantClick(restaurant.getPlaceId()));
 
+        holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
+  /*
         if (restaurant.getPhoto() != null) {
-            Glide.with(holder.binding.getRoot())
+           Glide.with(holder.binding.getRoot())
                     .load(restaurant.getPhoto())
                     .apply(RequestOptions.centerCropTransform())
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
@@ -71,7 +73,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         } else {
             holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
         }
-
+*/
     }
 
     public interface OnRestaurantListener {

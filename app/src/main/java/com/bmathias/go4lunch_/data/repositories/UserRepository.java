@@ -40,6 +40,10 @@ public final class UserRepository {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    public Boolean isCurrentUserLogged() {
+        return (this.getCurrentUser() != null);
+    }
+
     public Task<Void> signOut(Context context) {
         LiveData<Boolean> _signedOut = new MutableLiveData<>();
         AuthUI.getInstance().signOut(context);
