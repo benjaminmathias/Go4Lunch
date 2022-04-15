@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/white"
-            android:drawableTop="@drawable/ic_baseline_open_in_browser_24"
+            android:drawableTop="@drawable/ic_web_24"
             android:text="WEBSITE"
             android:textColor="@color/orange_500"
             app:drawableTint="@color/orange_500" />

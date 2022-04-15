@@ -2,18 +2,22 @@ package com.bmathias.go4lunch_;
 
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bmathias.go4lunch_.data.manager.UserManager;
@@ -23,6 +27,7 @@ import com.bmathias.go4lunch_.ui.list.ListFragment;
 import com.bmathias.go4lunch_.ui.map.MapFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationBarView bottomNavigationView;
     private NavigationView navigationView;
-
 
 
     @Override
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("NonConstantResourceId")
-    private final NavigationBarView.OnItemSelectedListener navListener = item -> {
+    private final NavigationBarView.OnItemSelectedListener bottomNavListener = item -> {
         Fragment selectedFragment = null;
 
         switch (item.getItemId()) {
@@ -81,6 +85,33 @@ public class MainActivity extends AppCompatActivity {
         return true;
     };
 
+    @SuppressLint("NonConstantResourceId")
+    private final NavigationView.OnNavigationItemSelectedListener drawerNavListener = item -> {
+
+        switch (item.getItemId()) {
+            case R.id.your_lunch_button:
+                Toast.makeText(this, "Vous avez choisi le restaurant suivant :", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.settings_button:
+                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.logout_button:
+                new AlertDialog.Builder(MainActivity.this)
+                        .setMessage("Would you like to log out ?")
+                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                            userManager.signOut(MainActivity.this);
+                            Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel())
+                        .show();
+
+                break;
+        }
+        return true;
+    };
+
+
     private void configureToolbar() {
         this.toolbar = this.binding.activityMainToolbar;
         setSupportActionBar(toolbar);
@@ -88,8 +119,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureNavigationView() {
         this.bottomNavigationView = this.binding.bottomNavigation;
-        bottomNavigationView.setOnItemSelectedListener(navListener);
+        bottomNavigationView.setOnItemSelectedListener(bottomNavListener);
         bottomNavigationView.setSelectedItemId(R.id.nav_list);
+
+        this.navigationView = this.binding.navigationView;
+        navigationView.setNavigationItemSelectedListener(drawerNavListener);
     }
 
     private void configureDrawerLayout() {
@@ -102,11 +136,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void updateUIWithUserData(){
+    private void updateUIWithUserData() {
         if (userManager.isCurrentUserLogged()) {
             FirebaseUser user = userManager.getCurrentUser();
 
-            if (user.getPhotoUrl() != null){
+            if (user.getPhotoUrl() != null) {
                 setProfilePicture(user.getPhotoUrl());
             }
 
@@ -114,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setProfilePicture(Uri profilePictureUrl){
+    private void setProfilePicture(Uri profilePictureUrl) {
         this.navigationView = this.binding.navigationView;
         View headerView = binding.navigationView.getHeaderView(0);
         ImageView userImageView = headerView.findViewById(R.id.nav_header_user_image_view);
@@ -127,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setTextUserData(FirebaseUser user){
+    private void setTextUserData(FirebaseUser user) {
         //Get email & username from User
         String email = TextUtils.isEmpty(user.getEmail()) ? getString(R.string.info_no_email_found) : user.getEmail();
         String userFirstName = TextUtils.isEmpty(user.getDisplayName()) ? getString(R.string.info_no_username_found) : user.getDisplayName();
@@ -140,4 +174,6 @@ public class MainActivity extends AppCompatActivity {
         userMailTextView.setText(email);
 
     }
+
+
 }

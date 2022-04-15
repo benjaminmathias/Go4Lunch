@@ -21,8 +21,8 @@ public class MainViewModel extends ViewModel {
    public void getCurrentUser(){
       userRepository.getCurrentUser();
    }
-
+/*
    public void signOutUser(){
-    //  userRepository.signOut(Context context);
-   }
+      userRepository.signOut(Context context);
+   }*/
 }
