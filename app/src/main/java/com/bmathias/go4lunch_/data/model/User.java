@@ -1,41 +1,89 @@
 package com.bmathias.go4lunch_.data.model;
 
-import android.net.Uri;
-
 import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class User implements Serializable {
 
-   public String uid;
+    private String userId;
 
-   public String name;
+    private String userName;
 
-   public Uri photoUrl;
+    private String photoUrl;
 
-   @SuppressWarnings("WeakerAccess")
-   public String email;
+    @SuppressWarnings("WeakerAccess")
+    private String userEmail;
 
-   public String selectedRestaurant;
+    private String selectedRestaurantId;
 
-   public List<String> likedRestaurants;
+    private String selectedRestaurantName;
 
-   @Exclude
-   public boolean isAuthenticated;
+    @Exclude
+    public boolean isAuthenticated;
 
-   @Exclude
-   boolean isNew, isCreated;
+    @Exclude
+    public boolean isNew, isCreated;
 
-   public User() {}
 
-   public User(String uid, String name, String email, Uri photoUrl, String selectedRestaurant, List<String> likedRestaurants) {
-      this.uid = uid;
-      this.name = name;
-      this.email = email;
-      this.photoUrl = photoUrl;
-      this.selectedRestaurant = selectedRestaurant;
-      this.likedRestaurants = likedRestaurants;
-   }
+    public User() {
+    }
+
+    public User(String userId, String userName, String userEmail, String photoUrl, String selectedRestaurantId, String selectedRestaurantName) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.photoUrl = photoUrl;
+        this.selectedRestaurantId = selectedRestaurantId;
+        this.selectedRestaurantName = selectedRestaurantName;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getSelectedRestaurantId() {
+        return selectedRestaurantId;
+    }
+
+    public void setSelectedRestaurantId(String selectedRestaurantId) {
+        this.selectedRestaurantId = selectedRestaurantId;
+    }
+
+    public String getSelectedRestaurantName() {
+        return selectedRestaurantName;
+    }
+
+    public void setSelectedRestaurantName(String selectedRestaurantName) {
+        this.selectedRestaurantName = selectedRestaurantName;
+    }
+
 }

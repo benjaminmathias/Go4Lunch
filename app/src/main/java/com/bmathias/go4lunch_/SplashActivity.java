@@ -1,22 +1,30 @@
 package com.bmathias.go4lunch_;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.bmathias.go4lunch_.utils.Constants.USER;
 
-import android.animation.ObjectAnimator;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
+import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.databinding.ActivitySplashBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.bmathias.go4lunch_.injection.Injection;
+import com.bmathias.go4lunch_.injection.ViewModelFactory;
+import com.bmathias.go4lunch_.viewmodel.SplashViewModel;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
+    SplashViewModel splashViewModel;
     ActivitySplashBinding activitySplashBinding;
     int counter = 0;
 
@@ -27,44 +35,59 @@ public class SplashActivity extends AppCompatActivity {
         View view = activitySplashBinding.getRoot();
         setContentView(view);
 
-        getSupportActionBar().hide();
+        initSplashViewModel();
+
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         progressBarSetup();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkIfUserIsAuthenticated();
-                finish();
-            }
-        }, 2100);
+        new Handler().postDelayed(this::checkIfUserIsAuthenticated, 2100);
+    }
 
+    private void initSplashViewModel() {
+        ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
+        this.splashViewModel = new ViewModelProvider(this, viewModelFactory).get(SplashViewModel.class);
 
     }
 
     private void checkIfUserIsAuthenticated() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-        } else {
-            startActivity(new Intent(SplashActivity.this, AuthActivity.class));
-        }
+        splashViewModel.checkIfUserIsAuthenticated();
+        splashViewModel.isUserAuthenticatedLiveData.observe(this, user -> {
+            if (user == null) {
+                goToAuthInActivity();
+            } else {
+                goToMainActivity(user);
+            }
+            finish();
+        });
     }
 
-    private void progressBarSetup(){
+    private void goToAuthInActivity() {
+        Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToMainActivity(User user) {
+        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+        intent.putExtra(USER, user);
+        startActivity(intent);
+    }
+
+    private void progressBarSetup() {
         final Timer t = new Timer();
         TimerTask tt = new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 counter++;
                 activitySplashBinding.splashProgressbar.setProgress(counter);
 
-                if(counter == 100)
+                if (counter == 100)
                     t.cancel();
             }
         };
 
-        t.schedule(tt,0,20);
+        t.schedule(tt, 0, 20);
     }
+
+
 }

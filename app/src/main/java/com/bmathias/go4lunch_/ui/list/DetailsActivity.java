@@ -1,18 +1,21 @@
 package com.bmathias.go4lunch_.ui.list;
 
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
-
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.RestaurantDetails;
@@ -23,14 +26,17 @@ import com.bmathias.go4lunch_.viewmodel.DetailsViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class DetailsActivity extends AppCompatActivity {
 
     private DetailsViewModel detailsViewModel;
+    private DetailsAdapter adapter;
     private ActivityDetailsBinding binding;
 
-    private Boolean isClicked = false;
+    private Boolean isClicked;
+    private String placeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,8 @@ public class DetailsActivity extends AppCompatActivity {
         binding = ActivityDetailsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         this.setupDetailsView();
+        this.setupFab(placeId);
+        this.setupRecyclerView();
         setContentView(view);
     }
 
@@ -48,7 +56,47 @@ public class DetailsActivity extends AppCompatActivity {
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.detailsViewModel = new ViewModelProvider(this, viewModelFactory).get(DetailsViewModel.class);
         this.detailsViewModel.observeRestaurantDetails(placeId);
+        this.detailsViewModel.getSpecificUsersFromDatabase(placeId);
     }
+
+    private void setupRecyclerView() {
+        adapter = new DetailsAdapter(new ArrayList<>());
+
+        this.detailsViewModel.getSpecificUsers().observe(this, users ->
+                adapter.setUserItems(users));
+
+        binding.restaurantDetailsWorkmatesRecyclerview.setAdapter(adapter);
+        binding.restaurantDetailsWorkmatesRecyclerview.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+    }
+
+    private void setupFab(String placeId) {
+
+        detailsViewModel.getUserFromDatabase();
+        this.detailsViewModel.currentUser.observe(this, user -> {
+
+            // Setup FAB style when activity is opened
+            if (user.getSelectedRestaurantId() != null && user.getSelectedRestaurantId().equals(placeId)) {
+                binding.floatingActionButton.setImageResource(R.drawable.ic_baseline_check_24);
+                isClicked = true;
+            } else {
+                binding.floatingActionButton.setImageResource(R.drawable.ic_baseline_group_24);
+                isClicked = false;
+            }
+
+            binding.floatingActionButton.setOnClickListener(view -> {
+                if (isClicked) {
+                    binding.floatingActionButton.setImageResource(R.drawable.ic_baseline_group_24);
+                    detailsViewModel.deleteSelectedRestaurant();
+                    isClicked = false;
+                } else {
+                    binding.floatingActionButton.setImageResource(R.drawable.ic_baseline_check_24);
+                    detailsViewModel.updateSelectedRestaurant(placeId, placeName);
+                    isClicked = true;
+                }
+            });
+        });
+    }
+
 
     private void setupDetailsView() {
         detailsViewModel.getRestaurantDetails().observe(this, restaurantDetails -> {
@@ -56,6 +104,7 @@ public class DetailsActivity extends AppCompatActivity {
                 return;
             }
 
+            placeName = restaurantDetails.getName();
             restaurantDetailsPhoneDialog(restaurantDetails);
             restaurantDetailsWebsiteDialog(restaurantDetails);
             restaurantDetailsImageView(restaurantDetails);
@@ -63,7 +112,7 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void restaurantDetailsTextViews(RestaurantDetails restaurantDetails){
+    private void restaurantDetailsTextViews(RestaurantDetails restaurantDetails) {
         binding.restaurantDetailsName.setText(Objects.requireNonNull(restaurantDetails.getName()));
         binding.restaurantDetailsAddress.setText(Objects.requireNonNull(restaurantDetails.getAddress()));
     }
@@ -75,7 +124,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         if (phoneNumber != null) {
             binding.restaurantDetailsPhone.setOnClickListener(view -> new AlertDialog.Builder(DetailsActivity.this)
-                    .setMessage("Whould you like to call " + restaurantDetails.getName() + " at the following number : " + phoneNumber)
+                    .setMessage("Would you like to call " + restaurantDetails.getName() + " at the following number : " + phoneNumber)
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
                         startActivity(phoneIntent);
@@ -84,6 +133,7 @@ public class DetailsActivity extends AppCompatActivity {
                     .show());
         } else {
             binding.restaurantDetailsPhone.setEnabled(false);
+            binding.restaurantDetailsPhone.setTextColor(Color.LTGRAY);
         }
     }
 
@@ -91,7 +141,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void restaurantDetailsWebsiteDialog(RestaurantDetails restaurantDetails) {
         if (restaurantDetails.getWebsite() != null) {
             binding.restaurantDetailsWebsite.setOnClickListener(view -> new AlertDialog.Builder(DetailsActivity.this)
-                    .setMessage("Whould you like to open " + restaurantDetails.getName() + " website ?")
+                    .setMessage("Would you like to open " + restaurantDetails.getName() + " website ?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         Uri webpage = Uri.parse(restaurantDetails.getWebsite());
                         Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
@@ -99,11 +149,19 @@ public class DetailsActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel())
                     .show());
+        } else {
+            binding.restaurantDetailsWebsite.setEnabled(false);
+            binding.restaurantDetailsWebsite.setTextColor(Color.LTGRAY);
         }
     }
 
     // Setup ImageView resource
-    private void restaurantDetailsImageView(RestaurantDetails restaurantDetails){
+    private void restaurantDetailsImageView(RestaurantDetails restaurantDetails) {
+
+        binding.restaurantDetailsPicture.setImageResource(R.drawable.drawer_image);
+
+        // TODO : image won't load for testing purpose
+        /*
         if (restaurantDetails.getPhotoUrl() != null) {
             Glide.with(binding.getRoot())
                     .load(restaurantDetails.getPhotoUrl())
@@ -112,6 +170,7 @@ public class DetailsActivity extends AppCompatActivity {
         } else {
             binding.restaurantDetailsPicture.setImageResource(R.drawable.ic_baseline_fastfood_24);
         }
+        */
 
         // Like Button
         binding.restaurantDetailsLike.setOnClickListener(view -> {

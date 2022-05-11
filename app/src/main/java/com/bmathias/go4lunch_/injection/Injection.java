@@ -1,13 +1,19 @@
 package com.bmathias.go4lunch_.injection;
 
-import android.content.Context;
-
 import com.bmathias.go4lunch_.BuildConfig;
 import com.bmathias.go4lunch_.data.network.PlacesApiService;
+import com.bmathias.go4lunch_.data.repositories.AuthRepository;
+import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
-import com.bmathias.go4lunch_.data.repositories.UserRepository;
+import com.bmathias.go4lunch_.data.repositories.SplashRepository;
+import com.bmathias.go4lunch_.data.repositories.UsersRepository;
 
 public class Injection {
+
+    public static ViewModelFactory provideViewModelFactory() {
+        return new ViewModelFactory(provideRestaurantRepository(), provideAuthRepository(),
+                provideCurrentUserRepository(), provideSplashRepository(), provideUserRepository());
+    }
 
     public static RestaurantRepository provideRestaurantRepository() {
         return RestaurantRepository.getInstance(provideApiService(), BuildConfig.PHOTO_BASE_URL);
@@ -17,16 +23,20 @@ public class Injection {
         return PlacesApiService.retrofit.create(PlacesApiService.class);
     }
 
-    public static ViewModelFactory provideViewModelFactory() {
-        return new ViewModelFactory(provideRestaurantRepository());
+    public static CurrentUserRepository provideCurrentUserRepository() {
+        return CurrentUserRepository.getInstance();
     }
 
-    public static UserRepository provideUserRepository() {
-        return UserRepository.getInstance();
+    public static AuthRepository provideAuthRepository() {
+        return AuthRepository.getInstance();
     }
 
-    public static UserViewModelFactory provideUserViewModelFactory() {
-        return new UserViewModelFactory(provideUserRepository());
+    public static SplashRepository provideSplashRepository() {
+        return SplashRepository.getInstance();
+    }
+
+    public static UsersRepository provideUserRepository() {
+        return UsersRepository.getInstance();
     }
 
 }

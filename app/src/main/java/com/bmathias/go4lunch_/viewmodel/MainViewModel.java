@@ -1,28 +1,20 @@
 package com.bmathias.go4lunch_.viewmodel;
 
-import android.content.Context;
-
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.bmathias.go4lunch_.data.repositories.UserRepository;
+import com.bmathias.go4lunch_.data.model.User;
+import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 
 public class MainViewModel extends ViewModel {
+    private CurrentUserRepository currentUserRepository;
+    public LiveData<User> currentUser;
 
-   private final UserRepository userRepository;
+    public MainViewModel(CurrentUserRepository currentUserRepository) {
+        this.currentUserRepository = currentUserRepository;
+    }
 
-   public MainViewModel(UserRepository userRepository) {
-      this.userRepository = userRepository;
-   }
-
-   public void checkIfUserIsLoggedIn(){
-      userRepository.isCurrentUserLogged();
-   }
-
-   public void getCurrentUser(){
-      userRepository.getCurrentUser();
-   }
-/*
-   public void signOutUser(){
-      userRepository.signOut(Context context);
-   }*/
+    public void getUserFromDatabase(){
+        currentUser = currentUserRepository.getCurrentUser();
+    }
 }

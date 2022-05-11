@@ -1,17 +1,10 @@
 package com.bmathias.go4lunch_;
 
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
+import static com.bmathias.go4lunch_.utils.Constants.USER;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,29 +12,45 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.bmathias.go4lunch_.data.manager.UserManager;
+import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.databinding.ActivityMainBinding;
-import com.bmathias.go4lunch_.ui.workmates.WorkmatesFragment;
+import com.bmathias.go4lunch_.injection.Injection;
+import com.bmathias.go4lunch_.injection.ViewModelFactory;
+import com.bmathias.go4lunch_.ui.list.DetailsActivity;
 import com.bmathias.go4lunch_.ui.list.ListFragment;
 import com.bmathias.go4lunch_.ui.map.MapFragment;
+import com.bmathias.go4lunch_.ui.workmates.WorkmatesFragment;
+import com.bmathias.go4lunch_.viewmodel.MainViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
-    private UserManager userManager = UserManager.getInstance();
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private GoogleSignInClient googleSignInClient;
 
     private ActivityMainBinding binding;
 
     private Toolbar toolbar;
-    private DrawerLayout drawerLayout;
-    private NavigationBarView bottomNavigationView;
     private NavigationView navigationView;
+
+    private MainViewModel mainViewModel;
 
 
     @Override
@@ -51,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        User user = getUserFromIntent();
+        initGoogleSignInClient();
+
+        setupMainViewModel();
+
         configureToolbar();
         configureNavigationView();
         configureDrawerLayout();
@@ -58,7 +72,63 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new ListFragment()).commit();
 
-        updateUIWithUserData();
+        updateUIWithUserData(user);
+    }
+
+    private User getUserFromIntent() {
+        return (User) getIntent().getSerializableExtra(USER);
+    }
+
+    private void setupMainViewModel() {
+        ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
+        this.mainViewModel = new ViewModelProvider(this, viewModelFactory).get(MainViewModel.class);
+        this.mainViewModel.getUserFromDatabase();
+    }
+
+    private void initGoogleSignInClient() {
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+    }
+
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser == null) {
+            goToAuthInActivity();
+        }
+    }
+
+    private void goToAuthInActivity() {
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        startActivity(intent);
+    }
+
+    private void signOut() {
+        singOutFirebase();
+        signOutGoogle();
+    }
+
+    private void singOutFirebase() {
+        firebaseAuth.signOut();
+    }
+
+    private void signOutGoogle() {
+        googleSignInClient.signOut();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseAuth.addAuthStateListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuth.removeAuthStateListener(this);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -90,18 +160,28 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.your_lunch_button:
-                Toast.makeText(this, "Vous avez choisi le restaurant suivant :", Toast.LENGTH_SHORT).show();
+
+                mainViewModel.getUserFromDatabase();
+                this.mainViewModel.currentUser.observe(this, user -> {
+                    Toast.makeText(this, "Vous avez choisi le restaurant suivant :" + user.getSelectedRestaurantName(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, DetailsActivity.class);
+                    intent.putExtra("placeId", user.getSelectedRestaurantId());
+                    startActivity(intent);
+                });
+
                 break;
             case R.id.settings_button:
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+
                 break;
             case R.id.logout_button:
                 new AlertDialog.Builder(MainActivity.this)
                         .setMessage("Would you like to log out ?")
                         .setPositiveButton("Yes", (dialogInterface, i) -> {
-                            userManager.signOut(MainActivity.this);
+                            signOut();
                             Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                             startActivity(intent);
+                            finish();
                         })
                         .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel())
                         .show();
@@ -118,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureNavigationView() {
-        this.bottomNavigationView = this.binding.bottomNavigation;
+        NavigationBarView bottomNavigationView = this.binding.bottomNavigation;
         bottomNavigationView.setOnItemSelectedListener(bottomNavListener);
         bottomNavigationView.setSelectedItemId(R.id.nav_list);
 
@@ -127,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureDrawerLayout() {
-        this.drawerLayout = this.binding.activityMainDrawerLayout;
+        DrawerLayout drawerLayout = this.binding.activityMainDrawerLayout;
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.button_login_text_logged, R.string.button_login_text_not_logged);
@@ -136,19 +216,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void updateUIWithUserData() {
-        if (userManager.isCurrentUserLogged()) {
-            FirebaseUser user = userManager.getCurrentUser();
-
-            if (user.getPhotoUrl() != null) {
-                setProfilePicture(user.getPhotoUrl());
-            }
-
-            setTextUserData(user);
+    private void updateUIWithUserData(User user) {
+        if (user.getPhotoUrl() != null) {
+            setProfilePicture(user.getPhotoUrl());
         }
+        setTextUserData(user);
     }
 
-    private void setProfilePicture(Uri profilePictureUrl) {
+    private void setProfilePicture(String profilePictureUrl) {
         this.navigationView = this.binding.navigationView;
         View headerView = binding.navigationView.getHeaderView(0);
         ImageView userImageView = headerView.findViewById(R.id.nav_header_user_image_view);
@@ -161,10 +236,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setTextUserData(FirebaseUser user) {
+    private void setTextUserData(User user) {
         //Get email & username from User
-        String email = TextUtils.isEmpty(user.getEmail()) ? getString(R.string.info_no_email_found) : user.getEmail();
-        String userFirstName = TextUtils.isEmpty(user.getDisplayName()) ? getString(R.string.info_no_username_found) : user.getDisplayName();
+        String email = TextUtils.isEmpty(user.getUserEmail()) ? getString(R.string.info_no_email_found) : user.getUserEmail();
+        String userFirstName = TextUtils.isEmpty(user.getUserName()) ? getString(R.string.info_no_username_found) : user.getUserName();
 
         this.navigationView = this.binding.navigationView;
         View headerView = binding.navigationView.getHeaderView(0);
@@ -174,6 +249,5 @@ public class MainActivity extends AppCompatActivity {
         userMailTextView.setText(email);
 
     }
-
 
 }

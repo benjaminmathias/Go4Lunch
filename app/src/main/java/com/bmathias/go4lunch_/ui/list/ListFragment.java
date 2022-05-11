@@ -1,9 +1,7 @@
 package com.bmathias.go4lunch_.ui.list;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +14,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
+import com.bmathias.go4lunch_.databinding.FragmentListBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;
 import com.bmathias.go4lunch_.viewmodel.ListViewModel;
-import com.bmathias.go4lunch_.databinding.FragmentListBinding;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import io.reactivex.Observer;
 
 
 public class ListFragment extends Fragment implements ListAdapter.OnRestaurantListener {
@@ -40,7 +32,6 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentListBinding.inflate(inflater, container, false);
-
         this.setupViewModel();
         this.setupRecyclerView();
         return binding.getRoot();
@@ -54,17 +45,18 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
 
     private void setupRecyclerView(){
         adapter = new ListAdapter(new ArrayList<>(), this);
+
+        listViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurantItems ->
+                adapter.setRestaurantItems(restaurantItems));
+
         binding.fragmentListRecyclerView.setAdapter(adapter);
         binding.fragmentListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.fragmentListRecyclerView.addItemDecoration(new DividerItemDecoration(binding.fragmentListRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL));
 
-        listViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurantItems -> {
-            adapter.setRestaurantItems(restaurantItems);
-            adapter.notifyDataSetChanged();
-        });
     }
 
+    // Handle onClick event on RecyclerView items
     @Override
     public void onRestaurantClick(String placeId) {
         Toast.makeText(this.getActivity(), "Click on " + placeId, Toast.LENGTH_SHORT).show();

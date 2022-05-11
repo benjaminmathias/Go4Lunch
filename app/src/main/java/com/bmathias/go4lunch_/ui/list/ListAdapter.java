@@ -1,6 +1,8 @@
 package com.bmathias.go4lunch_.ui.list;
 
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -19,7 +21,7 @@ import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
-    private List<RestaurantItem> restaurantItemsList;
+    private final List<RestaurantItem> restaurantItemsList;
     private final OnRestaurantListener mOnRestaurantListener;
 
     public ListAdapter(List<RestaurantItem> restaurantItemsList, OnRestaurantListener onRestaurantListener) {
@@ -27,8 +29,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         this.mOnRestaurantListener = onRestaurantListener;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setRestaurantItems(List<RestaurantItem> restaurantItems){
-        this.restaurantItemsList = restaurantItems;
+        this.restaurantItemsList.clear();
+        this.restaurantItemsList.addAll(restaurantItems);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -40,8 +45,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ListAdapter.ViewHolder holder, int position) {
 
-        // Setup name textview
         RestaurantItem restaurant = restaurantItemsList.get(position);
+
+        // Setup name textview
         holder.binding.restaurantNameTextView.setText(String.valueOf(restaurant.getName()));
 
         // Setup address textview
@@ -51,19 +57,21 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         OpeningHours openStatus = restaurant.getIsOpen();
         if (openStatus != null && openStatus.getOpenNow()) {
             holder.binding.restaurantOpenTextView.setText("Ouvert");
+            holder.binding.restaurantOpenTextView.setTextColor(Color.GREEN);
         } else {
             holder.binding.restaurantOpenTextView.setText("Fermé");
+            holder.binding.restaurantOpenTextView.setTextColor(Color.RED);
         }
 
         // Setup ImageView
 
         // For testing purpose
-        holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
+        holder.binding.restaurantImageView.setImageResource(R.drawable.drawer_image);
 
         holder.itemView.setOnClickListener(view -> mOnRestaurantListener.onRestaurantClick(restaurant.getPlaceId()));
 
-        holder.binding.restaurantImageView.setImageResource(R.drawable.ic_baseline_fastfood_24);
-  /*
+        // TODO: commented for testing purpose, remove for demo
+        /*
         if (restaurant.getPhoto() != null) {
            Glide.with(holder.binding.getRoot())
                     .load(restaurant.getPhoto())
@@ -83,7 +91,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
        return restaurantItemsList == null ? 0 : restaurantItemsList.size();
-        // return restaurantItemsList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

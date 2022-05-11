@@ -4,6 +4,8 @@ public class RestaurantDetails {
 
     private String name;
 
+    private String placeId;
+
     private String address;
 
     private String phoneNumber;
@@ -18,6 +20,14 @@ public class RestaurantDetails {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
     public String getAddress() {
@@ -54,32 +64,38 @@ public class RestaurantDetails {
 
     public static class Builder {
         private String name;
+        private String placeId;
         private String address;
         private String phoneNumber;
         private String website;
         private String photoUrl;
 
-        public Builder withName(String name){
+        public Builder withName(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder withAddress(String address){
+        public Builder withPlaceId(String placeId) {
+            this.placeId = placeId;
+            return this;
+        }
+
+        public Builder withAddress(String address) {
             this.address = address;
             return this;
         }
 
-        public Builder withPhoneNumber(String phoneNumber){
+        public Builder withPhoneNumber(String phoneNumber) {
             this.phoneNumber = phoneNumber;
             return this;
         }
 
-        public Builder withWebsite(String website){
+        public Builder withWebsite(String website) {
             this.website = website;
             return this;
         }
 
-        public Builder withPhotoUrl(String photoUrl){
+        public Builder withPhotoUrl(String photoUrl) {
             this.photoUrl = photoUrl;
             return this;
         }
@@ -87,23 +103,26 @@ public class RestaurantDetails {
         public RestaurantDetails build() {
             RestaurantDetails restaurantDetails = new RestaurantDetails();
 
-            if(name != null){
+            if (name != null) {
                 restaurantDetails.setName(name);
             }
 
-            if(address != null){
+            if (placeId != null) {
+                restaurantDetails.setPlaceId(placeId);
+            }
+            if (address != null) {
                 restaurantDetails.setAddress(address);
             }
 
-            if(phoneNumber != null){
+            if (phoneNumber != null) {
                 restaurantDetails.setPhoneNumber(phoneNumber);
             }
 
-            if(website != null){
+            if (website != null) {
                 restaurantDetails.setWebsite(website);
             }
 
-            if(photoUrl != null){
+            if (photoUrl != null) {
                 restaurantDetails.setPhotoUrl(photoUrl);
             }
 

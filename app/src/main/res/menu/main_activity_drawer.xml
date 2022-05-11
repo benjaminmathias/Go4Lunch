@@ -4,7 +4,8 @@
     tools:showIn="navigation_view"
     >
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single">
         <item
             android:id="@+id/your_lunch_button"
             android:icon="@drawable/ic_baseline_fastfood_24"
