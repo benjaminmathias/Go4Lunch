@@ -13,6 +13,7 @@ import com.bmathias.go4lunch_.viewmodel.AuthViewModel;
 import com.bmathias.go4lunch_.viewmodel.DetailsViewModel;
 import com.bmathias.go4lunch_.viewmodel.ListViewModel;
 import com.bmathias.go4lunch_.viewmodel.MainViewModel;
+import com.bmathias.go4lunch_.viewmodel.MapViewModel;
 import com.bmathias.go4lunch_.viewmodel.SplashViewModel;
 import com.bmathias.go4lunch_.viewmodel.WorkmatesViewModel;
 
@@ -48,7 +49,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
       } else if (aClass.isAssignableFrom(WorkmatesViewModel.class)){
          return (T) new WorkmatesViewModel(usersDatasource);
       } else if (aClass.isAssignableFrom(MainViewModel.class)){
-         return (T) new MainViewModel(currentUserDatasource);
+         return (T) new MainViewModel(currentUserDatasource, restaurantDatasource);
+      } else if (aClass.isAssignableFrom(MapViewModel.class)){
+         return (T) new MapViewModel(restaurantDatasource);
       }
       throw new IllegalArgumentException("Unknown ViewModel class");
    }

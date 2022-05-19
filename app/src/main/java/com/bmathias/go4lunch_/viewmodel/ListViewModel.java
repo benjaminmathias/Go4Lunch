@@ -1,5 +1,7 @@
 package com.bmathias.go4lunch_.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class ListViewModel extends ViewModel {
 
-    private static final String TAG = "ListViewModel";
+    private static final String TAG = "ListViewModel :";
 
     private final RestaurantRepository restaurantRepository;
 
@@ -31,14 +33,16 @@ public class ListViewModel extends ViewModel {
 
 
     public void observeRestaurants(){
-        _showProgress.postValue(true);
+      //  _showProgress.postValue(true);
         LiveData<List<RestaurantItem>> _restaurant = Transformations.map(restaurantRepository.streamFetchRestaurants(), result -> {
-            _showProgress.postValue(false);
+          //  _showProgress.postValue(false);
 
             if (result.isSuccess()) {
+                Log.e(TAG, "success");
                 return result.getData();
             } else {
                 _error.postValue(result.getError().getMessage());
+                Log.e(TAG, result.getError().getMessage());
                 return null;
             }
         });

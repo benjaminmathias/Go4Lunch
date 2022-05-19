@@ -17,13 +17,13 @@ public interface PlacesApiService {
             @Query("location") String location,
             @Query("radius") String radius,
             @Query("type") String type,
-            @Query("key") String api_key
+            @Query("key") String key
     );
 
     @GET("place/details/json")
     Observable<DetailsResultAPI> getRestaurantDetails(
             @Query("place_id") String place_id,
-            @Query("key") String api_key
+            @Query("key") String key
     );
 
     Retrofit retrofit = new Retrofit.Builder()

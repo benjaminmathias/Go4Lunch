@@ -1,7 +1,8 @@
 package com.bmathias.go4lunch_.data.model;
 
-import com.bmathias.go4lunch_.data.network.model.places.Location;
 import com.bmathias.go4lunch_.data.network.model.places.OpeningHours;
+
+import java.util.Objects;
 
 public class RestaurantItem {
 
@@ -9,7 +10,9 @@ public class RestaurantItem {
 
     private String address;
 
-    private Location location;
+    private Double longitude;
+
+    private Double latitude;
 
     private OpeningHours isOpen;
 
@@ -33,12 +36,20 @@ public class RestaurantItem {
         this.address = address;
     }
 
-    public Location getLocation() {
-        return location;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
     public OpeningHours getIsOpen() {
@@ -68,7 +79,8 @@ public class RestaurantItem {
     public static class Builder {
         private String name;
         private String address;
-        private Location location;
+        private Double longitude;
+        private Double latitude;
         private OpeningHours isOpen;
         private String placeId;
         private String photo;
@@ -83,8 +95,13 @@ public class RestaurantItem {
             return this;
         }
 
-        public Builder withLocation(Location location) {
-            this.location = location;
+        public Builder withLongitude(Double longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public Builder withLatitude(Double latitude) {
+            this.latitude = latitude;
             return this;
         }
 
@@ -114,8 +131,12 @@ public class RestaurantItem {
                 restaurantItem.setAddress(address);
             }
 
-            if (location != null){
-                restaurantItem.setLocation(location);
+            if (Objects.nonNull(longitude)){
+                restaurantItem.setLongitude(longitude);
+            }
+
+            if (Objects.nonNull(latitude)){
+                restaurantItem.setLatitude(latitude);
             }
 
             if (isOpen != null){

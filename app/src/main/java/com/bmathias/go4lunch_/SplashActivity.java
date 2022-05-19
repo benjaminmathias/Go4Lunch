@@ -2,14 +2,18 @@ package com.bmathias.go4lunch_;
 
 import static com.bmathias.go4lunch_.utils.Constants.USER;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.databinding.ActivitySplashBinding;
@@ -35,13 +39,13 @@ public class SplashActivity extends AppCompatActivity {
         View view = activitySplashBinding.getRoot();
         setContentView(view);
 
+        Objects.requireNonNull(getSupportActionBar()).hide();
         initSplashViewModel();
 
-        Objects.requireNonNull(getSupportActionBar()).hide();
-
-        progressBarSetup();
-
-        new Handler().postDelayed(this::checkIfUserIsAuthenticated, 2100);
+        locationPermissionRequest.launch(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        });
     }
 
     private void initSplashViewModel() {
@@ -61,6 +65,26 @@ public class SplashActivity extends AppCompatActivity {
             finish();
         });
     }
+
+    ActivityResultLauncher<String[]> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+
+                        Boolean fineLocationGranted = result.put(Manifest.permission.ACCESS_FINE_LOCATION, false);
+                        Boolean coarseLocationGranted = result.put(Manifest.permission.ACCESS_COARSE_LOCATION, false);
+
+                        if (Boolean.TRUE.equals(fineLocationGranted) && Boolean.TRUE.equals(coarseLocationGranted)) {
+                            progressBarSetup();
+                            new Handler().postDelayed(this::checkIfUserIsAuthenticated, 2100);
+                        } else if (Boolean.FALSE.equals(fineLocationGranted) && Boolean.FALSE.equals(coarseLocationGranted))  {
+                            // No location access granted.
+                            Toast.makeText(this, "You need to authorize location access to use this app !", Toast.LENGTH_LONG).show();
+                            result.put(Manifest.permission.ACCESS_FINE_LOCATION, false);
+                            result.put(Manifest.permission.ACCESS_COARSE_LOCATION, false);
+                            new Handler().postDelayed(this::finish, 2000);
+                            startActivity(getIntent());
+                        }
+                    }
+            );
 
     private void goToAuthInActivity() {
         Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
@@ -88,6 +112,4 @@ public class SplashActivity extends AppCompatActivity {
 
         t.schedule(tt, 0, 20);
     }
-
-
 }

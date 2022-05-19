@@ -35,6 +35,13 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,10 +66,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
-        User user = getUserFromIntent();
-        initGoogleSignInClient();
-
         setupMainViewModel();
 
         configureToolbar();
@@ -72,11 +75,9 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new ListFragment()).commit();
 
-        updateUIWithUserData(user);
-    }
+        initGoogleSignInClient();
 
-    private User getUserFromIntent() {
-        return (User) getIntent().getSerializableExtra(USER);
+        updateUIWithUserData();
     }
 
     private void setupMainViewModel() {
@@ -120,6 +121,12 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        updateUIWithUserData();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         firebaseAuth.addAuthStateListener(this);
@@ -160,13 +167,15 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
         switch (item.getItemId()) {
             case R.id.your_lunch_button:
-
                 mainViewModel.getUserFromDatabase();
                 this.mainViewModel.currentUser.observe(this, user -> {
-                    Toast.makeText(this, "Vous avez choisi le restaurant suivant :" + user.getSelectedRestaurantName(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, DetailsActivity.class);
-                    intent.putExtra("placeId", user.getSelectedRestaurantId());
-                    startActivity(intent);
+                    if (user.getSelectedRestaurantId() != null) {
+                        Intent intent = new Intent(this, DetailsActivity.class);
+                        intent.putExtra("placeId", user.getSelectedRestaurantId());
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(this, "Vous n'avez pas selectionné de restaurant !", Toast.LENGTH_SHORT).show();
+                    }
                 });
 
                 break;
@@ -216,11 +225,15 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
 
-    private void updateUIWithUserData(User user) {
-        if (user.getPhotoUrl() != null) {
-            setProfilePicture(user.getPhotoUrl());
-        }
-        setTextUserData(user);
+    private void updateUIWithUserData() {
+        mainViewModel.getUserFromDatabase();
+        this.mainViewModel.currentUser.observe(this, user -> {
+            if (user.getPhotoUrl() != null) {
+                setProfilePicture(user.getPhotoUrl());
+            }
+            setTextUserData(user);
+
+        });
     }
 
     private void setProfilePicture(String profilePictureUrl) {
@@ -249,5 +262,4 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         userMailTextView.setText(email);
 
     }
-
 }

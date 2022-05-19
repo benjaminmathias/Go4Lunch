@@ -31,25 +31,34 @@ public class RestaurantRepository {
     private final String photoBaseUrl;
     private final PlacesApiService placesAPIService;
 
-    private static volatile RestaurantRepository INSTANCE;
+    private static volatile RestaurantRepository instance;
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-    //private final CollectionReference usersRef = rootRef.collection(USERS);
 
     private static final String location = "43.80812051168388,4.638306531512217";
     private static final String radius = "1000";
     private static final String type = "restaurant";
 
-    public static RestaurantRepository getInstance(PlacesApiService placesAPIService, String photoBaseUrl) {
-        return INSTANCE == null ? new RestaurantRepository(placesAPIService, photoBaseUrl) : INSTANCE;
-    }
-
-    public RestaurantRepository(PlacesApiService placesAPIService, String photoBaseUrl) {
+    private RestaurantRepository(PlacesApiService placesAPIService, String photoBaseUrl) {
         this.placesAPIService = placesAPIService;
         this.photoBaseUrl = photoBaseUrl;
     }
 
+    public static RestaurantRepository getInstance(PlacesApiService placesAPIService, String photoBaseUrl) {
+        RestaurantRepository result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized (RestaurantRepository.class) {
+            if (instance == null) {
+                instance = new RestaurantRepository(placesAPIService, photoBaseUrl);
+            }
+            return instance;
+        }
+    }
+
+    // Retrieve Restaurant and convert to our own model
     public LiveData<DataResult<List<RestaurantItem>>> streamFetchRestaurants() {
         MutableLiveData<DataResult<List<RestaurantItem>>> _restaurants = new MutableLiveData<>();
 
@@ -62,12 +71,16 @@ public class RestaurantRepository {
                     _restaurants.postValue(dataResult);
                 }, throwable -> {
                     DataResult<List<RestaurantItem>> dataResult = new DataResult<>(throwable);
+                    Log.e("onError", "onError : " + throwable.getMessage());
+                    throwable.printStackTrace();
                     _restaurants.postValue(dataResult);
                 });
+
 
         return _restaurants;
     }
 
+    // Retrieve RestaurantDetails and convert to our own model
     public LiveData<DataResult<RestaurantDetails>> streamFetchRestaurantDetails(String placeId) {
         MutableLiveData<DataResult<RestaurantDetails>> _restaurantDetails = new MutableLiveData<>();
 
@@ -86,6 +99,7 @@ public class RestaurantRepository {
         return _restaurantDetails;
     }
 
+    // Convert the Restaurant model provided by Places API to our own model
     private static List<RestaurantItem> restaurantsConverter(List<RestaurantApi> restaurantApis, String photoBaseUrl) {
         List<RestaurantItem> restaurantItems = new ArrayList<>(restaurantApis.size());
         for (RestaurantApi restaurantAPI : restaurantApis) {
@@ -96,7 +110,8 @@ public class RestaurantRepository {
                     .withPlaceId(restaurantAPI.getPlaceId());
 
             if (restaurantAPI.getGeometry() != null) {
-                builder.withLocation(restaurantAPI.getGeometry().getLocation());
+                builder.withLongitude(restaurantAPI.getGeometry().getLocation().getLng());
+                builder.withLatitude(restaurantAPI.getGeometry().getLocation().getLat());
             }
 
             if (restaurantAPI.getPhotos() != null && !restaurantAPI.getPhotos().isEmpty()) {
@@ -112,6 +127,7 @@ public class RestaurantRepository {
         return restaurantItems;
     }
 
+    // Convert the RestaurantDetails model provided by Places Details API to our own model
     private static RestaurantDetails restaurantDetailsConverter(RestaurantDetailsAPI restaurantDetailsAPI, String photoBaseUrl) {
         RestaurantDetails.Builder builder = new RestaurantDetails.Builder()
                 .withAddress(restaurantDetailsAPI.getFormattedAddress());
@@ -120,7 +136,7 @@ public class RestaurantRepository {
             builder.withName(restaurantDetailsAPI.getName());
         }
 
-        if (restaurantDetailsAPI.getPlaceId() != null){
+        if (restaurantDetailsAPI.getPlaceId() != null) {
             builder.withPlaceId(restaurantDetailsAPI.getPlaceId());
         }
         if (restaurantDetailsAPI.getInternationalPhoneNumber() != null) {
@@ -141,6 +157,7 @@ public class RestaurantRepository {
     }
 
 
+    // Update user selected restaurant
     public void updateSelectedRestaurant(String placeId, String placeName) {
 
         if (firebaseAuth.getUid() != null) {
@@ -152,6 +169,7 @@ public class RestaurantRepository {
         }
     }
 
+    // Delete user selected restaurant
     public void deleteSelectedRestaurant() {
 
         if (firebaseAuth.getUid() != null) {

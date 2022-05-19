@@ -32,6 +32,7 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentListBinding.inflate(inflater, container, false);
+
         this.setupViewModel();
         this.setupRecyclerView();
         return binding.getRoot();
