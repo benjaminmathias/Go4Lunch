@@ -21,7 +21,7 @@ public final class UsersRepository {
 
     private static volatile UsersRepository instance;
 
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
     private final CollectionReference usersRef = rootRef.collection(USERS);
 
@@ -74,10 +74,8 @@ public final class UsersRepository {
                         Log.d(TAG, "Listen failed.", error);
                         return;
                     }
-
                     List<User> users = Objects.requireNonNull(value).toObjects(User.class);
                     _specificUsers.postValue(users);
-                    // Log.d(TAG, document.getId() + " => " + document.getData());
                 });
 
         return _specificUsers;

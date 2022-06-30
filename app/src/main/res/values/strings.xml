@@ -32,4 +32,13 @@
     <string name="popup_message_choice_disconnect">Se déconnecter</string>
     <string name="popup_message_choice_delete">Supprimer le compte</string>
     <string name="popup_message_choice_no">Annuler</string>
+
+    <!-- Settings Spinner -->
+    <string-array name="distance">
+        <item>250</item>
+        <item>500</item>
+        <item>750</item>
+        <item>1000</item>
+        <item>1500</item>
+    </string-array>
 </resources>

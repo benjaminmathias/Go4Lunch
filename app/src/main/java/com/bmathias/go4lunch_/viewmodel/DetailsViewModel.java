@@ -38,8 +38,6 @@ public class DetailsViewModel extends ViewModel {
 
     private LiveData<List<User>> users;
 
-    private String placeId;
-
     private final MutableLiveData<Boolean> _showProgress = new MutableLiveData<>();
     public LiveData<Boolean> showProgress = _showProgress;
 
@@ -52,8 +50,8 @@ public class DetailsViewModel extends ViewModel {
         this.restaurantRepository = restaurantRepository;
         this.currentUserRepository = currentUserRepository;
         this.usersRepository = usersRepository;
-        observeRestaurantDetails(null);
-        getSpecificUsersFromDatabase(null);
+       // observeRestaurantDetails(null);
+       // getSpecificUsersFromDatabase(null);
     }
 
     public void observeRestaurantDetails(String placeId) {
@@ -92,5 +90,13 @@ public class DetailsViewModel extends ViewModel {
 
     public void deleteSelectedRestaurant(){
         restaurantRepository.deleteSelectedRestaurant();
+    }
+
+    public void addFavoriteRestaurant(String placeId){
+        restaurantRepository.addFavoriteRestaurant(placeId);
+    }
+
+    public void deleteFavoriteRestaurant(String placeId){
+        restaurantRepository.removeFavoriteRestaurant(placeId);
     }
 }

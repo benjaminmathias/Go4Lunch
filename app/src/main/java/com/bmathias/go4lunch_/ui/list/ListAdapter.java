@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
@@ -30,7 +31,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setRestaurantItems(List<RestaurantItem> restaurantItems){
+    public void setRestaurantItems(List<RestaurantItem> restaurantItems) {
         this.restaurantItemsList.clear();
         this.restaurantItemsList.addAll(restaurantItems);
         notifyDataSetChanged();
@@ -52,6 +53,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         // Setup address textview
         holder.binding.restaurantTypeAndAddressTextView.setText(String.valueOf(restaurant.getAddress()));
+        if (restaurant.getIsSomeoneEating()){
+            holder.binding.restaurantNameTextView.setTextColor(Color.GREEN);
+        }
 
         // Setup status
         OpeningHours openStatus = restaurant.getIsOpen();
@@ -62,6 +66,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             holder.binding.restaurantOpenTextView.setText("Fermé");
             holder.binding.restaurantOpenTextView.setTextColor(Color.RED);
         }
+
+        holder.binding.restaurantDistanceTextView.setText(restaurant.getDistance() + "m");
 
         // Setup ImageView
 
@@ -90,7 +96,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-       return restaurantItemsList == null ? 0 : restaurantItemsList.size();
+        return restaurantItemsList == null ? 0 : restaurantItemsList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

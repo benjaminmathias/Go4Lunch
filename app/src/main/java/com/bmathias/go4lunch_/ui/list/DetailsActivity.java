@@ -47,6 +47,7 @@ public class DetailsActivity extends AppCompatActivity {
         binding = ActivityDetailsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         this.setupDetailsView();
+        this.setupLike(placeId);
         this.setupFab(placeId);
         this.setupRecyclerView();
         setContentView(view);
@@ -97,7 +98,6 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
-
     private void setupDetailsView() {
         detailsViewModel.getRestaurantDetails().observe(this, restaurantDetails -> {
             if (restaurantDetails == null) {
@@ -136,6 +136,30 @@ public class DetailsActivity extends AppCompatActivity {
             binding.restaurantDetailsPhone.setTextColor(Color.LTGRAY);
         }
     }
+
+    private void setupLike(String placeId) {
+
+        detailsViewModel.getUserFromDatabase();
+
+        this.detailsViewModel.currentUser.observe(this, user -> {
+
+            isClicked = user.getFavoriteRestaurants() != null && user.getFavoriteRestaurants().contains(placeId);
+            tintViewDrawable(binding.restaurantDetailsLike, isClicked);
+
+            binding.restaurantDetailsLike.setOnClickListener(view -> {
+                if (isClicked) {
+                    tintViewDrawable(binding.restaurantDetailsLike, false);
+                    detailsViewModel.deleteFavoriteRestaurant(placeId);
+                    isClicked = false;
+                } else {
+                    tintViewDrawable(binding.restaurantDetailsLike, true);
+                    detailsViewModel.addFavoriteRestaurant(placeId);
+                    isClicked = true;
+                }
+            });
+        });
+    }
+
 
     // Setup an AlertDialog to open the restaurant's website IF there's a website available
     private void restaurantDetailsWebsiteDialog(RestaurantDetails restaurantDetails) {

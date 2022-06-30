@@ -21,7 +21,6 @@ import com.bmathias.go4lunch_.viewmodel.ListViewModel;
 
 import java.util.ArrayList;
 
-
 public class ListFragment extends Fragment implements ListAdapter.OnRestaurantListener {
 
     private ListViewModel listViewModel;
@@ -41,7 +40,6 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
     private void setupViewModel(){
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.listViewModel = new ViewModelProvider(this, viewModelFactory).get(ListViewModel.class);
-        this.listViewModel.observeRestaurants();
     }
 
     private void setupRecyclerView(){
@@ -65,4 +63,5 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
         intent.putExtra("placeId", placeId);
         startActivity(intent);
     }
+
 }

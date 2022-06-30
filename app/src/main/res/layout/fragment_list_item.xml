@@ -10,13 +10,16 @@
 
     <TextView
         android:id="@+id/restaurant_name_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Le nom"
+        android:layout_marginEnd="6dp"
+        android:ellipsize="end"
         android:textAppearance="?attr/textAppearanceSubtitle2"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_distance_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Le nom" />
 
     <TextView
         android:id="@+id/restaurant_type_and_address_text_view"
@@ -44,15 +47,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_type_and_address_text_view" />
 
-    <TextView
-        android:id="@+id/restaurant_distance_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Distance"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_image_view"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/restaurant_image_view"
         android:layout_width="60dp"
@@ -64,16 +58,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/distance_text_view"
+        android:id="@+id/restaurant_distance_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Distance"
+        android:layout_marginEnd="6dp"
         android:textAppearance="?attr/textAppearanceCaption"
         app:layout_constraintEnd_toStartOf="@+id/restaurant_image_view"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/restaurant_name_text_view"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Distance" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

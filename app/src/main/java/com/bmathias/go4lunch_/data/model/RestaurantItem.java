@@ -20,6 +20,10 @@ public class RestaurantItem {
 
     private String photo;
 
+    private float distance;
+
+    private boolean isSomeoneEating;
+
     public String getName() {
         return name;
     }
@@ -76,6 +80,22 @@ public class RestaurantItem {
         this.photo = photo;
     }
 
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public boolean getIsSomeoneEating() {
+        return isSomeoneEating;
+    }
+
+    public void setIsSomeoneEating(boolean someoneEating) {
+        isSomeoneEating = someoneEating;
+    }
+
     public static class Builder {
         private String name;
         private String address;
@@ -84,6 +104,8 @@ public class RestaurantItem {
         private OpeningHours isOpen;
         private String placeId;
         private String photo;
+        private float distance;
+        private boolean isSomeoneEating;
 
         public Builder withName(String name) {
             this.name = name;
@@ -120,6 +142,16 @@ public class RestaurantItem {
             return this;
         }
 
+        public Builder withDistance(float distance){
+            this.distance = distance;
+            return this;
+        }
+
+        public Builder withIsSomeoneEating(boolean isSomeoneEating) {
+            this.isSomeoneEating = isSomeoneEating;
+            return this;
+        }
+
         public RestaurantItem build() {
             RestaurantItem restaurantItem = new RestaurantItem();
 
@@ -149,6 +181,14 @@ public class RestaurantItem {
 
             if (photo != null){
                 restaurantItem.setPhoto(photo);
+            }
+
+            if (Objects.nonNull(distance)){
+                restaurantItem.setDistance(distance);
+            }
+
+            if (Objects.nonNull(isSomeoneEating)){
+                restaurantItem.setIsSomeoneEating(isSomeoneEating);
             }
 
             return restaurantItem;

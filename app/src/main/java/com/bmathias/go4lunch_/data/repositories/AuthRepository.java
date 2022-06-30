@@ -20,6 +20,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class AuthRepository {
@@ -54,9 +57,7 @@ public class AuthRepository {
                     String userName = firebaseUser.getDisplayName();
                     String userEmail = firebaseUser.getEmail();
                     String photoUrl = Objects.requireNonNull(firebaseUser.getPhotoUrl()).toString();
-                    String selectedRestaurantId = null;
-                    String selectedRestaurantName = null;
-                    User user = new User(userId, userName, userEmail, photoUrl, selectedRestaurantId, selectedRestaurantName);
+                    User user = new User(userId, userName, userEmail, photoUrl, null, null, null);
 
                     createUserInFirestoreIfNotExists(user, authenticatedUserMutableLiveData);
                     //authenticatedUserMutableLiveData.setValue(user);

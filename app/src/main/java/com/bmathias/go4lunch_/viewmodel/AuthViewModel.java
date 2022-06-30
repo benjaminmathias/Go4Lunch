@@ -1,8 +1,5 @@
 package com.bmathias.go4lunch_.viewmodel;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -11,7 +8,7 @@ import com.bmathias.go4lunch_.data.repositories.AuthRepository;
 import com.google.firebase.auth.AuthCredential;
 
 public class AuthViewModel extends ViewModel {
-    private AuthRepository authRepository;
+    private final AuthRepository authRepository;
     public LiveData<User> authenticatedUserLiveData;
     public LiveData<User> createdUserLiveData;
 
