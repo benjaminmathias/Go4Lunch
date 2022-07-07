@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                 new ListFragment()).commit();
 
         initGoogleSignInClient();
-
+        
         updateUIWithUserData();
     }
 

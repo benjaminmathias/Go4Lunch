@@ -22,8 +22,6 @@ public class User implements Serializable {
 
     private String selectedRestaurantName;
 
-    private List<String> favoriteRestaurants;
-
     @Exclude
     public boolean isAuthenticated;
 
@@ -34,14 +32,13 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String userId, String userName, String userEmail, String photoUrl, String selectedRestaurantId, String selectedRestaurantName, List<String> favoriteRestaurants) {
+    public User(String userId, String userName, String userEmail, String photoUrl, String selectedRestaurantId, String selectedRestaurantName) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.photoUrl = photoUrl;
         this.selectedRestaurantId = selectedRestaurantId;
         this.selectedRestaurantName = selectedRestaurantName;
-        this.favoriteRestaurants = favoriteRestaurants;
     }
 
     public String getUserId() {
@@ -90,13 +87,5 @@ public class User implements Serializable {
 
     public void setSelectedRestaurantName(String selectedRestaurantName) {
         this.selectedRestaurantName = selectedRestaurantName;
-    }
-
-    public List<String> getFavoriteRestaurants() {
-        return favoriteRestaurants;
-    }
-
-    public void setFavoriteRestaurants(List<String> favoriteRestaurants) {
-        this.favoriteRestaurants = favoriteRestaurants;
     }
 }

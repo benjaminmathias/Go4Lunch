@@ -57,7 +57,7 @@ public class AuthRepository {
                     String userName = firebaseUser.getDisplayName();
                     String userEmail = firebaseUser.getEmail();
                     String photoUrl = Objects.requireNonNull(firebaseUser.getPhotoUrl()).toString();
-                    User user = new User(userId, userName, userEmail, photoUrl, null, null, null);
+                    User user = new User(userId, userName, userEmail, photoUrl, null, null);
 
                     createUserInFirestoreIfNotExists(user, authenticatedUserMutableLiveData);
                     //authenticatedUserMutableLiveData.setValue(user);

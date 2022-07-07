@@ -3,7 +3,9 @@ package com.bmathias.go4lunch_.ui.list;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,9 +56,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         // Setup address textview
         holder.binding.restaurantTypeAndAddressTextView.setText(String.valueOf(restaurant.getAddress()));
-        if (restaurant.getIsSomeoneEating()){
-            holder.binding.restaurantNameTextView.setTextColor(Color.GREEN);
-        }
 
         // Setup status
         OpeningHours openStatus = restaurant.getIsOpen();
@@ -67,10 +67,25 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             holder.binding.restaurantOpenTextView.setTextColor(Color.RED);
         }
 
+        // Display restaurant distance from user
         holder.binding.restaurantDistanceTextView.setText(restaurant.getDistance() + "m");
 
-        // Setup ImageView
+        // Display if someone is eating at that restaurant
+        // TODO : display the number of people eating there
+        if (restaurant.getIsSomeoneEating()) {
+            holder.binding.peopleEatingView.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.peopleEatingView.setVisibility(View.GONE);
+        }
 
+        // TODO : display the amount of user like on a restaurant
+        if (restaurant.getNumberOfFavorites() != 0) {
+            holder.binding.likesCounterView.setText("(" + String.valueOf(restaurant.getNumberOfFavorites()) + ")");
+            holder.binding.likedStarImageView.setVisibility(View.VISIBLE);
+        }
+
+
+        // Setup ImageView
         // For testing purpose
         holder.binding.restaurantImageView.setImageResource(R.drawable.drawer_image);
 
@@ -107,8 +122,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             super(binding.getRoot());
             this.binding = binding;
             this.onRestaurantListener = onRestaurantListener;
-
         }
-
     }
 }

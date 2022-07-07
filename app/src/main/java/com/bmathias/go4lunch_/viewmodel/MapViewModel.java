@@ -39,7 +39,7 @@ public class MapViewModel extends ViewModel {
 
     private Disposable disposable;
 
-    public MutableLiveData<UserLocation> userLocationLiveData;
+    public MutableLiveData<UserLocation> userLocationLiveData = new MutableLiveData<>();
 
 
     public MapViewModel(RestaurantRepository restaurantRepository) {
@@ -84,7 +84,9 @@ public class MapViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
-        disposable.isDisposed();
+        if(!disposable.isDisposed()){
+            disposable.dispose();
+        }
         super.onCleared();
     }
 }

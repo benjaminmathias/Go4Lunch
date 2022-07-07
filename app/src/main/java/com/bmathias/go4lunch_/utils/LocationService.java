@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -21,14 +22,13 @@ import java.util.Locale;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class LocationService {
+public class LocationService implements LocationListener {
 
     private final FusedLocationProviderClient fusedLocationProviderClient;
     private final BehaviorSubject<UserLocation> latestLocation = BehaviorSubject.create();
     private boolean hasSettingUp = false;
 
     private static volatile LocationService instance;
-
 
     public Context context;
 
@@ -77,6 +77,7 @@ public class LocationService {
                     // Valeur du publish
                     Log.d("LocationHelper", latitude + "," + longitude);
 
+
                     UserLocation userLocation = new UserLocation(latitude, longitude);
 
                     latestLocation.onNext(userLocation);
@@ -87,7 +88,6 @@ public class LocationService {
         });
     }
 
-    /*
     @Override
     public void onLocationChanged(@NonNull Location location) {
 
@@ -95,6 +95,8 @@ public class LocationService {
         double longitude = location.getLongitude();
         UserLocation userNewLocation = new UserLocation(latitude, longitude);
 
+        Toast.makeText(App.getContext(), "Location updated !", Toast.LENGTH_SHORT).show();
+
         latestLocation.onNext(userNewLocation);
-    }*/
+    }
 }

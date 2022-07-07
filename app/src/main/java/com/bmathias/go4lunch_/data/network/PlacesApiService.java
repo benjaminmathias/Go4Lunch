@@ -16,7 +16,7 @@ public interface PlacesApiService {
     @GET("place/nearbysearch/json")
     Observable<RestaurantsApiResult> getRestaurants(
             @Query("location") String location,
-            @Query("radius") String radius,
+            @Query("rankby") String rankby,
             @Query("type") String type,
             @Query("key") String key
     );

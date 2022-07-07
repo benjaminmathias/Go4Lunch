@@ -14,6 +14,8 @@ public class RestaurantDetails {
 
     private String photoUrl;
 
+    private boolean isCurrentUserFavorite;
+
     public String getName() {
         return name;
     }
@@ -62,6 +64,14 @@ public class RestaurantDetails {
         this.photoUrl = photoUrl;
     }
 
+    public boolean getCurrentUserFavorite() {
+        return isCurrentUserFavorite;
+    }
+
+    public void setCurrentUserFavorite(boolean currentUserFavorite) {
+        isCurrentUserFavorite = currentUserFavorite;
+    }
+
     public static class Builder {
         private String name;
         private String placeId;
@@ -69,6 +79,7 @@ public class RestaurantDetails {
         private String phoneNumber;
         private String website;
         private String photoUrl;
+        private Boolean isCurrentUserFavorite;
 
         public Builder withName(String name) {
             this.name = name;
@@ -100,6 +111,11 @@ public class RestaurantDetails {
             return this;
         }
 
+        public Builder withIsCurrentUserFavorite(boolean isCurrentUserFavorite) {
+            this.isCurrentUserFavorite = isCurrentUserFavorite;
+            return this;
+        }
+
         public RestaurantDetails build() {
             RestaurantDetails restaurantDetails = new RestaurantDetails();
 
@@ -124,6 +140,10 @@ public class RestaurantDetails {
 
             if (photoUrl != null) {
                 restaurantDetails.setPhotoUrl(photoUrl);
+            }
+
+            if (isCurrentUserFavorite != null) {
+                restaurantDetails.setCurrentUserFavorite(isCurrentUserFavorite);
             }
 
             return restaurantDetails;

@@ -141,9 +141,9 @@ public class DetailsActivity extends AppCompatActivity {
 
         detailsViewModel.getUserFromDatabase();
 
-        this.detailsViewModel.currentUser.observe(this, user -> {
+        this.detailsViewModel.getRestaurantDetails().observe(this, restaurant -> {
 
-            isClicked = user.getFavoriteRestaurants() != null && user.getFavoriteRestaurants().contains(placeId);
+            isClicked = restaurant.getCurrentUserFavorite();
             tintViewDrawable(binding.restaurantDetailsLike, isClicked);
 
             binding.restaurantDetailsLike.setOnClickListener(view -> {

@@ -50,8 +50,6 @@ public class DetailsViewModel extends ViewModel {
         this.restaurantRepository = restaurantRepository;
         this.currentUserRepository = currentUserRepository;
         this.usersRepository = usersRepository;
-       // observeRestaurantDetails(null);
-       // getSpecificUsersFromDatabase(null);
     }
 
     public void observeRestaurantDetails(String placeId) {

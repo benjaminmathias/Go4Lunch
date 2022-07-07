@@ -24,6 +24,8 @@ public class RestaurantItem {
 
     private boolean isSomeoneEating;
 
+    private int numberOfFavorites;
+
     public String getName() {
         return name;
     }
@@ -96,6 +98,14 @@ public class RestaurantItem {
         isSomeoneEating = someoneEating;
     }
 
+    public int getNumberOfFavorites() {
+        return numberOfFavorites;
+    }
+
+    public void setNumberOfFavorites(int numberOfFavorites) {
+        this.numberOfFavorites = numberOfFavorites;
+    }
+
     public static class Builder {
         private String name;
         private String address;
@@ -106,6 +116,7 @@ public class RestaurantItem {
         private String photo;
         private float distance;
         private boolean isSomeoneEating;
+        private int numberOfFavorites;
 
         public Builder withName(String name) {
             this.name = name;
@@ -152,6 +163,11 @@ public class RestaurantItem {
             return this;
         }
 
+        public Builder withNumberOfFavorites(int numberOfFavorites) {
+            this.numberOfFavorites = numberOfFavorites;
+            return this;
+        }
+
         public RestaurantItem build() {
             RestaurantItem restaurantItem = new RestaurantItem();
 
@@ -189,6 +205,10 @@ public class RestaurantItem {
 
             if (Objects.nonNull(isSomeoneEating)){
                 restaurantItem.setIsSomeoneEating(isSomeoneEating);
+            }
+
+            if (Objects.nonNull(numberOfFavorites)){
+                restaurantItem.setNumberOfFavorites(numberOfFavorites);
             }
 
             return restaurantItem;

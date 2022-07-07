@@ -2,28 +2,31 @@ package com.bmathias.go4lunch_.data.model;
 
 public class LikedRestaurant {
 
-   private String likedPlaceId;
+   private String restaurantId;
 
-   private String likedUserId;
+   private String userId;
 
-   public LikedRestaurant(String likedPlaceId, String likedUserId) {
-      this.likedPlaceId = likedPlaceId;
-      this.likedUserId = likedUserId;
+   public LikedRestaurant(){
    }
 
-   public String getLikedPlaceId() {
-      return likedPlaceId;
+   public LikedRestaurant(String restaurantId, String userId) {
+      this.restaurantId = restaurantId;
+      this.userId = userId;
    }
 
-   public void setLikedPlaceId(String likedPlaceId) {
-      this.likedPlaceId = likedPlaceId;
+   public String getRestaurantId() {
+      return restaurantId;
    }
 
-   public String getLikedUserId() {
-      return likedUserId;
+   public void setRestaurantId(String restaurantId) {
+      this.restaurantId = restaurantId;
    }
 
-   public void setLikedUserId(String likedUserId) {
-      this.likedUserId = likedUserId;
+   public String getUserId() {
+      return userId;
+   }
+
+   public void setUserId(String userId) {
+      this.userId = userId;
    }
 }

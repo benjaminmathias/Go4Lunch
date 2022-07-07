@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bmathias.go4lunch_.R;
@@ -39,11 +38,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Objects;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -83,15 +77,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap = map;
 
         mapViewModel.getUserLocation().observe(getViewLifecycleOwner(), this::setupMap);
-
-
-
-      /*  locationDisposable = this.mapViewModel.getUserLocation()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::setupMap);*/
     }
-
 
     /**
      * @MissingPermission used here, we check the location permissions on another activity at runtime
@@ -101,7 +87,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         Log.d(TAG, "setupMap" + userLocation.getLongitude() + "," + userLocation.getLatitude());
 
-        googleMap.setMyLocationEnabled(true);
+        if (this.mapViewModel.getUserLocation() != null) {
+            double latitude = userLocation.getLatitude();
+            double longitude = userLocation.getLongitude();
+
+            Log.d("MapFragment", "Lat : " + latitude + " ; Lng : " + longitude);
+
+            // Animate map to phone location
+            googleMap.setMyLocationEnabled(true);
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 18.0f));
+        }
 
         mapViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurantItems -> {
             // Add markers for each restaurant with a tag
@@ -134,18 +129,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 return false;
             });
         });
-
-
-        if (this.mapViewModel.getUserLocation() != null) {
-            double latitude = userLocation.getLatitude();
-            double longitude = userLocation.getLongitude();
-
-            Log.d("MapFragment", "Lat : " + latitude + " ; Lng : " + longitude);
-
-            // Animate map to phone location
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 18.0f));
-        }
-
     }
 
     // Method used to covert vector asset to bitmap (used for map marker)
