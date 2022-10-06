@@ -132,7 +132,6 @@ public class AuthActivity extends AppCompatActivity {
 
     private void goToMainActivity() {
         Intent intent = new Intent(AuthActivity.this, MainActivity.class);
-       // intent.putExtra(USER, user);
         startActivity(intent);
         finish();
     }

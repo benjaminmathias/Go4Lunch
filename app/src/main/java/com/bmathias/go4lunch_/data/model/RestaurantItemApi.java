@@ -1,8 +1,10 @@
 package com.bmathias.go4lunch_.data.model;
 
+import com.bmathias.go4lunch_.data.network.model.places.OpeningHours;
+
 import java.util.Objects;
 
-public class RestaurantItem {
+public class RestaurantItemApi {
 
     private String name;
 
@@ -12,7 +14,7 @@ public class RestaurantItem {
 
     private Double latitude;
 
-    private boolean isOpen;
+    private OpeningHours isOpen;
 
     private String placeId;
 
@@ -56,11 +58,11 @@ public class RestaurantItem {
         this.latitude = latitude;
     }
 
-    public boolean getIsOpen() {
+    public OpeningHours getIsOpen() {
         return isOpen;
     }
 
-    public void setIsOpen(boolean isOpen) {
+    public void setIsOpen(OpeningHours isOpen) {
         this.isOpen = isOpen;
     }
 
@@ -109,7 +111,7 @@ public class RestaurantItem {
         private String address;
         private Double longitude;
         private Double latitude;
-        private boolean isOpen;
+        private OpeningHours isOpen;
         private String placeId;
         private String photo;
         private float distance;
@@ -136,22 +138,22 @@ public class RestaurantItem {
             return this;
         }
 
-        public Builder withIsOpen(boolean isOpen) {
+        public Builder withIsOpen(OpeningHours isOpen){
             this.isOpen = isOpen;
             return this;
         }
 
-        public Builder withPlaceId(String placeId) {
+        public Builder withPlaceId(String placeId){
             this.placeId = placeId;
             return this;
         }
 
-        public Builder withPhoto(String photo) {
+        public Builder withPhoto(String photo){
             this.photo = photo;
             return this;
         }
 
-        public Builder withDistance(float distance) {
+        public Builder withDistance(float distance){
             this.distance = distance;
             return this;
         }
@@ -166,50 +168,50 @@ public class RestaurantItem {
             return this;
         }
 
-        public RestaurantItem build() {
-            RestaurantItem restaurantItem = new RestaurantItem();
+        public RestaurantItemApi build() {
+            RestaurantItemApi restaurantItemApi = new RestaurantItemApi();
 
             if (name != null) {
-                restaurantItem.setName(name);
+                restaurantItemApi.setName(name);
             }
 
             if (address != null) {
-                restaurantItem.setAddress(address);
+                restaurantItemApi.setAddress(address);
             }
 
-            if (Objects.nonNull(longitude)) {
-                restaurantItem.setLongitude(longitude);
+            if (Objects.nonNull(longitude)){
+                restaurantItemApi.setLongitude(longitude);
             }
 
-            if (Objects.nonNull(latitude)) {
-                restaurantItem.setLatitude(latitude);
+            if (Objects.nonNull(latitude)){
+                restaurantItemApi.setLatitude(latitude);
             }
 
-            if (Objects.nonNull(isOpen)) {
-                restaurantItem.setIsOpen(isOpen);
+            if (isOpen != null){
+                restaurantItemApi.setIsOpen(isOpen);
             }
 
-            if (placeId != null) {
-                restaurantItem.setPlaceId(placeId);
+            if (placeId != null){
+                restaurantItemApi.setPlaceId(placeId);
             }
 
-            if (photo != null) {
-                restaurantItem.setPhoto(photo);
+            if (photo != null){
+                restaurantItemApi.setPhoto(photo);
             }
 
-            if (Objects.nonNull(distance)) {
-                restaurantItem.setDistance(distance);
+            if (Objects.nonNull(distance)){
+                restaurantItemApi.setDistance(distance);
             }
 
-            if (Objects.nonNull(isSomeoneEating)) {
-                restaurantItem.setNumberOfPeopleEating(isSomeoneEating);
+            if (Objects.nonNull(isSomeoneEating)){
+                restaurantItemApi.setNumberOfPeopleEating(isSomeoneEating);
             }
 
-            if (Objects.nonNull(numberOfFavorites)) {
-                restaurantItem.setNumberOfFavorites(numberOfFavorites);
+            if (Objects.nonNull(numberOfFavorites)){
+                restaurantItemApi.setNumberOfFavorites(numberOfFavorites);
             }
 
-            return restaurantItem;
+            return restaurantItemApi;
         }
     }
 }

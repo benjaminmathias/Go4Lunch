@@ -2,9 +2,16 @@ package com.bmathias.go4lunch_;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +34,7 @@ import com.bmathias.go4lunch_.ui.list.DetailsActivity;
 import com.bmathias.go4lunch_.ui.list.ListFragment;
 import com.bmathias.go4lunch_.ui.map.MapFragment;
 import com.bmathias.go4lunch_.ui.workmates.WorkmatesFragment;
+import com.bmathias.go4lunch_.utils.NotificationReceiver;
 import com.bmathias.go4lunch_.viewmodel.MainViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -67,9 +75,10 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                 new ListFragment()).commit();
 
         initGoogleSignInClient();
-        
+
         updateUIWithUserData();
     }
+
 
     private void setupMainViewModel() {
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
@@ -178,14 +187,14 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                 break;
             case R.id.logout_button:
                 new AlertDialog.Builder(MainActivity.this)
-                        .setMessage("Would you like to log out ?")
-                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        .setMessage(R.string.drawer_menu_logout_dialog_message)
+                        .setPositiveButton(R.string.positive_string, (dialogInterface, i) -> {
                             signOut();
                             Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                             startActivity(intent);
                             finish();
                         })
-                        .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel())
+                        .setNegativeButton(R.string.negative_string, (dialogInterface, i) -> dialogInterface.cancel())
                         .show();
 
                 break;
@@ -254,5 +263,54 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         userNameTextView.setText(userFirstName);
         userMailTextView.setText(email);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.search) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        menuItem.setVisible(false);
+        return true;
+    }
+
+    private void createNotificationChannel(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = String.valueOf(R.string.app_name);
+            String description = "Channel for Go4Lunch Notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("notifyGo4Lunch", name, importance);
+            channel.setDescription(description);
+
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void setupNotification(){
+        Toast.makeText(this, "Notification set !", Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent (MainActivity.this, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        long timeAtButtonClick = System.currentTimeMillis();
+
+        long tenSecondsInMillis = 1000 * 10;
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                timeAtButtonClick + tenSecondsInMillis,
+                pendingIntent);
     }
 }

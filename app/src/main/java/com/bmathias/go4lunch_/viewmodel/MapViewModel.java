@@ -15,7 +15,6 @@ import com.bmathias.go4lunch_.utils.LocationService;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -34,8 +33,7 @@ public class MapViewModel extends ViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>();
     public LiveData<String> error = _error;
 
-    private LiveData<List<RestaurantItem>> restaurants;
-
+    private final MutableLiveData<List<RestaurantItem>> restaurants = new MutableLiveData<>();
 
     private Disposable disposable;
 
@@ -44,31 +42,33 @@ public class MapViewModel extends ViewModel {
 
     public MapViewModel(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
-        observeRestaurants();
         observeLocation();
     }
 
-    public void observeRestaurants() {
+    // RESTAURANTS
+    public LiveData<Boolean> loadRestaurants(String query){
         //  _showProgress.postValue(true);
-        LiveData<List<RestaurantItem>> _restaurant = Transformations.map(restaurantRepository.streamFetchRestaurants(), result -> {
+        return Transformations.map(restaurantRepository.getRestaurantsObservable(query), result -> {
             //  _showProgress.postValue(false);
 
             if (result.isSuccess()) {
                 Log.e(TAG, "success");
-                return result.getData();
+                restaurants.postValue(result.getData());
+                return true;
             } else {
                 _error.postValue(result.getError().getMessage());
                 Log.e(TAG, result.getError().getMessage());
-                return null;
+                return false;
             }
         });
-        restaurants = _restaurant;
     }
+
 
     public LiveData<List<RestaurantItem>> getRestaurants() {
         return restaurants;
     }
 
+    // LOCATION
     public void observeLocation() {
         disposable = locationService.retrieveLocation()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -80,7 +80,6 @@ public class MapViewModel extends ViewModel {
     public LiveData<UserLocation> getUserLocation(){
         return userLocationLiveData;
     }
-
 
     @Override
     protected void onCleared() {

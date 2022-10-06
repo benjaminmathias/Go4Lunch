@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:text="Go4Lunch"
+        android:text="@string/app_name"
         android:textColor="#FFFFFF"
         android:textSize="60sp"
         android:textStyle="bold"
@@ -54,5 +54,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_go4lunch_icon"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        android:contentDescription="TODO" />
 </androidx.constraintlayout.widget.ConstraintLayout>

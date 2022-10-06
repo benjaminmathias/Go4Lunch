@@ -1,6 +1,9 @@
 package com.bmathias.go4lunch_.ui.list;
 
+import static com.bmathias.go4lunch_.utils.App.getContext;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,6 +15,7 @@ import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.databinding.ActivityDetailsBinding;
 import com.bmathias.go4lunch_.databinding.ActivityDetailsItemBinding;
 import com.bmathias.go4lunch_.databinding.FragmentWorkmatesItemsBinding;
+import com.bmathias.go4lunch_.utils.App;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -21,6 +25,7 @@ import java.util.List;
 public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.ViewHolder> {
 
    private final List<User> specificUsersItemsList;
+   private final Context context = getContext();
 
    public DetailsAdapter(List<User> userItemsList) {
       this.specificUsersItemsList = userItemsList;
@@ -43,9 +48,11 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.ViewHold
    public void onBindViewHolder(@NonNull DetailsAdapter.ViewHolder holder, int position) {
 
       User user = specificUsersItemsList.get(position);
+      String userName = user.getUserName();
+      String userRestaurant = user.getSelectedRestaurantName();
 
       // Setup textview
-      holder.binding.detailsListTextview.setText(user.getUserName() + " is joining at " + user.getSelectedRestaurantName() + " !");
+      holder.binding.detailsListTextview.setText(userName + (context.getResources().getString(R.string.details_workmate_joining_text)) + userRestaurant + (context.getResources().getString(R.string.details_workmate_joining_text_end)));
 
       // Setup imageview
       if (user.getPhotoUrl() != null) {

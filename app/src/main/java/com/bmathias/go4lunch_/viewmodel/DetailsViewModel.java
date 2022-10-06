@@ -1,27 +1,17 @@
 package com.bmathias.go4lunch_.viewmodel;
 
-import android.util.Log;
-
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.RestaurantDetails;
 import com.bmathias.go4lunch_.data.model.User;
-import com.bmathias.go4lunch_.data.network.model.DataResult;
-import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
-import com.bmathias.go4lunch_.data.network.model.placesDetails.RestaurantDetailsAPI;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
-import com.bmathias.go4lunch_.databinding.ActivityDetailsBinding;
-import com.bmathias.go4lunch_.ui.list.DetailsActivity;
 
 import java.util.List;
-import java.util.Objects;
 
 
 public class DetailsViewModel extends ViewModel {
@@ -53,7 +43,7 @@ public class DetailsViewModel extends ViewModel {
     }
 
     public void observeRestaurantDetails(String placeId) {
-        restaurantDetails = Transformations.map(restaurantRepository.streamFetchRestaurantDetails(placeId), result -> {
+        restaurantDetails = Transformations.map(restaurantRepository.getRestaurantDetailsObservable(placeId), result -> {
             _showProgress.postValue(false);
 
             if (result.isSuccess()) {

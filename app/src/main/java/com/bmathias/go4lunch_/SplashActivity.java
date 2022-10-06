@@ -24,8 +24,6 @@ import com.bmathias.go4lunch_.databinding.ActivitySplashBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;
 import com.bmathias.go4lunch_.viewmodel.SplashViewModel;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.Objects;
 import java.util.Timer;
@@ -91,8 +89,8 @@ public class SplashActivity extends AppCompatActivity {
 
     public void showAlertDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("This app needs you to allow location permission in order to function. Will you allow it ?");
-        alertDialogBuilder.setPositiveButton("Yes",
+        alertDialogBuilder.setMessage(R.string.splash_dialog_message);
+        alertDialogBuilder.setPositiveButton(R.string.positive_string,
                 (arg0, arg1) -> {
                     try {
                         // Access app settings screen
@@ -105,13 +103,13 @@ public class SplashActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } catch (Exception e){
-                        Toast.makeText(SplashActivity.this, "failed to open Settings\n" + e, Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, R.string.splash_dialog_settings_error + " " + e, Toast.LENGTH_LONG).show();
                         Log.d("error", e.toString());
                     }
                 });
 
-        alertDialogBuilder.setNegativeButton("No", (dialog, which) -> {
-            Toast.makeText(SplashActivity.this, "You need to authorize location permission to use this app !", Toast.LENGTH_LONG).show();
+        alertDialogBuilder.setNegativeButton(R.string.negative_string, (dialog, which) -> {
+            Toast.makeText(SplashActivity.this, R.string.splash_dialog_message_warning, Toast.LENGTH_LONG).show();
             finish();
         });
 

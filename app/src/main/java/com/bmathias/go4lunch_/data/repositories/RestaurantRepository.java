@@ -1,5 +1,6 @@
 package com.bmathias.go4lunch_.data.repositories;
 
+import static com.bmathias.go4lunch_.utils.Constants.LIKED_RESTAURANTS;
 import static com.bmathias.go4lunch_.utils.Constants.TAG;
 import static com.bmathias.go4lunch_.utils.Constants.USERS;
 
@@ -22,6 +23,7 @@ import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantsApiResult;
 import com.bmathias.go4lunch_.data.network.model.placesDetails.DetailsResultAPI;
 import com.bmathias.go4lunch_.data.network.model.placesDetails.RestaurantDetailsAPI;
+import com.bmathias.go4lunch_.utils.DistanceComparator;
 import com.bmathias.go4lunch_.utils.LocationService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -34,11 +36,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,7 +60,7 @@ public class RestaurantRepository {
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
     private final CollectionReference usersRef = rootRef.collection(USERS);
-    private final CollectionReference likedRestaurantsRef = rootRef.collection("likedRestaurants");
+    private final CollectionReference likedRestaurantsRef = rootRef.collection(LIKED_RESTAURANTS);
 
     private static final String type = "restaurant";
 
@@ -84,38 +84,50 @@ public class RestaurantRepository {
         }
     }
 
-    // RESTAURANT //
-    private Observable<RestaurantsApiResult> getRestaurantsApiResultObservable(UserLocation userLocation) {
+    // RESTAURANT PLACES API //
+    // Observable that combine both sources and convert them to our own model
+    private Observable<List<RestaurantItem>> getRestaurantsObservable(String query, UserLocation userLocation) {
+        if (query == null) {
+            query = "";
+        }
+        return Observable.zip(
+                getRestaurantsFromApiObservable(query, userLocation),
+                getNumberOfPeopleEatingObservable(),
+                getNumberOfFavoriteObservable(),
+                (restaurantsFromApi, numberOfPeopleEating, numberOfFavorites) ->
+                        restaurantApiConverter(restaurantsFromApi, photoBaseUrl, numberOfPeopleEating, numberOfFavorites)
+        );
+    }
+
+    private Observable<List<RestaurantApi>> getRestaurantsFromApiObservable(String query, UserLocation userLocation) {
         latitude = userLocation.getLatitude();
         longitude = userLocation.getLongitude();
 
         String location = latitude + "," + longitude;
-
         String radius = sharedPrefs.getString("radius", "1000");
 
         Log.d("User Location is", location);
         Log.d("Radius is", "" + radius);
-        return placesAPIService.getRestaurants(location, "distance", type, BuildConfig.MAPS_API_KEY);
+        return placesAPIService.getRestaurants(query, location, radius, type, BuildConfig.MAPS_API_KEY)
+                .map(RestaurantsApiResult::getResults);
     }
 
-    // Retrieve Restaurant and convert to our own model
+    // Retrieve Restaurant
     @SuppressLint("CheckResult")
-    public LiveData<DataResult<List<RestaurantItem>>> streamFetchRestaurants() {
-
+    public LiveData<DataResult<List<RestaurantItem>>> getRestaurantsObservable(String query) {
         MutableLiveData<DataResult<List<RestaurantItem>>> _restaurants = new MutableLiveData<>();
-
         Observable<UserLocation> userLocationObservable = mLocationService.retrieveLocation();
-
         Log.d("User Location ", "Stream called");
-        userLocationObservable.flatMap(userLocation ->
-                        Observable.zip(getRestaurantsApiResultObservable(userLocation), getSelectedRestaurantIdsObservable(), getNumberOfFavoriteObservable(), (restaurantsApiResult, selectedRestaurantIds, numberOfFavorites)
-                                ->
-                                restaurantsConverter(restaurantsApiResult.getResults(), photoBaseUrl, selectedRestaurantIds, numberOfFavorites))
-                )
+
+        userLocationObservable.flatMap(userLocation -> getRestaurantsObservable(query, userLocation))
+                .map(restaurants -> {
+                    Collections.sort(restaurants, new DistanceComparator());
+                    return restaurants;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(restaurantsItems -> {
-                    DataResult<List<RestaurantItem>> dataResult = new DataResult<>(restaurantsItems);
+                .subscribe(restaurants -> {
+                    DataResult<List<RestaurantItem>> dataResult = new DataResult<>(restaurants);
                     _restaurants.postValue(dataResult);
                 }, throwable -> {
                     DataResult<List<RestaurantItem>> dataResult = new DataResult<>(throwable);
@@ -125,7 +137,6 @@ public class RestaurantRepository {
                     Log.e("onError", "======================================================");
                     _restaurants.postValue(dataResult);
                 });
-
         return _restaurants;
     }
 
@@ -136,7 +147,7 @@ public class RestaurantRepository {
 
     // Retrieve RestaurantDetails and convert to our own model
     @SuppressLint("CheckResult")
-    public LiveData<DataResult<RestaurantDetails>> streamFetchRestaurantDetails(String placeId) {
+    public LiveData<DataResult<RestaurantDetails>> getRestaurantDetailsObservable(String placeId) {
 
         MutableLiveData<DataResult<RestaurantDetails>> _restaurantDetails = new MutableLiveData<>();
 
@@ -156,15 +167,14 @@ public class RestaurantRepository {
         return _restaurantDetails;
     }
 
-    // CONVERTERS
+    // --- CONVERTERS --- //
     // Convert the Restaurant model provided by Places API to our own model
-    private static List<RestaurantItem> restaurantsConverter(List<RestaurantApi> restaurantApis, String photoBaseUrl, Set<String> selectedRestaurantIds, List<String> likedRestaurants) {
-        List<RestaurantItem> restaurantItems = new ArrayList<>(restaurantApis.size());
+    private static List<RestaurantItem> restaurantApiConverter(List<RestaurantApi> restaurantApis, String photoBaseUrl, List<String> eatingAtRestaurant, List<String> likedRestaurants) {
+        List<RestaurantItem> restaurantsList = new ArrayList<>(restaurantApis.size());
         for (RestaurantApi restaurantAPI : restaurantApis) {
             RestaurantItem.Builder builder = new RestaurantItem.Builder()
                     .withName(restaurantAPI.getName())
                     .withAddress(restaurantAPI.getVicinity())
-                    .withIsOpen(restaurantAPI.getOpeningHours())
                     .withPlaceId(restaurantAPI.getPlaceId());
 
             if (restaurantAPI.getGeometry() != null) {
@@ -178,23 +188,22 @@ public class RestaurantRepository {
                 );
             }
 
+            if (restaurantAPI.getOpeningHours() != null) {
+                builder.withIsOpen(restaurantAPI.getOpeningHours().getOpenNow());
+            } else {
+                builder.withIsOpen(false);
+            }
+
             if (restaurantAPI.getPhotos() != null && !restaurantAPI.getPhotos().isEmpty()) {
                 String photoReference = restaurantAPI.getPhotos().get(0).getPhotoReference();
                 String photoUrl = photoBaseUrl + photoReference + "&key=" + BuildConfig.MAPS_API_KEY;
                 builder.withPhoto(photoUrl);
             }
 
-            builder.withIsSomeoneEating(selectedRestaurantIds.contains(restaurantAPI.getPlaceId()));
-
-           // builder.withNumberOfFavorites(likedRestaurants.stream().filter(id -> id.equals(restaurantAPI.getPlaceId())).collect(Collectors.toList()));
-            /*
-            if (likedRestaurants != null) {
-                Set<String> distinct = new HashSet<>(likedRestaurants);
-                for (String s : distinct) {
-                    builder.withNumberOfFavorites(Collections.frequency(likedRestaurants, restaurantAPI.getPlaceId()));
-                }
-                Log.d(TAG, "Number of likes for " + restaurantAPI.getName() + " = " + distinct.size());
-            }*/
+            if (eatingAtRestaurant != null) {
+                int numberOfPeopleEating = Collections.frequency(eatingAtRestaurant, restaurantAPI.getPlaceId());
+                builder.withIsSomeoneEating(numberOfPeopleEating);
+            }
 
             if (likedRestaurants != null) {
                 int numberOfFavorites = Collections.frequency(likedRestaurants, restaurantAPI.getPlaceId());
@@ -202,13 +211,10 @@ public class RestaurantRepository {
                 Log.d(TAG, "Number of likes for " + restaurantAPI.getName() + " = " + numberOfFavorites);
             }
 
-
-            Log.d("RestaurantRepository", restaurantAPI.getName() + " isSomeoneEating = " + selectedRestaurantIds.contains(restaurantAPI.getPlaceId()));
-
-            RestaurantItem restaurantItem = builder.build();
-            restaurantItems.add(restaurantItem);
+            RestaurantItem restaurants = builder.build();
+            restaurantsList.add(restaurants);
         }
-        return restaurantItems;
+        return restaurantsList;
     }
 
     // Convert the RestaurantDetails model provided by Places Details API to our own model
@@ -244,7 +250,6 @@ public class RestaurantRepository {
 
     // Update user selected restaurant
     public void updateSelectedRestaurant(String placeId, String placeName) {
-
         if (firebaseAuth.getUid() != null) {
             DocumentReference userRef = rootRef.collection(USERS).document(firebaseAuth.getUid());
             userRef.update("selectedRestaurantId", placeId).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantId successfully updated!"))
@@ -256,7 +261,6 @@ public class RestaurantRepository {
 
     // Delete user selected restaurant
     public void deleteSelectedRestaurant() {
-
         if (firebaseAuth.getUid() != null) {
             DocumentReference userRef = rootRef.collection(USERS).document(firebaseAuth.getUid());
             userRef.update("selectedRestaurantId", null).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantId successfully deleted!"))
@@ -282,7 +286,6 @@ public class RestaurantRepository {
     // Remove a specific favorite restaurant
     public void removeFavoriteRestaurant(String placeId) {
         if (firebaseAuth.getUid() != null) {
-
             Query query = likedRestaurantsRef.whereEqualTo("restaurantId", placeId)
                     .whereEqualTo("userId", firebaseAuth.getUid());
 
@@ -298,9 +301,9 @@ public class RestaurantRepository {
         }
     }
 
-    // Retrieve a set of Restaurant selected by users
-    public Observable<Set<String>> getSelectedRestaurantIdsObservable() {
-        BehaviorSubject<Set<String>> restaurantIdsObservable = BehaviorSubject.create();
+    // Retrieve the amount of coworkers eating at a specific restaurant
+    public Observable<List<String>> getNumberOfPeopleEatingObservable() {
+        BehaviorSubject<List<String>> peopleEatingObservable = BehaviorSubject.create();
 
         usersRef.whereNotEqualTo("selectedRestaurantId", null)
                 .addSnapshotListener((value, error) -> {
@@ -312,15 +315,16 @@ public class RestaurantRepository {
                     List<User> users = Objects.requireNonNull(value).toObjects(User.class);
 
                     Log.d(TAG, "Example ID : " + users.get(0).getSelectedRestaurantId());
-                    Set<String> restaurantIds = new HashSet<>();
+                    List<String> restaurantIds = new ArrayList<>();
+
                     for (User user : users) {
                         restaurantIds.add(user.getSelectedRestaurantId());
                     }
 
-                    restaurantIdsObservable.onNext(restaurantIds);
+                    peopleEatingObservable.onNext(restaurantIds);
                 });
 
-        return restaurantIdsObservable;
+        return peopleEatingObservable;
     }
 
     // Retrieve the amount of favorite
@@ -388,4 +392,101 @@ public class RestaurantRepository {
         Log.d("RestaurantRepository", "Distance = " + Math.round(locationA.distanceTo(locationB)));
         return Math.round(locationA.distanceTo(locationB));
     }
+
+
+    // Commented methods for autocomplete, cannot be used in our case since the API isn't sending needed data
+
+    // AUTOCOMPLETE //
+   /* private Observable<List<AutocompletePrediction>> getRestaurantsPlaceAutoCompleteObservable(String query, UserLocation location) {
+
+        BehaviorSubject<List<AutocompletePrediction>> autocompletePredictionsObservable = BehaviorSubject.create();
+
+        Places.initialize(App.getContext(), BuildConfig.MAPS_API_KEY);
+        PlacesClient placesClient = Places.createClient(App.getContext());
+        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+        // Specified radius
+        double radius = 2.0;
+
+        // Get rectangular bounds from location
+        double[] boundsFromLatLng = getBoundsFromLatLng(radius, location.getLatitude(), location.getLongitude());
+
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                .setOrigin(new LatLng(location.getLatitude(), location.getLongitude()))
+                .setLocationRestriction(RectangularBounds.newInstance(
+                        new LatLng(boundsFromLatLng[0], boundsFromLatLng[1]),
+                        new LatLng(boundsFromLatLng[2], boundsFromLatLng[3])))
+                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                .setSessionToken(token)
+                .setQuery(query)
+                .build();
+
+        placesClient.findAutocompletePredictions(request)
+                .addOnSuccessListener(response -> {
+                    List<AutocompletePrediction> filteredList = new ArrayList<>();
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        if (prediction.getPlaceTypes().contains(Place.Type.FOOD)) {
+                            filteredList.add(prediction);
+                        }
+                    }
+
+                    autocompletePredictionsObservable.onNext(filteredList);
+
+                    // Log purpose
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        Log.d("Autocomplete id : ", prediction.getPlaceId());
+                        Log.d("Autocomplete text : ", prediction.getPrimaryText(null).toString());
+                        Log.d("Autocomplete type : ", prediction.getPlaceTypes().toString());
+                        Log.d("Autocomplete distance :", Objects.requireNonNull(prediction.getDistanceMeters()).toString());
+                    }
+
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        Log.d("Autocomplete error : ", "Place not found: " + apiException.getStatusCode());
+                    }
+                });
+        return autocompletePredictionsObservable;
+    }
+
+    // Method used to restrict the result of autocomplete to a certain radius
+    public double[] getBoundsFromLatLng(double radius, double lat, double lng) {
+        double lat_change = radius / 111.2f;
+        double lon_change = Math.abs(Math.cos(lat * (Math.PI / 180)));
+        return new double[]{
+                lat - lat_change,
+                lng - lon_change,
+                lat + lat_change,
+                lng + lon_change
+        };
+    }
+     // Convert the Restaurant model provided by Autocomplete to our own model
+    private static List<RestaurantItem> restaurantAutocompleteConverter(List<AutocompletePrediction> restaurantAutocomplete, String photoBaseUrl, List<String> eatingAtRestaurant, List<String> likedRestaurants) {
+        List<RestaurantItem> restaurantsList = new ArrayList<>(restaurantAutocomplete.size());
+
+        CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.NORMAL);
+
+        for (AutocompletePrediction restaurantsAutocomplete : restaurantAutocomplete) {
+            RestaurantItem.Builder builder = new RestaurantItem.Builder()
+                    .withDistance(Objects.requireNonNull(restaurantsAutocomplete.getDistanceMeters()).floatValue())
+                    .withName(restaurantsAutocomplete.getPrimaryText(STYLE_BOLD).toString())
+                    .withAddress(restaurantsAutocomplete.getSecondaryText(STYLE_BOLD).toString());
+
+            if (eatingAtRestaurant != null) {
+                int numberOfPeopleEating = Collections.frequency(eatingAtRestaurant, restaurantsAutocomplete.getPlaceId());
+                builder.withIsSomeoneEating(numberOfPeopleEating);
+            }
+
+            if (likedRestaurants != null) {
+                int numberOfFavorites = Collections.frequency(likedRestaurants, restaurantsAutocomplete.getPlaceId());
+                builder.withNumberOfFavorites(numberOfFavorites);
+            }
+
+            RestaurantItem restaurants = builder.build();
+            restaurantsList.add(restaurants);
+        }
+        return restaurantsList;
+    }
+
+    */
 }

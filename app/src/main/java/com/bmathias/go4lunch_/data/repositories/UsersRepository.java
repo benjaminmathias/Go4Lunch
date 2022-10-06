@@ -46,8 +46,7 @@ public final class UsersRepository {
 
         MutableLiveData<List<User>> _users = new MutableLiveData<>();
 
-        usersRef.whereNotEqualTo("userId", firebaseAuth.getUid())
-                .get()
+        usersRef.get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -62,6 +61,7 @@ public final class UsersRepository {
 
         return _users;
     }
+
 
     // Retrieve only users eating at said restaurant in realtime
     public LiveData<List<User>> retrieveSpecificEatingUsers(String placeId) {

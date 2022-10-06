@@ -1,6 +1,9 @@
 package com.bmathias.go4lunch_.ui.workmates;
 
+import static com.bmathias.go4lunch_.utils.App.getContext;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.View
 
     private final List<User> userItemsList;
     private final OnUserListener mOnUserListener;
+    private final Context context = getContext();
 
     public WorkmatesAdapter(List<User> userItemsList, OnUserListener onUserListener) {
         this.userItemsList = userItemsList;
@@ -46,7 +50,11 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.View
         User user = userItemsList.get(position);
 
         // Setup textview
-        holder.binding.workmatesTextview.setText(user.getUserName() + " is eating at " + user.getSelectedRestaurantName());
+        if (user.getSelectedRestaurantId() != null) {
+            holder.binding.workmatesTextview.setText(user.getUserName() + context.getResources().getString(R.string.workmates_eating_at) + user.getSelectedRestaurantName());
+        } else {
+            holder.binding.workmatesTextview.setText(user.getUserName() + context.getResources().getString(R.string.workmates_not_eating));
+        }
 
         // Setup imageview
 
@@ -60,8 +68,9 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.View
             holder.binding.workmatesImage.setImageResource(R.drawable.ic_baseline_fastfood_24);
         }
 
-        holder.itemView.setOnClickListener(view -> mOnUserListener.onUserClick(user.getSelectedRestaurantId()));
-
+        if (user.getSelectedRestaurantId() != null) {
+            holder.itemView.setOnClickListener(view -> mOnUserListener.onUserClick(user.getSelectedRestaurantId()));
+        }
     }
 
     public interface OnUserListener {

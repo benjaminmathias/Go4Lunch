@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.databinding.FragmentWorkmatesBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;
@@ -33,6 +34,7 @@ public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnUs
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
+        requireActivity().setTitle(R.string.workmates_fragment_name);
         this.setupViewModel();
         this.setupRecyclerView();
         return binding.getRoot();

@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="title_home">Home</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="positive_string">Oui</string>
+    <string name="negative_string">Non</string>
+
+    <!-- MAIN ACTIVITY -->
+    <!-- Bottom Navigation -->
+    <string name="nav_menu_map">Carte</string>
+    <string name="nav_menu_list">Liste</string>
+    <string name="nav_menu_workmates">Collègues</string>
+
+    <!-- Main Activity Drawer -->
+    <string name="drawer_menu_lunch">Votre déjeuner</string>
+    <string name="drawer_menu_settings">Paramètres</string>
+    <string name="drawer_menu_logout">Se déconnecter</string>
+    <string name="drawer_menu_logout_dialog_message">Voulez vous vous déconnecter ?</string>
+
+    <!-- List Fragment -->
+    <string name="list_restaurant_closed">Fermé</string>
+    <string name="list_restaurant_distance">m</string>
+    <string name="list_search_hint">Chercher …</string>
+    <string name="list_restaurant_open">Ouvert</string>
+    <string name="list_fragment_name">J\'ai faim !</string>
+
+    <!-- Workmates Fragment -->
+    <string name="workmates_eating_at">&#160;mange à&#160;</string>
+    <string name="workmates_fragment_name">Collègues disponibles</string>
+
+    <!-- DETAILS ACTIVITY -->
+    <string name="details_call_button">Appeller</string>
+    <string name="details_like_button">Like</string>
+    <string name="details_website_button">Site internet</string>
+    <string name="details_workmate_joining_text">&#160;déjeune à&#160;</string>
+    <string name="details_workmate_joining_text_end">&#160;!</string>
+    <string name="details_dialog_web_message_start">"Souhaitez-vous ouvrir le site internet de "</string>
+    <string name="details_dialog_web_message_end">\?</string>
+    <string name="details_dialog_phone_message_start">"Souhaitez-vous appeler "</string>
+    <string name="details_dialog_phone_message_end">&#160;au numéro suivant :&#160;</string>
+
+    <!-- NOTIFICATION -->
+    <string name="notification_title">C\'est l\'heure de manger !</string>
+    <string name="notification_text_1">Votre déjeuner à&#160;</string>
+    <string name="notification_text_2">&#160;, c\'est maintenant !</string>
+
+    <!-- SPLASH ACTIVITY -->
+    <string name="splash_dialog_message">"Cette application a besoin de votre position pour fonctionner. Souhaitez-vous partager votre position ? "</string>
+    <string name="splash_dialog_message_warning">Vous devenez autoriser le partage de votre position pour utiliser cette application !</string>
+    <string name="splash_dialog_settings_error">impossible d\'ouvrir les paramètres</string>
+
+    <!-- SETTINGS ACTIVITY -->
+    <string name="settings_distance_text">Distance des restaurants (en mètres)</string>
+
+    <!-- LOGIN ACTIVITY -->
+    <string name="login_app_description">Trouver un lieu où déjeuner et invitez vos collègues !</string>
+    <string name="error_not_connected">Vous devez vous connecter !</string>
+    <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
+    <string name="error_no_internet">Aucune connexion internet !</string>
+    <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
+    <string name="connection_succeed">Authentification réussie !</string>
+    <string name="button_login_text_logged">Afficher le profil</string>
+    <string name="button_login_text_not_logged">Connexion</string>
+    <string name="login_with_google">Se connecter avec Google</string>
+    <string name="login_with_facebook">Se connecter avec Facebook</string>
+
+
+    <!-- ... -->
+    <string name="facebook_application_id" translatable="false">APP_ID</string>
+    <!-- Facebook Application ID, prefixed by 'fb'. Enables Chrome Custom tabs. -->
+    <string name="facebook_login_protocol_scheme" translatable="false">fbAPP_ID</string>
+
+    <!-- DRAWER -->
+    <string name="info_no_email_found">Pas d\'email</string>
+    <string name="info_no_username_found">Pas de pseudo</string>
+    <string name="popup_message_informations_account">Souhaitez-vous vous déconnecter ou supprimer votre compte ?</string>
+    <string name="popup_message_choice_disconnect">Se déconnecter</string>
+    <string name="popup_message_choice_delete">Supprimer le compte</string>
+    <string name="popup_message_choice_no">Annuler</string>
+
+    <!-- Settings Spinner -->
+    <string-array name="distance">
+        <item>500</item>
+        <item>1000</item>
+        <item>2500</item>
+        <item>5000</item>
+    </string-array>
+
+
+    <!-- Channel -->
+    <string name="default_notification_channel_id">1234</string>
+    <string name="msg_token_fmt">Token FCM</string>
+    <string name="title_activity_scrolling">a</string>
+    <string name="large_text">a</string>
+    <string name="action_settings">a</string>
+    <string name="empty_dataset_error">Impossible d\'afficher les résultats</string>
+    <string name="empty_dataset_error_description">Veuillez vérifier votre connexion internet afin de résoudre ce problème.</string>
+    <string name="empty_dataset_no_result">Pas de résultat correspondant à votre recherche</string>
+    <string name="empty_dataset_no_result_description">Essayez de chercher un autre restaurant</string>
+    <string name="workmates_not_eating">" n'a pas selectionné de restaurant"</string>
+
+
+</resources>

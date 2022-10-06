@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bmathias.go4lunch_">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".utils.App"
@@ -39,12 +39,26 @@
             android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
         <activity
             android:name=".ui.list.DetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Go4Lunch_.NoActionBar"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".AuthActivity"
             android:exported="false"
             android:noHistory="true"
             android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
+
+        <!-- NOTIFICATION SERVICE -->
+        <receiver
+            android:name=".utils.WakeUpAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

@@ -22,7 +22,7 @@ import java.util.Locale;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class LocationService implements LocationListener {
+public class LocationService {
 
     private final FusedLocationProviderClient fusedLocationProviderClient;
     private final BehaviorSubject<UserLocation> latestLocation = BehaviorSubject.create();
@@ -88,15 +88,4 @@ public class LocationService implements LocationListener {
         });
     }
 
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        UserLocation userNewLocation = new UserLocation(latitude, longitude);
-
-        Toast.makeText(App.getContext(), "Location updated !", Toast.LENGTH_SHORT).show();
-
-        latestLocation.onNext(userNewLocation);
-    }
 }

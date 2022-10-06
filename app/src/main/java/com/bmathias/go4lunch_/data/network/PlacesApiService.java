@@ -15,8 +15,9 @@ public interface PlacesApiService {
 
     @GET("place/nearbysearch/json")
     Observable<RestaurantsApiResult> getRestaurants(
+            @Query("keyword") String keyword,
             @Query("location") String location,
-            @Query("rankby") String rankby,
+            @Query("radius") String radius,
             @Query("type") String type,
             @Query("key") String key
     );
@@ -26,8 +27,6 @@ public interface PlacesApiService {
             @Query("place_id") String place_id,
             @Query("key") String key
     );
-
-
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://maps.googleapis.com/maps/api/")

@@ -24,31 +24,29 @@ public class ListViewModel extends ViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>();
     public LiveData<String> error = _error;
 
-    private LiveData<List<RestaurantItem>> restaurants;
+    private final MutableLiveData<List<RestaurantItem>> restaurants = new MutableLiveData<>();
 
     public ListViewModel(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
-        observeRestaurants();
     }
 
-
-    public void observeRestaurants(){
-      //  _showProgress.postValue(true);
-        LiveData<List<RestaurantItem>> _restaurant = Transformations.map(restaurantRepository.streamFetchRestaurants(), result -> {
-          //  _showProgress.postValue(false);
+    public LiveData<Boolean> loadRestaurants(String query) {
+        _showProgress.postValue(true);
+        return Transformations.map(restaurantRepository.getRestaurantsObservable(query), result -> {
+            _showProgress.postValue(false);
 
             if (result.isSuccess()) {
                 Log.e(TAG, "success");
-                return result.getData();
+                restaurants.postValue(result.getData());
+                return true;
             } else {
                 _error.postValue(result.getError().getMessage());
                 Log.e(TAG, result.getError().getMessage());
-                return null;
+                return false;
             }
         });
-
-        restaurants = _restaurant;
     }
+
 
     public LiveData<List<RestaurantItem>> getRestaurants() {
         return restaurants;

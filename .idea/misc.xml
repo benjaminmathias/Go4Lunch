@@ -16,27 +16,36 @@
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_baseline_open_in_browser_24.xml" value="0.1695" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_baseline_phone_24.xml" value="0.2065" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_baseline_restaurant_24.xml" value="0.212" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.185" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.2065" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_baseline_star_outline_24.xml" value="0.2105" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_go4lunch_icon.xml" value="0.1845" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/drawable/ic_launcher_background.xml" value="0.21354166666666666" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_auth.xml" value="0.3546875" />
-        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_details.xml" value="0.5" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_details.xml" value="0.25" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_details_item.xml" value="0.3546875" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_scrolling.xml" value="0.25" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_settings.xml" value="0.33" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/activity_splash.xml" value="0.25" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/content_main.xml" value="0.21614583333333334" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/content_scrolling.xml" value="0.340625" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/fragment_list.xml" value="0.3546875" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/fragment_list_item.xml" value="0.67" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/fragment_map.xml" value="0.3546875" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/fragment_place_autocomplete.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/fragment_workmates.xml" value="0.3546875" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/fragment_workmates_items.xml" value="0.33" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/item_empty_dataset.xml" value="0.3536458333333333" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/nav_header.xml" value="0.3546875" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/layout/spinner_style.xml" value="0.23385416666666667" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/menu/bottom_nav_menu.xml" value="0.3546875" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/menu/bottom_navigation.xml" value="0.3546875" />
         <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/menu/main_activity_drawer.xml" value="0.3546875" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/menu/menu_scrolling.xml" value="0.3546875" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/menu/searchbar.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/Ben/Desktop/OC/Projets/Go4Lunch_/app/src/main/res/menu/toolbar.xml" value="0.20208333333333334" />
       </map>
     </option>
   </component>
