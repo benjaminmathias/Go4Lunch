@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.bmathias.go4lunch_.data.model.User;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -21,28 +20,27 @@ public final class UsersRepository {
 
     private static volatile UsersRepository instance;
 
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-    private final CollectionReference usersRef = rootRef.collection(USERS);
+    private final CollectionReference usersRef;
 
-    private UsersRepository() {
+    private UsersRepository(FirebaseFirestore firebaseFirestore) {
+        usersRef = firebaseFirestore.collection(USERS);
     }
 
-    public static UsersRepository getInstance() {
+    public static UsersRepository getInstance(FirebaseFirestore firebaseFirestore) {
         UsersRepository result = instance;
         if (result != null) {
             return result;
         }
         synchronized (UsersRepository.class) {
             if (instance == null) {
-                instance = new UsersRepository();
+                instance = new UsersRepository(firebaseFirestore);
             }
             return instance;
         }
     }
 
-    // Retrieve all workmates besides current logged user
-    public LiveData<List<User>> retrieveFirestoreUsers() {
+    // Retrieve all workmates
+    public LiveData<List<User>> getUsers() {
 
         MutableLiveData<List<User>> _users = new MutableLiveData<>();
 
@@ -64,7 +62,7 @@ public final class UsersRepository {
 
 
     // Retrieve only users eating at said restaurant in realtime
-    public LiveData<List<User>> retrieveSpecificEatingUsers(String placeId) {
+    public LiveData<List<User>> getUsersByPlaceId(String placeId) {
 
         MutableLiveData<List<User>> _specificUsers = new MutableLiveData<>();
 

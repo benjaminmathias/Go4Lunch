@@ -14,20 +14,26 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class CurrentUserRepository {
-   private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-   private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-   private final CollectionReference usersRef = rootRef.collection(USERS);
 
    private static volatile CurrentUserRepository instance;
 
-   public static CurrentUserRepository getInstance() {
+   private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+   private final CollectionReference usersRef;
+
+
+
+   private CurrentUserRepository(FirebaseFirestore firebaseFirestore) {
+      usersRef = firebaseFirestore.collection(USERS);
+   }
+
+   public static CurrentUserRepository getInstance(FirebaseFirestore firebaseFirestore) {
       CurrentUserRepository result = instance;
       if (result != null) {
          return result;
       }
       synchronized (CurrentUserRepository.class) {
          if (instance == null) {
-            instance = new CurrentUserRepository();
+            instance = new CurrentUserRepository(firebaseFirestore);
          }
          return instance;
       }

@@ -9,10 +9,6 @@ import com.bmathias.go4lunch_.utils.App;
 public class MySharedPrefs {
 
    private static SharedPreferences mSharedPref;
-   public static final String PREF_NAME = "selected_radius";
-   public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
-   public static final String IS_READ_UNREAD_REQUIRED = "isReadUnreadRequired";
-   public static final String Access_State_Device = "accessStateDevice";
 
    private static volatile MySharedPrefs instance;
 

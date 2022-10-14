@@ -10,6 +10,7 @@ import com.bmathias.go4lunch_.data.repositories.SplashRepository;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
 import com.bmathias.go4lunch_.utils.App;
 import com.bmathias.go4lunch_.utils.LocationService;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Injection {
 
@@ -19,7 +20,7 @@ public class Injection {
     }
 
     public static RestaurantRepository provideRestaurantRepository() {
-        return RestaurantRepository.getInstance(provideLocationService(), provideApiService(), BuildConfig.PHOTO_BASE_URL, provideSharedPrefs());
+        return RestaurantRepository.getInstance(provideLocationService(), provideApiService(), BuildConfig.PHOTO_BASE_URL, provideSharedPrefs(), FirebaseFirestore.getInstance());
     }
 
     private static PlacesApiService provideApiService() {
@@ -31,7 +32,7 @@ public class Injection {
     }
 
     public static CurrentUserRepository provideCurrentUserRepository() {
-        return CurrentUserRepository.getInstance();
+        return CurrentUserRepository.getInstance(FirebaseFirestore.getInstance());
     }
 
     public static AuthRepository provideAuthRepository() {
@@ -39,11 +40,11 @@ public class Injection {
     }
 
     public static SplashRepository provideSplashRepository() {
-        return SplashRepository.getInstance();
+        return SplashRepository.getInstance(FirebaseFirestore.getInstance());
     }
 
     public static UsersRepository provideUserRepository() {
-        return UsersRepository.getInstance();
+        return UsersRepository.getInstance(FirebaseFirestore.getInstance());
     }
 
     public static MySharedPrefs provideSharedPrefs() {return MySharedPrefs.getInstance();}

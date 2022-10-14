@@ -12,10 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.User;
-import com.bmathias.go4lunch_.databinding.ActivityDetailsBinding;
 import com.bmathias.go4lunch_.databinding.ActivityDetailsItemBinding;
-import com.bmathias.go4lunch_.databinding.FragmentWorkmatesItemsBinding;
-import com.bmathias.go4lunch_.utils.App;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;

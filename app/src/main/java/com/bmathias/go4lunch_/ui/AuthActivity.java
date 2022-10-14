@@ -1,4 +1,4 @@
-package com.bmathias.go4lunch_;
+package com.bmathias.go4lunch_.ui;
 
 import static com.bmathias.go4lunch_.utils.Constants.RC_SIGN_IN;
 import static com.bmathias.go4lunch_.utils.HelperClass.logErrorMessage;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.databinding.ActivityAuthBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;

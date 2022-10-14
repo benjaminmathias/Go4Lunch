@@ -1,5 +1,9 @@
 package com.bmathias.go4lunch_;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Test;
@@ -8,17 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UnitTest {
+public class FirestoreUnitTest {
 
-    @Mock
-    FirebaseFirestore mockFirestore;
+    @Mock FirebaseFirestore firestoreMock;
 
     @Test
-    public void getUserFromDatabase(){
-
+    public void testQuery(){
 
     }
-
-
-
 }

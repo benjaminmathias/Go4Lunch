@@ -1,4 +1,4 @@
-package com.bmathias.go4lunch_;
+package com.bmathias.go4lunch_.ui;
 
 import static com.bmathias.go4lunch_.utils.Constants.USER;
 
@@ -19,6 +19,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bmathias.go4lunch_.BuildConfig;
+import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.databinding.ActivitySplashBinding;
 import com.bmathias.go4lunch_.injection.Injection;

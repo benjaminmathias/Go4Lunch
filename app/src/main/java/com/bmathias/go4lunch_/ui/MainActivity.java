@@ -1,4 +1,4 @@
-package com.bmathias.go4lunch_;
+package com.bmathias.go4lunch_.ui;
 
 
 import android.annotation.SuppressLint;
@@ -26,6 +26,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.databinding.ActivityMainBinding;
 import com.bmathias.go4lunch_.injection.Injection;
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     private NavigationView navigationView;
 
     private MainViewModel mainViewModel;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

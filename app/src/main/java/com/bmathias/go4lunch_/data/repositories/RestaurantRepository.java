@@ -3,9 +3,9 @@ package com.bmathias.go4lunch_.data.repositories;
 import static com.bmathias.go4lunch_.utils.Constants.LIKED_RESTAURANTS;
 import static com.bmathias.go4lunch_.utils.Constants.TAG;
 import static com.bmathias.go4lunch_.utils.Constants.USERS;
+import static com.bmathias.go4lunch_.utils.MapUtils.getDistance;
 
 import android.annotation.SuppressLint;
-import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -59,26 +59,28 @@ public class RestaurantRepository {
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-    private final CollectionReference usersRef = rootRef.collection(USERS);
-    private final CollectionReference likedRestaurantsRef = rootRef.collection(LIKED_RESTAURANTS);
+    private final CollectionReference usersRef;
+    private final CollectionReference likedRestaurantsRef;
 
     private static final String type = "restaurant";
 
-    private RestaurantRepository(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs) {
+    private RestaurantRepository(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore) {
         this.placesAPIService = placesAPIService;
         this.photoBaseUrl = photoBaseUrl;
         this.mLocationService = locationService;
         this.sharedPrefs = sharedPrefs;
+        usersRef = firebaseFirestore.collection(USERS);
+        likedRestaurantsRef = firebaseFirestore.collection(LIKED_RESTAURANTS);
     }
 
-    public static RestaurantRepository getInstance(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs) {
+    public static RestaurantRepository getInstance(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore) {
         RestaurantRepository result = instance;
         if (result != null) {
             return result;
         }
         synchronized (RestaurantRepository.class) {
             if (instance == null) {
-                instance = new RestaurantRepository(locationService, placesAPIService, photoBaseUrl, sharedPrefs);
+                instance = new RestaurantRepository(locationService, placesAPIService, photoBaseUrl, sharedPrefs, firebaseFirestore);
             }
             return instance;
         }
@@ -378,20 +380,7 @@ public class RestaurantRepository {
     }
 
     // Compute distance between user's phone and restaurant location
-    public static float getDistance(Double latA, Double lngA, Double latB, Double lngB) {
-        Location locationA = new Location("point A");
 
-        locationA.setLatitude(latA);
-        locationA.setLongitude(lngA);
-
-        Location locationB = new Location("point B");
-
-        locationB.setLatitude(latB);
-        locationB.setLongitude(lngB);
-
-        Log.d("RestaurantRepository", "Distance = " + Math.round(locationA.distanceTo(locationB)));
-        return Math.round(locationA.distanceTo(locationB));
-    }
 
 
     // Commented methods for autocomplete, cannot be used in our case since the API isn't sending needed data

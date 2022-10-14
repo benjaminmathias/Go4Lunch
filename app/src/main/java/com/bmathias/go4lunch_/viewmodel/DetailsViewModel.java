@@ -64,7 +64,7 @@ public class DetailsViewModel extends ViewModel {
     }
 
     public void getSpecificUsersFromDatabase(String placeId){
-        LiveData<List<User>> specificUsers = usersRepository.retrieveSpecificEatingUsers(placeId);
+        LiveData<List<User>> specificUsers = usersRepository.getUsersByPlaceId(placeId);
         users = specificUsers;
     }
 

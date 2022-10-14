@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel;
 import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
-import com.google.android.gms.location.FusedLocationProviderClient;
 
 public class MainViewModel extends ViewModel {
     private CurrentUserRepository currentUserRepository;

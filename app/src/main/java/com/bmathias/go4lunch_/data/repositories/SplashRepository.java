@@ -15,21 +15,25 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 @SuppressWarnings("ConstantConditions")
 public class SplashRepository {
-   private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-   //private User user = new User();
-   private FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-   private CollectionReference usersRef = rootRef.collection(USERS);
 
    private static volatile SplashRepository instance;
 
-   public static SplashRepository getInstance() {
+   private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+   private final CollectionReference usersRef;
+
+   private SplashRepository(FirebaseFirestore firebaseFirestore){
+      usersRef = firebaseFirestore.collection(USERS);
+   }
+
+   public static SplashRepository getInstance(FirebaseFirestore firebaseFirestore) {
       SplashRepository result = instance;
       if (result != null) {
          return result;
       }
       synchronized (SplashRepository.class) {
          if (instance == null) {
-            instance = new SplashRepository();
+            instance = new SplashRepository(firebaseFirestore);
          }
          return instance;
       }
@@ -60,6 +64,7 @@ public class SplashRepository {
       });
    }
 
+   /*
    public MutableLiveData<User> addUserToLiveData(String userId) {
       MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
       usersRef.document(userId).get().addOnCompleteListener(userTask -> {
@@ -74,5 +79,5 @@ public class SplashRepository {
          }
       });
       return userMutableLiveData;
-   }
+   }*/
 }

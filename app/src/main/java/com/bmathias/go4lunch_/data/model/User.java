@@ -3,9 +3,6 @@ package com.bmathias.go4lunch_.data.model;
 import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class User implements Serializable {
 

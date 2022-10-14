@@ -19,7 +19,7 @@ public class WorkmatesViewModel extends ViewModel {
     }
 
     public void getUsersFromDatabase() {
-        LiveData<List<User>> _users = usersRepository.retrieveFirestoreUsers();
+        LiveData<List<User>> _users = usersRepository.getUsers();
         users = _users;
     }
 

@@ -3,7 +3,6 @@ package com.bmathias.go4lunch_.ui.list;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,9 +13,6 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.SearchView;
 
 import android.view.inputmethod.EditorInfo;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -126,9 +122,7 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
             binding.progressbar.setVisibility(View.GONE);
         });
 
-        listViewModel.showProgress.observe(getViewLifecycleOwner(), isVisible -> {
-            binding.progressbar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        });
+        listViewModel.showProgress.observe(getViewLifecycleOwner(), isVisible -> binding.progressbar.setVisibility(isVisible ? View.VISIBLE : View.GONE));
     }
 
     private void setupRecyclerView() {

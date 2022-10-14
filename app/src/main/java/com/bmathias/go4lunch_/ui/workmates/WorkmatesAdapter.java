@@ -4,8 +4,8 @@ import static com.bmathias.go4lunch_.utils.App.getContext;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -54,6 +54,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.View
             holder.binding.workmatesTextview.setText(user.getUserName() + context.getResources().getString(R.string.workmates_eating_at) + user.getSelectedRestaurantName());
         } else {
             holder.binding.workmatesTextview.setText(user.getUserName() + context.getResources().getString(R.string.workmates_not_eating));
+            holder.binding.workmatesTextview.setTypeface(holder.binding.workmatesTextview.getTypeface(), Typeface.ITALIC);
         }
 
         // Setup imageview

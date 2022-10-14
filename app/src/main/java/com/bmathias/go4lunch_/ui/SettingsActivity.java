@@ -1,4 +1,4 @@
-package com.bmathias.go4lunch_;
+package com.bmathias.go4lunch_.ui;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.databinding.ActivitySettingsBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;

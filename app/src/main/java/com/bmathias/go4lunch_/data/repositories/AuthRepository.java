@@ -3,15 +3,10 @@ package com.bmathias.go4lunch_.data.repositories;
 import static com.bmathias.go4lunch_.utils.Constants.USERS;
 import static com.bmathias.go4lunch_.utils.HelperClass.logErrorMessage;
 
-import android.content.Context;
-
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.bmathias.go4lunch_.data.model.User;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,9 +15,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class AuthRepository {

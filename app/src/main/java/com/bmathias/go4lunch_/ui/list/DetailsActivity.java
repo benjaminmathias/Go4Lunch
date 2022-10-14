@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.RestaurantDetails;
 import com.bmathias.go4lunch_.databinding.ActivityDetailsBinding;
-import com.bmathias.go4lunch_.databinding.ActivityScrollingBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;
 import com.bmathias.go4lunch_.utils.NotificationReceiver;
@@ -40,9 +39,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private DetailsViewModel detailsViewModel;
     private DetailsAdapter adapter;
-    private ActivityScrollingBinding binding;
-
-    private Toolbar toolbar;
+    private ActivityDetailsBinding binding;
 
     private String placeName;
 
@@ -51,12 +48,10 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         String placeId = getIntent().getExtras().getString("placeId");
         this.setupDetailsViewModel(placeId);
-        binding = ActivityScrollingBinding.inflate(getLayoutInflater());
+        binding = ActivityDetailsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
 
-
         configureToolbar();
-
 
         this.setupDetailsView();
         this.setupLike(placeId);
@@ -74,7 +69,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void configureToolbar() {
-        this.toolbar = this.binding.activityDetailsToolbar;
+        Toolbar toolbar = this.binding.activityDetailsToolbar;
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -139,6 +134,10 @@ public class DetailsActivity extends AppCompatActivity {
             restaurantDetailsWebsiteDialog(restaurantDetails);
             restaurantDetailsImageView(restaurantDetails);
             restaurantDetailsTextViews(restaurantDetails);
+
+            binding.restaurantDetailsPhone.setText(R.string.details_call_button);
+            binding.restaurantDetailsWebsite.setText(R.string.details_website_button);
+            binding.restaurantDetailsLike.setText(R.string.details_like_button);
         });
     }
 
@@ -265,7 +264,7 @@ public class DetailsActivity extends AppCompatActivity {
         Toast.makeText(this, "Notification set !", Toast.LENGTH_LONG).show();
 
         // For testing purpose, we fire the alarm 10 seconds after the user selected at restaurant
-       /* long timeAtButtonClick = System.currentTimeMillis();
+        /*long timeAtButtonClick = System.currentTimeMillis();
         long tenSecondsInMillis = 1000 * 10;
         alarmManager.set(AlarmManager.RTC_WAKEUP, timeAtButtonClick + tenSecondsInMillis, pendingIntent);*/
 
