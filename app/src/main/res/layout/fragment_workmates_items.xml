@@ -6,15 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/workmates_image"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,7 +23,6 @@
         android:layout_marginStart="16dp"
         android:ellipsize="marquee"
         android:focusable="true"
-        android:paddingStart="8dp"
         android:singleLine="true"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
