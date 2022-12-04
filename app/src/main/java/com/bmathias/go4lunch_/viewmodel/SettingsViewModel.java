@@ -16,7 +16,6 @@ public class SettingsViewModel extends ViewModel {
         sharedPrefs.putString(key, value);
     }
 
-
     public String readSharedPreferences(String key, String value){
        return sharedPrefs.getString(key, value);
 

@@ -19,13 +19,10 @@ public class DetailsViewModel extends ViewModel {
     private static final String TAG = "DetailsViewModel";
 
     private final RestaurantRepository restaurantRepository;
-
     private final UsersRepository usersRepository;
-
     private final CurrentUserRepository currentUserRepository;
 
     public LiveData<User> currentUser;
-
     private LiveData<List<User>> users;
 
     private final MutableLiveData<Boolean> _showProgress = new MutableLiveData<>();
@@ -45,11 +42,10 @@ public class DetailsViewModel extends ViewModel {
     public void observeRestaurantDetails(String placeId) {
         restaurantDetails = Transformations.map(restaurantRepository.getRestaurantDetailsObservable(placeId), result -> {
             _showProgress.postValue(false);
-
             if (result.isSuccess()) {
                 return result.getData();
             } else {
-               // _error.postValue(result.getError().getMessage());
+                _error.postValue(result.getError().getMessage());
                 return null;
             }
         });
@@ -64,8 +60,7 @@ public class DetailsViewModel extends ViewModel {
     }
 
     public void getSpecificUsersFromDatabase(String placeId){
-        LiveData<List<User>> specificUsers = usersRepository.getUsersByPlaceId(placeId);
-        users = specificUsers;
+        users = usersRepository.getUsersByPlaceId(placeId);
     }
 
     public LiveData<List<User>> getSpecificUsers(){

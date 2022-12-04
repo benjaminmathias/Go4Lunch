@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bmathias.go4lunch_">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,6 +17,12 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4Lunch_">
+        <meta-data tools:replace="android:value" android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+        <activity
+            android:name=".ui.workmates.ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
         <activity
             android:name="com.bmathias.go4lunch_.ui.SettingsActivity"
             android:exported="false" />
@@ -40,25 +47,23 @@
         <activity
             android:name="com.bmathias.go4lunch_.ui.list.DetailsActivity"
             android:exported="false"
-            android:theme="@style/Theme.Go4Lunch_.NoActionBar"
-            android:parentActivityName="com.bmathias.go4lunch_.ui.MainActivity"/>
+            android:parentActivityName="com.bmathias.go4lunch_.ui.MainActivity"
+            android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
         <activity
             android:name="com.bmathias.go4lunch_.ui.AuthActivity"
             android:exported="false"
             android:noHistory="true"
-            android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
-
-        <!-- NOTIFICATION SERVICE -->
+            android:theme="@style/Theme.Go4Lunch_.NoActionBar" /> <!-- NOTIFICATION SERVICE -->
         <receiver
             android:name="com.bmathias.go4lunch_.utils.WakeUpAlarmReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

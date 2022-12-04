@@ -47,9 +47,7 @@ public class ListViewModel extends ViewModel {
         });
     }
 
-
     public LiveData<List<RestaurantItem>> getRestaurants() {
         return restaurants;
     }
-
 }

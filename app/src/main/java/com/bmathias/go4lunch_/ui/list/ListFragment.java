@@ -35,10 +35,6 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
     private ListAdapter adapter;
     private FragmentListBinding binding;
 
-    private final Handler mHandler = new Handler();
-
-    private static int AUTOCOMPLETE_REQUEST_CODE = 1;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,6 +68,7 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                // TODO : remove when demo
               /*  mHandler.removeCallbacksAndMessages(null);
                 mHandler.postDelayed(() -> {
                     loadRestaurants(newText);
@@ -132,7 +129,6 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
         binding.fragmentListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.fragmentListRecyclerView.addItemDecoration(new DividerItemDecoration(binding.fragmentListRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL));
-
     }
 
     // Handle onClick event on RecyclerView items

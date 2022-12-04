@@ -1,6 +1,5 @@
 package com.bmathias.go4lunch_.ui.list;
 
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -51,7 +50,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         // Setup address textview
         if (restaurantItem.getAddress() != null) {
             holder.binding.restaurantTypeAndAddressTextView.setText(String.valueOf(restaurantItem.getAddress()));
-
         }
 
         // Setup status
@@ -71,16 +69,15 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         // Display if someone is eating at that restaurant
         if (restaurantItem.getNumberOfPeopleEating() > 0) {
             holder.binding.peopleEatingView.setVisibility(View.VISIBLE);
-            holder.binding.peopleEatingCounterView.setText("(" + String.valueOf(restaurantItem.getNumberOfPeopleEating()) + ")");
+            holder.binding.peopleEatingCounterView.setText(String.valueOf(restaurantItem.getNumberOfPeopleEating()));
         } else {
             holder.binding.peopleEatingView.setVisibility(View.GONE);
         }
 
         if (restaurantItem.getNumberOfFavorites() != 0) {
-            holder.binding.likesCounterView.setText("(" + String.valueOf(restaurantItem.getNumberOfFavorites()) + ")");
+            holder.binding.likesCounterView.setText(String.valueOf(restaurantItem.getNumberOfFavorites()));
             holder.binding.likedStarImageView.setVisibility(View.VISIBLE);
         }
-
 
         // Setup ImageView
         holder.binding.restaurantImageView.setImageResource(R.drawable.drawer_image);

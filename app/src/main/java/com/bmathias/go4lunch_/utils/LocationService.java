@@ -73,7 +73,6 @@ public class LocationService {
                     // Valeur du publish
                     Log.d("LocationHelper", latitude + "," + longitude);
 
-
                     UserLocation userLocation = new UserLocation(latitude, longitude);
 
                     latestLocation.onNext(userLocation);

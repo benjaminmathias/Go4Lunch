@@ -8,15 +8,14 @@ import com.bmathias.go4lunch_.data.repositories.AuthRepository;
 import com.google.firebase.auth.AuthCredential;
 
 public class AuthViewModel extends ViewModel {
-    private final AuthRepository authRepository;
+    private final AuthRepository mAuthRepository;
     public LiveData<User> authenticatedUserLiveData;
-    public LiveData<User> createdUserLiveData;
 
     public AuthViewModel(AuthRepository authRepository) {
-        this.authRepository = authRepository;
+        this.mAuthRepository = authRepository;
     }
 
-    public void signInWithGoogle(AuthCredential googleAuthCredential) {
-        authenticatedUserLiveData = authRepository.firebaseSignInWithGoogle(googleAuthCredential);
+    public void signWithAuthCredential(AuthCredential authCredential) {
+        authenticatedUserLiveData = mAuthRepository.firebaseSignIn(authCredential);
     }
 }

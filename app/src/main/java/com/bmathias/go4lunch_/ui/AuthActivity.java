@@ -1,10 +1,12 @@
 package com.bmathias.go4lunch_.ui;
 
 import static com.bmathias.go4lunch_.utils.Constants.RC_SIGN_IN;
+import static com.bmathias.go4lunch_.utils.Constants.TAG;
 import static com.bmathias.go4lunch_.utils.HelperClass.logErrorMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,6 +18,12 @@ import com.bmathias.go4lunch_.databinding.ActivityAuthBinding;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;
 import com.bmathias.go4lunch_.viewmodel.AuthViewModel;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -26,13 +34,15 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class AuthActivity extends AppCompatActivity {
 
     private AuthViewModel authViewModel;
     private GoogleSignInClient googleSignInClient;
-    ActivityAuthBinding activityAuthBinding;
+    private ActivityAuthBinding activityAuthBinding;
+    private CallbackManager mCallbackManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,10 +54,13 @@ public class AuthActivity extends AppCompatActivity {
         initSignInButton();
         initAuthViewModel();
         initGoogleSignInClient();
+        initFacebookSignInClient();
     }
 
     private void initSignInButton() {
         activityAuthBinding.googleLoginButton.setOnClickListener(v -> signIn());
+        mCallbackManager = CallbackManager.Factory.create();
+        activityAuthBinding.facebookLoginButton.setPermissions("email", "public_profile");
     }
 
     private void initAuthViewModel() {
@@ -65,6 +78,27 @@ public class AuthActivity extends AppCompatActivity {
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
     }
 
+    private void initFacebookSignInClient() {
+
+        activityAuthBinding.facebookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                getFacebookAuthCredential(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+            }
+        });
+    }
+
     private void signIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -74,6 +108,10 @@ public class AuthActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Facebook Login callback
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+        // Google Login
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -85,7 +123,6 @@ public class AuthActivity extends AppCompatActivity {
                 logErrorMessage(e.getMessage());
             }
         }
-
 
         IdpResponse response = IdpResponse.fromResultIntent(data);
 
@@ -111,11 +148,16 @@ public class AuthActivity extends AppCompatActivity {
     private void getGoogleAuthCredential(GoogleSignInAccount googleSignInAccount) {
         String googleTokenId = googleSignInAccount.getIdToken();
         AuthCredential googleAuthCredential = GoogleAuthProvider.getCredential(googleTokenId, null);
-        signInWithGoogleAuthCredential(googleAuthCredential);
+        signInWithAuthCredential(googleAuthCredential);
     }
 
-    private void signInWithGoogleAuthCredential(AuthCredential googleAuthCredential) {
-        authViewModel.signInWithGoogle(googleAuthCredential);
+    private void getFacebookAuthCredential(AccessToken token) {
+        AuthCredential facebookCredential = FacebookAuthProvider.getCredential(token.getToken());
+        signInWithAuthCredential(facebookCredential);
+    }
+
+    private void signInWithAuthCredential(AuthCredential googleAuthCredential) {
+        authViewModel.signWithAuthCredential(googleAuthCredential);
         authViewModel.authenticatedUserLiveData.observe(this, authenticatedUser -> {
             if (authenticatedUser == null) {
                 // TODO: Display error message
@@ -125,7 +167,6 @@ public class AuthActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void snackBarMessage(String name) {
         Toast.makeText(this, "Hi " + name + "!\n" + "Your account was successfully created.", Toast.LENGTH_LONG).show();

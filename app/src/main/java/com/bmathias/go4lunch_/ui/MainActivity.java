@@ -1,13 +1,7 @@
 package com.bmathias.go4lunch_.ui;
 
-
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -35,7 +29,6 @@ import com.bmathias.go4lunch_.ui.list.DetailsActivity;
 import com.bmathias.go4lunch_.ui.list.ListFragment;
 import com.bmathias.go4lunch_.ui.map.MapFragment;
 import com.bmathias.go4lunch_.ui.workmates.WorkmatesFragment;
-import com.bmathias.go4lunch_.utils.NotificationReceiver;
 import com.bmathias.go4lunch_.viewmodel.MainViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -108,16 +101,11 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
     private void signOut() {
-        singOutFirebase();
-        signOutGoogle();
+        signOutFirebase();
     }
 
-    private void singOutFirebase() {
+    private void signOutFirebase() {
         firebaseAuth.signOut();
-    }
-
-    private void signOutGoogle() {
-        googleSignInClient.signOut();
     }
 
     @Override
@@ -164,27 +152,25 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
     @SuppressLint("NonConstantResourceId")
     private final NavigationView.OnNavigationItemSelectedListener drawerNavListener = item -> {
-
         switch (item.getItemId()) {
             case R.id.your_lunch_button:
-                mainViewModel.getUserFromDatabase();
                 this.mainViewModel.currentUser.observe(this, user -> {
                     if (user.getSelectedRestaurantId() != null) {
                         Intent intent = new Intent(this, DetailsActivity.class);
                         intent.putExtra("placeId", user.getSelectedRestaurantId());
                         startActivity(intent);
                     } else {
-                        Toast.makeText(this, "Vous n'avez pas selectionné de restaurant !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.drawer_menu_restaurant_error, Toast.LENGTH_SHORT).show();
                     }
                 });
-
                 break;
+
             case R.id.settings_button:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-
                 break;
+
             case R.id.logout_button:
                 new AlertDialog.Builder(MainActivity.this)
                         .setMessage(R.string.drawer_menu_logout_dialog_message)
@@ -196,12 +182,10 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                         })
                         .setNegativeButton(R.string.negative_string, (dialogInterface, i) -> dialogInterface.cancel())
                         .show();
-
                 break;
         }
         return true;
     };
-
 
     private void configureToolbar() {
         this.toolbar = this.binding.activityMainToolbar;
@@ -212,29 +196,24 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         NavigationBarView bottomNavigationView = this.binding.bottomNavigation;
         bottomNavigationView.setOnItemSelectedListener(bottomNavListener);
         bottomNavigationView.setSelectedItemId(R.id.nav_list);
-
         this.navigationView = this.binding.navigationView;
         navigationView.setNavigationItemSelectedListener(drawerNavListener);
     }
 
     private void configureDrawerLayout() {
         DrawerLayout drawerLayout = this.binding.activityMainDrawerLayout;
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.button_login_text_logged, R.string.button_login_text_not_logged);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
 
-
     private void updateUIWithUserData() {
-        mainViewModel.getUserFromDatabase();
         this.mainViewModel.currentUser.observe(this, user -> {
             if (user.getPhotoUrl() != null) {
                 setProfilePicture(user.getPhotoUrl());
             }
             setTextUserData(user);
-
         });
     }
 
@@ -248,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                 .error(R.drawable.ic_settings)
                 .apply(RequestOptions.circleCropTransform())
                 .into(userImageView);
-
     }
 
     private void setTextUserData(User user) {
@@ -262,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         TextView userMailTextView = headerView.findViewById(R.id.nav_header_user_mail_text_view);
         userNameTextView.setText(userFirstName);
         userMailTextView.setText(email);
-
     }
 
     @Override
@@ -280,37 +257,5 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         MenuItem menuItem = menu.findItem(R.id.search);
         menuItem.setVisible(false);
         return true;
-    }
-
-    private void createNotificationChannel(){
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            CharSequence name = String.valueOf(R.string.app_name);
-            String description = "Channel for Go4Lunch Notification";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("notifyGo4Lunch", name, importance);
-            channel.setDescription(description);
-
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    private void setupNotification(){
-        Toast.makeText(this, "Notification set !", Toast.LENGTH_LONG).show();
-
-        Intent intent = new Intent (MainActivity.this, NotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        long timeAtButtonClick = System.currentTimeMillis();
-
-        long tenSecondsInMillis = 1000 * 10;
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                timeAtButtonClick + tenSecondsInMillis,
-                pendingIntent);
     }
 }

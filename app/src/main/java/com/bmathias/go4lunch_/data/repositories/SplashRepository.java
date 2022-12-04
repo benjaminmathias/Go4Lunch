@@ -13,7 +13,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-@SuppressWarnings("ConstantConditions")
+import java.util.Objects;
+
 public class SplashRepository {
 
    private static volatile SplashRepository instance;
@@ -59,25 +60,8 @@ public class SplashRepository {
                authenticatedUserInFirebaseLiveData.setValue(user);
             }
          } else {
-            logErrorMessage(userTask.getException().getMessage());
+            logErrorMessage(Objects.requireNonNull(userTask.getException()).getMessage());
          }
       });
    }
-
-   /*
-   public MutableLiveData<User> addUserToLiveData(String userId) {
-      MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
-      usersRef.document(userId).get().addOnCompleteListener(userTask -> {
-         if (userTask.isSuccessful()) {
-            DocumentSnapshot document = userTask.getResult();
-            if(document.exists()) {
-               User user = document.toObject(User.class);
-               userMutableLiveData.setValue(user);
-            }
-         } else {
-            logErrorMessage(userTask.getException().getMessage());
-         }
-      });
-      return userMutableLiveData;
-   }*/
 }

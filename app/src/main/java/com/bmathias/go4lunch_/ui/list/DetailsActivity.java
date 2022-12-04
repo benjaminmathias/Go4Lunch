@@ -48,13 +48,13 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         String placeId = getIntent().getExtras().getString("placeId");
         this.setupDetailsViewModel(placeId);
+        this.setupLike(placeId);
         binding = ActivityDetailsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
 
         configureToolbar();
 
         this.setupDetailsView();
-        this.setupLike(placeId);
         this.setupFab(placeId);
         this.setupRecyclerView();
         setContentView(view);
@@ -173,7 +173,6 @@ public class DetailsActivity extends AppCompatActivity {
         this.detailsViewModel.getRestaurantDetails().observe(this, restaurant -> {
 
             AtomicBoolean likeIsClicked = new AtomicBoolean(restaurant.getCurrentUserFavorite());
-
             if (restaurant.getCurrentUserFavorite()) {
                 likeIsClicked.set(true);
                 tintViewDrawable(binding.restaurantDetailsLike, likeIsClicked.getAndSet(true));
@@ -237,10 +236,8 @@ public class DetailsActivity extends AppCompatActivity {
         Drawable[] drawables = button.getCompoundDrawables();
         for (Drawable drawable : drawables) {
             if (drawable != null && !isClicked) {
-
                 drawable.setColorFilter(getResources().getColor(R.color.orange_500), PorterDuff.Mode.SRC_ATOP);
             } else if (drawable != null) {
-
                 drawable.setColorFilter(getResources().getColor(R.color.yellow), PorterDuff.Mode.SRC_ATOP);
             }
         }
@@ -271,7 +268,7 @@ public class DetailsActivity extends AppCompatActivity {
         // For real use, the alarm will be fired everyday at noon if the requirement are met (user have a selected restaurant)
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 33);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
         calendar.set(Calendar.MINUTE, 10);
 
         Intent intent = new Intent(DetailsActivity.this, NotificationReceiver.class);

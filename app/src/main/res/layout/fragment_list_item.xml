@@ -95,30 +95,34 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="2dp"
         android:text="TextView"
+        android:tintMode="src_in"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/likes_counter_view"
         app:layout_constraintEnd_toStartOf="@+id/people_eating_counter_view"
         app:layout_constraintStart_toEndOf="@+id/restaurant_type_and_address_text_view"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_distance_text_view"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_coworker_eating"
-        tools:visibility="gone" />
+        app:tint="@color/black" />
 
     <ImageView
         android:id="@+id/liked_star_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="2dp"
-        android:foregroundTint="#871D1D"
-        app:tint="#000000"
+        android:backgroundTint="@color/yellow"
+        android:backgroundTintMode="src_in"
+        android:tintMode="src_in"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/likes_counter_view"
         app:layout_constraintStart_toEndOf="@+id/restaurant_type_and_address_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/people_eating_view"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_distance_text_view"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_baseline_star_outline_24" />
+        app:srcCompat="@drawable/ic_baseline_star_24"
+        app:tint="@color/yellow" />
 
     <TextView
         android:id="@+id/people_eating_counter_view"

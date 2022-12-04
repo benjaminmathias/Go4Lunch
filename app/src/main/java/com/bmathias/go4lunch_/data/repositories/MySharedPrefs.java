@@ -12,7 +12,6 @@ public class MySharedPrefs {
 
    private static volatile MySharedPrefs instance;
 
-
    private MySharedPrefs() {}
 
    public static MySharedPrefs getInstance() {
@@ -35,7 +34,6 @@ public class MySharedPrefs {
          mSharedPref = context.getSharedPreferences(context.getPackageName(), Activity.MODE_PRIVATE);
    }
 
-
    public String getString(String key, String defValue) {
       return mSharedPref.getString(key, defValue);
    }
@@ -45,16 +43,4 @@ public class MySharedPrefs {
       prefsEditor.putString(key, value);
       prefsEditor.apply();
    }
-
-
-   //// Clear Preference ////
-   public static void clearPreference(Context context) {
-      mSharedPref.edit().clear().apply();
-   }
-
-   //// Remove ////
-   public static void removePreference(String Key){
-      mSharedPref.edit().remove(Key).apply();
-   }
-
 }

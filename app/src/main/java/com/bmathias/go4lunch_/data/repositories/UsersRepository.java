@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.bmathias.go4lunch_.data.model.User;
+import com.bmathias.go4lunch_.data.network.model.DataResult;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -60,6 +61,32 @@ public final class UsersRepository {
         return _users;
     }
 
+    public LiveData<DataResult<List<User>>> getDataUsers() {
+
+        MutableLiveData<DataResult<List<User>>> _users = new MutableLiveData<>();
+
+        usersRef.get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            List<User> users = task.getResult().toObjects(User.class);
+                            DataResult<List<User>> dataResult = new DataResult<>(users);
+                            _users.postValue(dataResult);
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                        }
+                    } else {
+                        Exception exception = task.getException();
+                        DataResult<List<User>> dataResult = new DataResult<>(exception);
+                        Log.e("onError", "======================================================");
+                        Log.e(TAG, "Error getting documents: ", task.getException());
+                        Objects.requireNonNull(exception).printStackTrace();
+                        Log.e("onError", "======================================================");
+                        _users.postValue(dataResult);
+                    }
+                });
+
+        return _users;
+    }
 
     // Retrieve only users eating at said restaurant in realtime
     public LiveData<List<User>> getUsersByPlaceId(String placeId) {

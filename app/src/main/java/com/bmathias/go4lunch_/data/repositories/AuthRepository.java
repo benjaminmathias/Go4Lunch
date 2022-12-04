@@ -38,11 +38,10 @@ public class AuthRepository {
         }
     }
 
-    public LiveData<User> firebaseSignInWithGoogle(AuthCredential googleAuthCredential) {
+    public LiveData<User> firebaseSignIn(AuthCredential authCredential) {
         MutableLiveData<User> authenticatedUserMutableLiveData = new MutableLiveData<>();
-        firebaseAuth.signInWithCredential(googleAuthCredential).addOnCompleteListener(authTask -> {
+        firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener(authTask -> {
             if (authTask.isSuccessful()) {
-                //boolean isNewUser = authTask.getResult().getAdditionalUserInfo().isNewUser();
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) {
                     String userId = firebaseUser.getUid();
@@ -52,11 +51,11 @@ public class AuthRepository {
                     User user = new User(userId, userName, userEmail, photoUrl, null, null);
 
                     createUserInFirestoreIfNotExists(user, authenticatedUserMutableLiveData);
-                    //authenticatedUserMutableLiveData.setValue(user);
+                    authenticatedUserMutableLiveData.setValue(user);
                 }
             } else {
                 authenticatedUserMutableLiveData.setValue(null);
-                logErrorMessage(authTask.getException().getMessage());
+                logErrorMessage(Objects.requireNonNull(authTask.getException()).getMessage());
             }
         });
         return authenticatedUserMutableLiveData;
@@ -73,7 +72,7 @@ public class AuthRepository {
                             authenticatedUser.isCreated = true;
                             userLiveData.setValue(authenticatedUser);
                         } else {
-                            logErrorMessage(userCreationTask.getException().getMessage());
+                            logErrorMessage(Objects.requireNonNull(userCreationTask.getException()).getMessage());
                             userLiveData.setValue(null);
                         }
                     });
@@ -81,48 +80,8 @@ public class AuthRepository {
                     userLiveData.setValue(authenticatedUser);
                 }
             } else {
-                logErrorMessage(uidTask.getException().getMessage());
+                logErrorMessage(Objects.requireNonNull(uidTask.getException()).getMessage());
             }
         });
     }
-
-    public LiveData<User> createUserInFirestoreIfNotExists(User authenticatedUser) {
-        MutableLiveData<User> newUserMutableLiveData = new MutableLiveData<>();
-        DocumentReference uidRef = usersRef.document(authenticatedUser.getUserId());
-        uidRef.get().addOnCompleteListener(uidTask -> {
-            if (uidTask.isSuccessful()) {
-                DocumentSnapshot document = uidTask.getResult();
-                if (!document.exists()) {
-                    uidRef.set(authenticatedUser).addOnCompleteListener(userCreationTask -> {
-                        if (userCreationTask.isSuccessful()) {
-                            authenticatedUser.isCreated = true;
-                            newUserMutableLiveData.setValue(authenticatedUser);
-                        } else {
-                            logErrorMessage(userCreationTask.getException().getMessage());
-                        }
-                    });
-                } else {
-                    newUserMutableLiveData.setValue(authenticatedUser);
-                }
-            } else {
-                logErrorMessage(uidTask.getException().getMessage());
-            }
-        });
-        return newUserMutableLiveData;
-    }
-/*
-    @Nullable
-    public FirebaseUser getCurrentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    public Boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);
-    }
-
-    public Task<Void> signOut(Context context) {
-        // LiveData<Boolean> _signedOut = new MutableLiveData<>();
-        return AuthUI.getInstance().signOut(context);
-    }
-*/
 }

@@ -3,6 +3,7 @@ package com.bmathias.go4lunch_.injection;
 import com.bmathias.go4lunch_.BuildConfig;
 import com.bmathias.go4lunch_.data.network.PlacesApiService;
 import com.bmathias.go4lunch_.data.repositories.AuthRepository;
+import com.bmathias.go4lunch_.data.repositories.ChatRepository;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.MySharedPrefs;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
@@ -19,8 +20,12 @@ public class Injection {
                 provideCurrentUserRepository(), provideSplashRepository(), provideUserRepository(), provideSharedPrefs());
     }
 
+    public static ChatViewModelFactory provideChatViewModelFactory(String userId) {
+        return new ChatViewModelFactory(provideChatRepository(), userId);
+    }
+
     public static RestaurantRepository provideRestaurantRepository() {
-        return RestaurantRepository.getInstance(provideLocationService(), provideApiService(), BuildConfig.PHOTO_BASE_URL, provideSharedPrefs(), FirebaseFirestore.getInstance());
+        return RestaurantRepository.getInstance(provideLocationService(), provideApiService(), BuildConfig.PHOTO_BASE_URL, provideSharedPrefs(), FirebaseFirestore.getInstance(), provideCurrentUserRepository());
     }
 
     private static PlacesApiService provideApiService() {
@@ -45,6 +50,10 @@ public class Injection {
 
     public static UsersRepository provideUserRepository() {
         return UsersRepository.getInstance(FirebaseFirestore.getInstance());
+    }
+
+    public static ChatRepository provideChatRepository() {
+        return ChatRepository.getInstance(FirebaseFirestore.getInstance(), provideCurrentUserRepository());
     }
 
     public static MySharedPrefs provideSharedPrefs() {return MySharedPrefs.getInstance();}

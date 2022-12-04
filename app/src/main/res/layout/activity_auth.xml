@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/login_activity_background" />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/facebook_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +24,7 @@
         android:backgroundTint="@color/facebook_button_color"
         android:drawableLeft="@drawable/ic_facebook_24"
         android:drawableTint="@color/white"
+        android:minHeight="48dp"
         android:padding="16dp"
         android:paddingBottom="4dp"
         android:text="@string/login_with_facebook"

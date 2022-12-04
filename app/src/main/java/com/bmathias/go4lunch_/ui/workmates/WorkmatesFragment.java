@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bmathias.go4lunch_.R;
@@ -23,7 +21,7 @@ import com.bmathias.go4lunch_.viewmodel.WorkmatesViewModel;
 
 import java.util.ArrayList;
 
-public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnUserListener {
+public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnUserListener, WorkmatesAdapter.OnUserChatListener {
 
     private WorkmatesViewModel workmatesViewModel;
     private WorkmatesAdapter adapter;
@@ -35,36 +33,66 @@ public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnUs
         binding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
         requireActivity().setTitle(R.string.workmates_fragment_name);
-        this.setupViewModel();
         this.setupRecyclerView();
+        this.setupViewModel();
+        observeLiveData();
+        loadUsers();
         return binding.getRoot();
-
     }
 
     private void setupViewModel(){
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.workmatesViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmatesViewModel.class);
-        this.workmatesViewModel.getUsersFromDatabase();
+        this.adapter.setRecyclerViewWorkmatesViewModel(workmatesViewModel);
+    }
+
+    private void loadUsers() {
+        this.workmatesViewModel.getDataUsersFromDatabase().observe(getViewLifecycleOwner(), aBoolean -> {
+
+        });
+    }
+
+    private void observeLiveData() {
+        workmatesViewModel.getUsers().observe(getViewLifecycleOwner(), users -> {
+                    adapter.setUserItems(users);
+            if (adapter.getItemCount() == 0) {
+                binding.emptyView.getRoot().setVisibility(View.VISIBLE);
+                binding.emptyView.title.setText(R.string.empty_dataset_no_result);
+                binding.emptyView.subTitle.setText(R.string.empty_dataset_no_result_description);
+                binding.fragmentWorkmatesRecyclerView.setVisibility(View.GONE);
+            }
+        });
+
+        workmatesViewModel.error.observe(getViewLifecycleOwner(), error -> {
+            binding.emptyView.getRoot().setVisibility(View.VISIBLE);
+            binding.emptyView.title.setText(R.string.empty_dataset_error);
+            binding.emptyView.subTitle.setText(R.string.empty_dataset_error_description);
+            binding.fragmentWorkmatesRecyclerView.setVisibility(View.GONE);
+            binding.progressbar.setVisibility(View.GONE);
+        });
+
+        workmatesViewModel.showProgress.observe(getViewLifecycleOwner(), isVisible -> binding.progressbar.setVisibility(isVisible ? View.VISIBLE : View.GONE));
     }
 
     private void setupRecyclerView(){
-        adapter = new WorkmatesAdapter(new ArrayList<>(), this);
-
-        this.workmatesViewModel.getUsers().observe(getViewLifecycleOwner(), users ->
-                adapter.setUserItems(users));
+        adapter = new WorkmatesAdapter(new ArrayList<>(), this, this);
+        adapter.setRecyclerViewWorkmatesViewModel(workmatesViewModel);
 
         binding.fragmentWorkmatesRecyclerView.setAdapter(adapter);
         binding.fragmentWorkmatesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.fragmentWorkmatesRecyclerView.addItemDecoration(new DividerItemDecoration(binding.fragmentWorkmatesRecyclerView.getContext(),
-                DividerItemDecoration.VERTICAL));
-
     }
 
     @Override
     public void onUserClick(String placeId) {
-        Toast.makeText(this.getActivity(), "Click on " + placeId, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), DetailsActivity.class);
         intent.putExtra("placeId", placeId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onUserChatClick(String userId) {
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra("userId", userId);
         startActivity(intent);
     }
 }

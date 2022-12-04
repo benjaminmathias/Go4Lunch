@@ -13,14 +13,14 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class CurrentUserRepository {
 
    private static volatile CurrentUserRepository instance;
 
    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
    private final CollectionReference usersRef;
-
-
 
    private CurrentUserRepository(FirebaseFirestore firebaseFirestore) {
       usersRef = firebaseFirestore.collection(USERS);
@@ -39,11 +39,15 @@ public class CurrentUserRepository {
       }
    }
 
-   public LiveData<User> getCurrentUser() {
-      MutableLiveData<User> authenticatedUserInFirebaseLiveData = new MutableLiveData<>();
+   public String getCurrentUserId() {
       FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
       assert firebaseUser != null;
-      getUserFromDatabase(firebaseUser.getUid(), authenticatedUserInFirebaseLiveData);
+      return firebaseUser.getUid();
+   }
+
+   public LiveData<User> getCurrentUser() {
+      MutableLiveData<User> authenticatedUserInFirebaseLiveData = new MutableLiveData<>();
+      getUserFromDatabase(getCurrentUserId(), authenticatedUserInFirebaseLiveData);
       return authenticatedUserInFirebaseLiveData;
    }
 
@@ -56,7 +60,7 @@ public class CurrentUserRepository {
                authenticatedUserInFirebaseLiveData.setValue(user);
             }
          } else {
-            logErrorMessage(userTask.getException().getMessage());
+            logErrorMessage(Objects.requireNonNull(userTask.getException()).getMessage());
          }
       });
    }

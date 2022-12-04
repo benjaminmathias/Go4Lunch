@@ -51,9 +51,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
       } else if (aClass.isAssignableFrom(SplashViewModel.class)){
          return (T) new SplashViewModel(splashDatasource);
       } else if (aClass.isAssignableFrom(WorkmatesViewModel.class)){
-         return (T) new WorkmatesViewModel(usersDatasource);
+         return (T) new WorkmatesViewModel(usersDatasource, currentUserDatasource);
       } else if (aClass.isAssignableFrom(MainViewModel.class)){
-         return (T) new MainViewModel(currentUserDatasource, restaurantDatasource);
+         return (T) new MainViewModel(currentUserDatasource);
       } else if (aClass.isAssignableFrom(MapViewModel.class)){
          return (T) new MapViewModel(restaurantDatasource);
       } else if (aClass.isAssignableFrom(SettingsViewModel.class)){

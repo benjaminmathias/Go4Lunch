@@ -57,30 +57,31 @@ public class RestaurantRepository {
 
     private static volatile RestaurantRepository instance;
 
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private final CurrentUserRepository currentUserRepository;
     private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
     private final CollectionReference usersRef;
     private final CollectionReference likedRestaurantsRef;
 
     private static final String type = "restaurant";
 
-    private RestaurantRepository(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore) {
+    private RestaurantRepository(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore, CurrentUserRepository currentUserRepository) {
         this.placesAPIService = placesAPIService;
         this.photoBaseUrl = photoBaseUrl;
         this.mLocationService = locationService;
         this.sharedPrefs = sharedPrefs;
+        this.currentUserRepository = currentUserRepository;
         usersRef = firebaseFirestore.collection(USERS);
         likedRestaurantsRef = firebaseFirestore.collection(LIKED_RESTAURANTS);
     }
 
-    public static RestaurantRepository getInstance(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore) {
+    public static RestaurantRepository getInstance(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore, CurrentUserRepository currentUserRepository) {
         RestaurantRepository result = instance;
         if (result != null) {
             return result;
         }
         synchronized (RestaurantRepository.class) {
             if (instance == null) {
-                instance = new RestaurantRepository(locationService, placesAPIService, photoBaseUrl, sharedPrefs, firebaseFirestore);
+                instance = new RestaurantRepository(locationService, placesAPIService, photoBaseUrl, sharedPrefs, firebaseFirestore, currentUserRepository);
             }
             return instance;
         }
@@ -252,8 +253,8 @@ public class RestaurantRepository {
 
     // Update user selected restaurant
     public void updateSelectedRestaurant(String placeId, String placeName) {
-        if (firebaseAuth.getUid() != null) {
-            DocumentReference userRef = rootRef.collection(USERS).document(firebaseAuth.getUid());
+        if (currentUserRepository.getCurrentUserId() != null) {
+            DocumentReference userRef = rootRef.collection(USERS).document(currentUserRepository.getCurrentUserId());
             userRef.update("selectedRestaurantId", placeId).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantId successfully updated!"))
                     .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
             userRef.update("selectedRestaurantName", placeName).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantName successfully updated!"))
@@ -263,8 +264,8 @@ public class RestaurantRepository {
 
     // Delete user selected restaurant
     public void deleteSelectedRestaurant() {
-        if (firebaseAuth.getUid() != null) {
-            DocumentReference userRef = rootRef.collection(USERS).document(firebaseAuth.getUid());
+        if (currentUserRepository.getCurrentUserId() != null) {
+            DocumentReference userRef = rootRef.collection(USERS).document(currentUserRepository.getCurrentUserId());
             userRef.update("selectedRestaurantId", null).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantId successfully deleted!"))
                     .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
             userRef.update("selectedRestaurantName", null).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantName successfully deleted!"))
@@ -274,10 +275,10 @@ public class RestaurantRepository {
 
     // Add a favorite restaurant
     public void addFavoriteRestaurant(String placeId) {
-        if (firebaseAuth.getUid() != null) {
+        if (currentUserRepository.getCurrentUserId() != null) {
             Map<String, Object> data = new HashMap<>();
             data.put("restaurantId", placeId);
-            data.put("userId", firebaseAuth.getUid());
+            data.put("userId", currentUserRepository.getCurrentUserId());
 
             likedRestaurantsRef.add(data)
                     .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId()))
@@ -287,9 +288,9 @@ public class RestaurantRepository {
 
     // Remove a specific favorite restaurant
     public void removeFavoriteRestaurant(String placeId) {
-        if (firebaseAuth.getUid() != null) {
+        if (currentUserRepository.getCurrentUserId() != null) {
             Query query = likedRestaurantsRef.whereEqualTo("restaurantId", placeId)
-                    .whereEqualTo("userId", firebaseAuth.getUid());
+                    .whereEqualTo("userId", currentUserRepository.getCurrentUserId());
 
             query.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -313,16 +314,12 @@ public class RestaurantRepository {
                         Log.d(TAG, "Listen failed.", error);
                         return;
                     }
-
                     List<User> users = Objects.requireNonNull(value).toObjects(User.class);
-
-                    Log.d(TAG, "Example ID : " + users.get(0).getSelectedRestaurantId());
                     List<String> restaurantIds = new ArrayList<>();
 
                     for (User user : users) {
                         restaurantIds.add(user.getSelectedRestaurantId());
                     }
-
                     peopleEatingObservable.onNext(restaurantIds);
                 });
 
@@ -339,23 +336,13 @@ public class RestaurantRepository {
                         Log.d(TAG, "Listen failed.", error);
                         return;
                     }
-
                     List<LikedRestaurant> likedRestaurants = Objects.requireNonNull(value).toObjects(LikedRestaurant.class);
-
-                    Log.d(TAG, "Example ID : " + likedRestaurants.get(0).getRestaurantId());
-
                     List<String> restaurantLikes = new ArrayList<>();
                     for (LikedRestaurant likedRestaurant : likedRestaurants) {
                         restaurantLikes.add(likedRestaurant.getRestaurantId());
                     }
-
-                    Log.d(TAG, "Number of likes : " + restaurantLikes.size());
-                    Log.d(TAG, "Liked  new list ID : " + Arrays.toString(restaurantLikes.toArray()));
-
-
                     restaurantLikesObservable.onNext(restaurantLikes);
                 });
-
         return restaurantLikesObservable;
     }
 
@@ -364,24 +351,18 @@ public class RestaurantRepository {
         BehaviorSubject<Boolean> currentUserFavoriteObservable = BehaviorSubject.create();
 
         likedRestaurantsRef.whereEqualTo("restaurantId", placeId)
-                .whereEqualTo("userId", firebaseAuth.getUid())
+                .whereEqualTo("userId", currentUserRepository.getCurrentUserId())
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
                         Log.d(TAG, "Listen failed.", error);
                         return;
                     }
-
                     boolean currentUserFavorite = !Objects.requireNonNull(value).getDocuments().isEmpty();
-
                     currentUserFavoriteObservable.onNext(currentUserFavorite);
                 });
 
         return currentUserFavoriteObservable;
     }
-
-    // Compute distance between user's phone and restaurant location
-
-
 
     // Commented methods for autocomplete, cannot be used in our case since the API isn't sending needed data
 
@@ -476,6 +457,5 @@ public class RestaurantRepository {
         }
         return restaurantsList;
     }
-
     */
 }

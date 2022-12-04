@@ -66,9 +66,7 @@
 
 
     <!-- ... -->
-    <string name="facebook_application_id" translatable="false">APP_ID</string>
     <!-- Facebook Application ID, prefixed by 'fb'. Enables Chrome Custom tabs. -->
-    <string name="facebook_login_protocol_scheme" translatable="false">fbAPP_ID</string>
 
     <!-- DRAWER -->
     <string name="info_no_email_found">Pas d\'email</string>
@@ -91,13 +89,17 @@
     <string name="default_notification_channel_id">1234</string>
     <string name="msg_token_fmt">Token FCM</string>
     <string name="title_activity_scrolling">a</string>
-    <string name="large_text">a</string>
     <string name="action_settings">a</string>
     <string name="empty_dataset_error">Impossible d\'afficher les résultats</string>
     <string name="empty_dataset_error_description">Veuillez vérifier votre connexion internet afin de résoudre ce problème.</string>
     <string name="empty_dataset_no_result">Pas de résultat correspondant à votre recherche</string>
     <string name="empty_dataset_no_result_description">Essayez de chercher un autre restaurant</string>
     <string name="workmates_not_eating">" n'a pas selectionné de restaurant"</string>
+    <string name="chat_activity_username">Moi</string>
+    <string name="no_messages">Il n\'y a pas de message a afficher</string>
+    <string name="messages_error">Impossible d\'afficher les messages</string>
+    <string name="message_hint">Envoyer un Chat</string>
+    <string name="drawer_menu_restaurant_error">Vous n\'avez pas choisi de restaurant !</string>
 
 
 </resources>

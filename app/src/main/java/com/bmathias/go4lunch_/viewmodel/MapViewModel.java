@@ -63,7 +63,6 @@ public class MapViewModel extends ViewModel {
         });
     }
 
-
     public LiveData<List<RestaurantItem>> getRestaurants() {
         return restaurants;
     }
