@@ -58,6 +58,8 @@ public class CurrentUserRepository {
             if(document.exists()) {
                User user = document.toObject(User.class);
                authenticatedUserInFirebaseLiveData.setValue(user);
+            } else {
+               // TODO : create firebase user
             }
          } else {
             logErrorMessage(Objects.requireNonNull(userTask.getException()).getMessage());

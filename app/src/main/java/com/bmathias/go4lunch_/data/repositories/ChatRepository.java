@@ -2,18 +2,15 @@ package com.bmathias.go4lunch_.data.repositories;
 
 import static androidx.lifecycle.Transformations.switchMap;
 import static com.bmathias.go4lunch_.utils.Constants.TAG;
-import static com.bmathias.go4lunch_.utils.HelperClass.logErrorMessage;
 
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import com.bmathias.go4lunch_.data.model.ChatMessage;
 import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.data.network.model.DataResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

@@ -7,9 +7,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class RestaurantApi {
 
-    @SerializedName("business_status")
-    @Expose
-    private String businessStatus;
     @SerializedName("geometry")
     @Expose
     private Geometry geometry;
@@ -25,23 +22,9 @@ public class RestaurantApi {
     @SerializedName("place_id")
     @Expose
     private String placeId;
-    @SerializedName("rating")
-    @Expose
-    private Double rating;
-    @SerializedName("user_ratings_total")
-    @Expose
-    private Integer userRatingsTotal;
     @SerializedName("vicinity")
     @Expose
     private String vicinity;
-
-    public String getBusinessStatus() {
-        return businessStatus;
-    }
-
-    public void setBusinessStatus(String businessStatus) {
-        this.businessStatus = businessStatus;
-    }
 
     public Geometry getGeometry() {
         return geometry;
@@ -81,22 +64,6 @@ public class RestaurantApi {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    public Integer getUserRatingsTotal() {
-        return userRatingsTotal;
-    }
-
-    public void setUserRatingsTotal(Integer userRatingsTotal) {
-        this.userRatingsTotal = userRatingsTotal;
     }
 
     public String getVicinity() {

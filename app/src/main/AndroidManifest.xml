@@ -4,6 +4,7 @@
     package="com.bmathias.go4lunch_">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -17,8 +18,14 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4Lunch_">
-        <meta-data tools:replace="android:value" android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"
+            tools:replace="android:value" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
         <activity
             android:name=".ui.workmates.ChatActivity"
             android:exported="false"
@@ -53,9 +60,12 @@
             android:name="com.bmathias.go4lunch_.ui.AuthActivity"
             android:exported="false"
             android:noHistory="true"
-            android:theme="@style/Theme.Go4Lunch_.NoActionBar" /> <!-- NOTIFICATION SERVICE -->
+            android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
+
+        <!-- NOTIFICATION SERVICE -->
         <receiver
             android:name="com.bmathias.go4lunch_.utils.WakeUpAlarmReceiver"
+            android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

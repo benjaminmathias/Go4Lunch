@@ -1,9 +1,7 @@
 package com.bmathias.go4lunch_.data.repositories;
 
 import static com.bmathias.go4lunch_.utils.Constants.LIKED_RESTAURANTS;
-import static com.bmathias.go4lunch_.utils.Constants.TAG;
 import static com.bmathias.go4lunch_.utils.Constants.USERS;
-import static com.bmathias.go4lunch_.utils.MapUtils.getDistance;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -12,45 +10,37 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.bmathias.go4lunch_.BuildConfig;
-import com.bmathias.go4lunch_.data.model.LikedRestaurant;
+import com.bmathias.go4lunch_.data.mappers.RestaurantMapper;
 import com.bmathias.go4lunch_.data.model.RestaurantDetails;
 import com.bmathias.go4lunch_.data.model.RestaurantItem;
-import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.data.model.UserLocation;
 import com.bmathias.go4lunch_.data.network.PlacesApiService;
 import com.bmathias.go4lunch_.data.network.model.DataResult;
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantApi;
 import com.bmathias.go4lunch_.data.network.model.places.RestaurantsApiResult;
 import com.bmathias.go4lunch_.data.network.model.placesDetails.DetailsResultAPI;
-import com.bmathias.go4lunch_.data.network.model.placesDetails.RestaurantDetailsAPI;
 import com.bmathias.go4lunch_.utils.DistanceComparator;
 import com.bmathias.go4lunch_.utils.LocationService;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.BehaviorSubject;
 
 public class RestaurantRepository {
 
     private final String photoBaseUrl;
     private final PlacesApiService placesAPIService;
     private final LocationService mLocationService;
-    private final MySharedPrefs sharedPrefs;
+    private final ConfigRepository configRepository;
+
+    private final Scheduler subscribeScheduler;
+    private final Scheduler observeSchedule;
 
     private Double latitude;
     private Double longitude;
@@ -58,33 +48,89 @@ public class RestaurantRepository {
     private static volatile RestaurantRepository instance;
 
     private final CurrentUserRepository currentUserRepository;
-    private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
     private final CollectionReference usersRef;
     private final CollectionReference likedRestaurantsRef;
+    private final UserDatasource userDatasource;
 
     private static final String type = "restaurant";
 
-    private RestaurantRepository(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore, CurrentUserRepository currentUserRepository) {
+    private RestaurantRepository(
+            LocationService locationService,
+            PlacesApiService placesAPIService,
+            String photoBaseUrl,
+            ConfigRepository configRepository,
+            FirebaseFirestore firebaseFirestore,
+            CurrentUserRepository currentUserRepository,
+            Scheduler subscribeScheduler,
+            Scheduler observeScheduler,
+            UserDatasource userDatasource) {
         this.placesAPIService = placesAPIService;
         this.photoBaseUrl = photoBaseUrl;
         this.mLocationService = locationService;
-        this.sharedPrefs = sharedPrefs;
+        this.configRepository = configRepository;
         this.currentUserRepository = currentUserRepository;
+        this.subscribeScheduler = subscribeScheduler;
+        this.observeSchedule = observeScheduler;
         usersRef = firebaseFirestore.collection(USERS);
         likedRestaurantsRef = firebaseFirestore.collection(LIKED_RESTAURANTS);
+        this.userDatasource = userDatasource;
     }
 
-    public static RestaurantRepository getInstance(LocationService locationService, PlacesApiService placesAPIService, String photoBaseUrl, MySharedPrefs sharedPrefs, FirebaseFirestore firebaseFirestore, CurrentUserRepository currentUserRepository) {
+    // Instance used for basic usage across the app
+    public static RestaurantRepository getInstance(
+            LocationService locationService,
+            PlacesApiService placesAPIService,
+            String photoBaseUrl,
+            ConfigRepository configRepository,
+            FirebaseFirestore firebaseFirestore,
+            CurrentUserRepository currentUserRepository,
+            Scheduler subscribeScheduler,
+            Scheduler observeScheduler,
+            UserDatasource userDatasource
+    ) {
         RestaurantRepository result = instance;
         if (result != null) {
             return result;
         }
         synchronized (RestaurantRepository.class) {
             if (instance == null) {
-                instance = new RestaurantRepository(locationService, placesAPIService, photoBaseUrl, sharedPrefs, firebaseFirestore, currentUserRepository);
+                instance = new RestaurantRepository(
+                        locationService,
+                        placesAPIService,
+                        photoBaseUrl,
+                        configRepository,
+                        firebaseFirestore,
+                        currentUserRepository,
+                        subscribeScheduler,
+                        observeScheduler,
+                        userDatasource);
             }
             return instance;
         }
+    }
+
+    // Instance only used for testing
+    public static RestaurantRepository getTestInstance(
+            LocationService locationService,
+            PlacesApiService placesAPIService,
+            String photoBaseUrl,
+            ConfigRepository configRepository,
+            FirebaseFirestore firebaseFirestore,
+            CurrentUserRepository currentUserRepository,
+            Scheduler subscribeScheduler,
+            Scheduler observeScheduler,
+            UserDatasource userDatasource
+    ) {
+        return new RestaurantRepository(
+                locationService,
+                placesAPIService,
+                photoBaseUrl,
+                configRepository,
+                firebaseFirestore,
+                currentUserRepository,
+                subscribeScheduler,
+                observeScheduler,
+                userDatasource);
     }
 
     // RESTAURANT PLACES API //
@@ -95,10 +141,16 @@ public class RestaurantRepository {
         }
         return Observable.zip(
                 getRestaurantsFromApiObservable(query, userLocation),
-                getNumberOfPeopleEatingObservable(),
-                getNumberOfFavoriteObservable(),
+                userDatasource.getNonDistinctSelectedRestaurantIds(),
+                userDatasource.getNonDistinctFavoritedRestaurantIds(),
                 (restaurantsFromApi, numberOfPeopleEating, numberOfFavorites) ->
-                        restaurantApiConverter(restaurantsFromApi, photoBaseUrl, numberOfPeopleEating, numberOfFavorites)
+                        RestaurantMapper.apisToItems(
+                                restaurantsFromApi,
+                                photoBaseUrl,
+                                numberOfPeopleEating,
+                                numberOfFavorites,
+                                latitude,
+                                longitude)
         );
     }
 
@@ -107,7 +159,7 @@ public class RestaurantRepository {
         longitude = userLocation.getLongitude();
 
         String location = latitude + "," + longitude;
-        String radius = sharedPrefs.getString("radius", "1000");
+        String radius = configRepository.getRadius();
 
         Log.d("User Location is", location);
         Log.d("Radius is", "" + radius);
@@ -127,8 +179,8 @@ public class RestaurantRepository {
                     Collections.sort(restaurants, new DistanceComparator());
                     return restaurants;
                 })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(subscribeScheduler)
+                .observeOn(observeSchedule)
                 .subscribe(restaurants -> {
                     DataResult<List<RestaurantItem>> dataResult = new DataResult<>(restaurants);
                     _restaurants.postValue(dataResult);
@@ -154,11 +206,11 @@ public class RestaurantRepository {
 
         MutableLiveData<DataResult<RestaurantDetails>> _restaurantDetails = new MutableLiveData<>();
 
-        Observable.zip(getRestaurantsDetailsApiResultObservable(placeId), getCurrentUserFavoriteObservable(placeId), (detailsResultAPI, currentUserFavorite)
-                        -> restaurantDetailsConverter(detailsResultAPI.getResult(), photoBaseUrl, currentUserFavorite)
+        Observable.zip(getRestaurantsDetailsApiResultObservable(placeId), userDatasource.getCurrentUserFavoriteObservable(placeId), (detailsResultAPI, currentUserFavorite)
+                        -> RestaurantMapper.apiToDetails(detailsResultAPI.getResult(), photoBaseUrl, currentUserFavorite, BuildConfig.MAPS_API_KEY)
                 )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(subscribeScheduler)
+                .observeOn(observeSchedule)
                 .subscribe(detailsResult -> {
                     DataResult<RestaurantDetails> dataResult = new DataResult<>(detailsResult);
                     _restaurantDetails.postValue(dataResult);
@@ -170,198 +222,24 @@ public class RestaurantRepository {
         return _restaurantDetails;
     }
 
-    // --- CONVERTERS --- //
-    // Convert the Restaurant model provided by Places API to our own model
-    private static List<RestaurantItem> restaurantApiConverter(List<RestaurantApi> restaurantApis, String photoBaseUrl, List<String> eatingAtRestaurant, List<String> likedRestaurants) {
-        List<RestaurantItem> restaurantsList = new ArrayList<>(restaurantApis.size());
-        for (RestaurantApi restaurantAPI : restaurantApis) {
-            RestaurantItem.Builder builder = new RestaurantItem.Builder()
-                    .withName(restaurantAPI.getName())
-                    .withAddress(restaurantAPI.getVicinity())
-                    .withPlaceId(restaurantAPI.getPlaceId());
-
-            if (restaurantAPI.getGeometry() != null) {
-                builder.withLongitude(restaurantAPI.getGeometry().getLocation().getLng());
-                builder.withLatitude(restaurantAPI.getGeometry().getLocation().getLat());
-                builder.withDistance(Math.round(getDistance(
-                        restaurantAPI.getGeometry().getLocation().getLat(),
-                        restaurantAPI.getGeometry().getLocation().getLng(),
-                        instance.latitude,
-                        instance.longitude))
-                );
-            }
-
-            if (restaurantAPI.getOpeningHours() != null) {
-                builder.withIsOpen(restaurantAPI.getOpeningHours().getOpenNow());
-            } else {
-                builder.withIsOpen(false);
-            }
-
-            if (restaurantAPI.getPhotos() != null && !restaurantAPI.getPhotos().isEmpty()) {
-                String photoReference = restaurantAPI.getPhotos().get(0).getPhotoReference();
-                String photoUrl = photoBaseUrl + photoReference + "&key=" + BuildConfig.MAPS_API_KEY;
-                builder.withPhoto(photoUrl);
-            }
-
-            if (eatingAtRestaurant != null) {
-                int numberOfPeopleEating = Collections.frequency(eatingAtRestaurant, restaurantAPI.getPlaceId());
-                builder.withIsSomeoneEating(numberOfPeopleEating);
-            }
-
-            if (likedRestaurants != null) {
-                int numberOfFavorites = Collections.frequency(likedRestaurants, restaurantAPI.getPlaceId());
-                builder.withNumberOfFavorites(numberOfFavorites);
-                Log.d(TAG, "Number of likes for " + restaurantAPI.getName() + " = " + numberOfFavorites);
-            }
-
-            RestaurantItem restaurants = builder.build();
-            restaurantsList.add(restaurants);
-        }
-        return restaurantsList;
-    }
-
-    // Convert the RestaurantDetails model provided by Places Details API to our own model
-    private static RestaurantDetails restaurantDetailsConverter(RestaurantDetailsAPI restaurantDetailsAPI, String photoBaseUrl, Boolean isCurrentUserFavorite) {
-        RestaurantDetails.Builder builder = new RestaurantDetails.Builder()
-                .withAddress(restaurantDetailsAPI.getFormattedAddress());
-
-        if (restaurantDetailsAPI.getName() != null) {
-            builder.withName(restaurantDetailsAPI.getName());
-        }
-
-        if (restaurantDetailsAPI.getPlaceId() != null) {
-            builder.withPlaceId(restaurantDetailsAPI.getPlaceId());
-        }
-        if (restaurantDetailsAPI.getInternationalPhoneNumber() != null) {
-            builder.withPhoneNumber(restaurantDetailsAPI.getFormattedPhoneNumber());
-        }
-
-        if (restaurantDetailsAPI.getWebsite() != null) {
-            builder.withWebsite(restaurantDetailsAPI.getWebsite());
-        }
-
-        if (restaurantDetailsAPI.getPhotos() != null && !restaurantDetailsAPI.getPhotos().isEmpty()) {
-            String photoReference = restaurantDetailsAPI.getPhotos().get(0).getPhotoReference();
-            String photoUrl = photoBaseUrl + photoReference + "&key=" + BuildConfig.MAPS_API_KEY;
-            builder.withPhotoUrl(photoUrl);
-        }
-
-        builder.withIsCurrentUserFavorite(isCurrentUserFavorite);
-
-        return builder.build();
-    }
-
     // Update user selected restaurant
     public void updateSelectedRestaurant(String placeId, String placeName) {
-        if (currentUserRepository.getCurrentUserId() != null) {
-            DocumentReference userRef = rootRef.collection(USERS).document(currentUserRepository.getCurrentUserId());
-            userRef.update("selectedRestaurantId", placeId).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantId successfully updated!"))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-            userRef.update("selectedRestaurantName", placeName).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantName successfully updated!"))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-        }
+        userDatasource.updateSelectedRestaurant(placeId, placeName);
     }
 
     // Delete user selected restaurant
     public void deleteSelectedRestaurant() {
-        if (currentUserRepository.getCurrentUserId() != null) {
-            DocumentReference userRef = rootRef.collection(USERS).document(currentUserRepository.getCurrentUserId());
-            userRef.update("selectedRestaurantId", null).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantId successfully deleted!"))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-            userRef.update("selectedRestaurantName", null).addOnSuccessListener(aVoid -> Log.d(TAG, "selectedRestaurantName successfully deleted!"))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-        }
+        userDatasource.deleteSelectedRestaurant();
     }
 
     // Add a favorite restaurant
     public void addFavoriteRestaurant(String placeId) {
-        if (currentUserRepository.getCurrentUserId() != null) {
-            Map<String, Object> data = new HashMap<>();
-            data.put("restaurantId", placeId);
-            data.put("userId", currentUserRepository.getCurrentUserId());
-
-            likedRestaurantsRef.add(data)
-                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId()))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
-        }
+        userDatasource.addFavoriteRestaurant(placeId);
     }
 
     // Remove a specific favorite restaurant
     public void removeFavoriteRestaurant(String placeId) {
-        if (currentUserRepository.getCurrentUserId() != null) {
-            Query query = likedRestaurantsRef.whereEqualTo("restaurantId", placeId)
-                    .whereEqualTo("userId", currentUserRepository.getCurrentUserId());
-
-            query.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult()) {
-                        likedRestaurantsRef.document(document.getId()).delete();
-                    }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            });
-        }
-    }
-
-    // Retrieve the amount of coworkers eating at a specific restaurant
-    public Observable<List<String>> getNumberOfPeopleEatingObservable() {
-        BehaviorSubject<List<String>> peopleEatingObservable = BehaviorSubject.create();
-
-        usersRef.whereNotEqualTo("selectedRestaurantId", null)
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) {
-                        Log.d(TAG, "Listen failed.", error);
-                        return;
-                    }
-                    List<User> users = Objects.requireNonNull(value).toObjects(User.class);
-                    List<String> restaurantIds = new ArrayList<>();
-
-                    for (User user : users) {
-                        restaurantIds.add(user.getSelectedRestaurantId());
-                    }
-                    peopleEatingObservable.onNext(restaurantIds);
-                });
-
-        return peopleEatingObservable;
-    }
-
-    // Retrieve the amount of favorite
-    public Observable<List<String>> getNumberOfFavoriteObservable() {
-        BehaviorSubject<List<String>> restaurantLikesObservable = BehaviorSubject.create();
-
-        likedRestaurantsRef.whereNotEqualTo("restaurantId", null)
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) {
-                        Log.d(TAG, "Listen failed.", error);
-                        return;
-                    }
-                    List<LikedRestaurant> likedRestaurants = Objects.requireNonNull(value).toObjects(LikedRestaurant.class);
-                    List<String> restaurantLikes = new ArrayList<>();
-                    for (LikedRestaurant likedRestaurant : likedRestaurants) {
-                        restaurantLikes.add(likedRestaurant.getRestaurantId());
-                    }
-                    restaurantLikesObservable.onNext(restaurantLikes);
-                });
-        return restaurantLikesObservable;
-    }
-
-    // Retrieve if the current user has favorited a specific restaurant
-    public Observable<Boolean> getCurrentUserFavoriteObservable(String placeId) {
-        BehaviorSubject<Boolean> currentUserFavoriteObservable = BehaviorSubject.create();
-
-        likedRestaurantsRef.whereEqualTo("restaurantId", placeId)
-                .whereEqualTo("userId", currentUserRepository.getCurrentUserId())
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) {
-                        Log.d(TAG, "Listen failed.", error);
-                        return;
-                    }
-                    boolean currentUserFavorite = !Objects.requireNonNull(value).getDocuments().isEmpty();
-                    currentUserFavoriteObservable.onNext(currentUserFavorite);
-                });
-
-        return currentUserFavoriteObservable;
+        userDatasource.removeFavoriteRestaurant(placeId);
     }
 
     // Commented methods for autocomplete, cannot be used in our case since the API isn't sending needed data

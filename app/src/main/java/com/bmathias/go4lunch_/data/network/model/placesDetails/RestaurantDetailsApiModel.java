@@ -2,10 +2,11 @@
 package com.bmathias.go4lunch_.data.network.model.placesDetails;
 
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RestaurantDetailsAPI {
+public class RestaurantDetailsApiModel {
 
     @SerializedName("formatted_address")
     @Expose
@@ -21,7 +22,7 @@ public class RestaurantDetailsAPI {
     private String name;
     @SerializedName("photos")
     @Expose
-    private final List<Photo> photos = null;
+    private List<Photo> photos = null;
     @SerializedName("place_id")
     @Expose
     private String placeId;
@@ -53,6 +54,10 @@ public class RestaurantDetailsAPI {
         return photos;
     }
 
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
+
     public String getPlaceId() {
         return placeId;
     }
@@ -65,4 +70,19 @@ public class RestaurantDetailsAPI {
         return website;
     }
 
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
+    }
+
+    public void setFormattedPhoneNumber(String formattedPhoneNumber) {
+        this.formattedPhoneNumber = formattedPhoneNumber;
+    }
+
+    public void setInternationalPhoneNumber(String internationalPhoneNumber) {
+        this.internationalPhoneNumber = internationalPhoneNumber;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 }

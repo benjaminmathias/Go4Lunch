@@ -12,7 +12,7 @@ public class DetailsResultAPI {
     private List<Object> htmlAttributions = null;
     @SerializedName("result")
     @Expose
-    private RestaurantDetailsAPI mRestaurantDetailsAPI;
+    private RestaurantDetailsApiModel mRestaurantDetailsApiModel;
     @SerializedName("status")
     @Expose
     private String status;
@@ -25,12 +25,12 @@ public class DetailsResultAPI {
         this.htmlAttributions = htmlAttributions;
     }
 
-    public RestaurantDetailsAPI getResult() {
-        return mRestaurantDetailsAPI;
+    public RestaurantDetailsApiModel getResult() {
+        return mRestaurantDetailsApiModel;
     }
 
-    public void setResult(RestaurantDetailsAPI restaurantDetailsAPI) {
-        this.mRestaurantDetailsAPI = restaurantDetailsAPI;
+    public void setResult(RestaurantDetailsApiModel restaurantDetailsApiModel) {
+        this.mRestaurantDetailsApiModel = restaurantDetailsApiModel;
     }
 
     public String getStatus() {

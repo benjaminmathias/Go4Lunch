@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bmathias.go4lunch_.data.repositories.AuthRepository;
+import com.bmathias.go4lunch_.data.repositories.ConfigRepository;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
-import com.bmathias.go4lunch_.data.repositories.MySharedPrefs;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 import com.bmathias.go4lunch_.data.repositories.SplashRepository;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
@@ -26,17 +26,20 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
    private final CurrentUserRepository currentUserDatasource;
    private final SplashRepository splashDatasource;
    private final UsersRepository usersDatasource;
-   private final MySharedPrefs sharedPreferencesDatasource;
+   private final ConfigRepository configRepository;
 
-   public ViewModelFactory(RestaurantRepository restaurantDatasource, AuthRepository authDatasource,
-                           CurrentUserRepository currentUserDatasource, SplashRepository splashDatasource,
-                           UsersRepository usersDatasource, MySharedPrefs sharedPreferencesDatasource) {
+   public ViewModelFactory(RestaurantRepository restaurantDatasource,
+                           AuthRepository authDatasource,
+                           CurrentUserRepository currentUserDatasource,
+                           SplashRepository splashDatasource,
+                           UsersRepository usersDatasource,
+                           ConfigRepository configRepository) {
       this.restaurantDatasource = restaurantDatasource;
       this.authDatasource = authDatasource;
       this.currentUserDatasource = currentUserDatasource;
       this.splashDatasource = splashDatasource;
       this.usersDatasource = usersDatasource;
-      this.sharedPreferencesDatasource = sharedPreferencesDatasource;
+      this.configRepository = configRepository;
    }
 
    @NonNull
@@ -57,7 +60,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
       } else if (aClass.isAssignableFrom(MapViewModel.class)){
          return (T) new MapViewModel(restaurantDatasource);
       } else if (aClass.isAssignableFrom(SettingsViewModel.class)){
-         return (T) new SettingsViewModel(sharedPreferencesDatasource);
+         return (T) new SettingsViewModel(configRepository);
       }
       throw new IllegalArgumentException("Unknown ViewModel class");
    }

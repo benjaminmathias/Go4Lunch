@@ -43,14 +43,14 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.restaurantDistanceSpinner.setAdapter(adapter);
         binding.restaurantDistanceSpinner.setOnItemSelectedListener(this);
-        selectSpinnerValue(binding.restaurantDistanceSpinner, this.settingsViewModel.readSharedPreferences("radius", "1000"));
+        selectSpinnerValue(binding.restaurantDistanceSpinner, this.settingsViewModel.readRadiusValue());
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String text = parent.getItemAtPosition(position).toString();
-        this.settingsViewModel.writeSharedPreferences("radius", text);
-        Log.d("Settings Activity", "SharedPreferences selected : " + this.settingsViewModel.readSharedPreferences("radius", text));
+        this.settingsViewModel.writeRadius(text);
+        Log.d("Settings Activity", "SharedPreferences selected : " + this.settingsViewModel.readRadiusValue());
     }
 
     private void selectSpinnerValue(Spinner spinner, String myString)

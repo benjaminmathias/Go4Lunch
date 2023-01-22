@@ -46,18 +46,20 @@ public class SplashRepository {
       if (firebaseUser == null) {
          authenticatedUserInFirebaseLiveData.setValue(null);
       } else {
-         getUserFromDatabase(firebaseUser.getUid(), authenticatedUserInFirebaseLiveData);
+         getUser(firebaseUser.getUid(), authenticatedUserInFirebaseLiveData);
       }
       return authenticatedUserInFirebaseLiveData;
    }
 
-   private void getUserFromDatabase(String userId, MutableLiveData<User> authenticatedUserInFirebaseLiveData) {
+   private void getUser(String userId, MutableLiveData<User> authenticatedUserInFirebaseLiveData) {
       usersRef.document(userId).get().addOnCompleteListener(userTask -> {
          if (userTask.isSuccessful()) {
             DocumentSnapshot document = userTask.getResult();
             if(document.exists()) {
                User user = document.toObject(User.class);
                authenticatedUserInFirebaseLiveData.setValue(user);
+            } else {
+               // TODO : create firebase user
             }
          } else {
             logErrorMessage(Objects.requireNonNull(userTask.getException()).getMessage());

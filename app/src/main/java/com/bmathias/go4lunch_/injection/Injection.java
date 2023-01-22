@@ -4,28 +4,56 @@ import com.bmathias.go4lunch_.BuildConfig;
 import com.bmathias.go4lunch_.data.network.PlacesApiService;
 import com.bmathias.go4lunch_.data.repositories.AuthRepository;
 import com.bmathias.go4lunch_.data.repositories.ChatRepository;
+import com.bmathias.go4lunch_.data.repositories.ConfigRepository;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
-import com.bmathias.go4lunch_.data.repositories.MySharedPrefs;
+import com.bmathias.go4lunch_.data.repositories.DefaultConfigRepository;
+import com.bmathias.go4lunch_.data.repositories.FirestoreUserDatasource;
+import com.bmathias.go4lunch_.data.repositories.DistanceSharedPrefs;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 import com.bmathias.go4lunch_.data.repositories.SplashRepository;
+import com.bmathias.go4lunch_.data.repositories.UserDatasource;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
 import com.bmathias.go4lunch_.utils.App;
 import com.bmathias.go4lunch_.utils.LocationService;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 public class Injection {
 
     public static ViewModelFactory provideViewModelFactory() {
-        return new ViewModelFactory(provideRestaurantRepository(), provideAuthRepository(),
-                provideCurrentUserRepository(), provideSplashRepository(), provideUserRepository(), provideSharedPrefs());
+        return new ViewModelFactory(
+                provideRestaurantRepository(),
+                provideAuthRepository(),
+                provideCurrentUserRepository(),
+                provideSplashRepository(),
+                provideUserRepository(),
+                provideConfigRepository());
     }
 
     public static ChatViewModelFactory provideChatViewModelFactory(String userId) {
         return new ChatViewModelFactory(provideChatRepository(), userId);
     }
 
+    public static UserDatasource provideUserDatasource() {
+        return new FirestoreUserDatasource(
+                provideCurrentUserRepository(),
+                FirebaseFirestore.getInstance()
+        );
+    }
+
     public static RestaurantRepository provideRestaurantRepository() {
-        return RestaurantRepository.getInstance(provideLocationService(), provideApiService(), BuildConfig.PHOTO_BASE_URL, provideSharedPrefs(), FirebaseFirestore.getInstance(), provideCurrentUserRepository());
+        return RestaurantRepository.getInstance(
+                provideLocationService(),
+                provideApiService(),
+                BuildConfig.PHOTO_BASE_URL,
+                provideConfigRepository(),
+                FirebaseFirestore.getInstance(),
+                provideCurrentUserRepository(),
+                Schedulers.io(),
+                AndroidSchedulers.mainThread(),
+                provideUserDatasource());
     }
 
     private static PlacesApiService provideApiService() {
@@ -56,6 +84,10 @@ public class Injection {
         return ChatRepository.getInstance(FirebaseFirestore.getInstance(), provideCurrentUserRepository());
     }
 
-    public static MySharedPrefs provideSharedPrefs() {return MySharedPrefs.getInstance();}
+    public static DistanceSharedPrefs provideSharedPrefs() {return DistanceSharedPrefs.getInstance();}
+
+    public static ConfigRepository provideConfigRepository() {
+        return new DefaultConfigRepository(provideSharedPrefs());
+    }
 
 }

@@ -6,30 +6,31 @@ import android.content.SharedPreferences;
 
 import com.bmathias.go4lunch_.utils.App;
 
-public class MySharedPrefs {
+public class DistanceSharedPrefs {
+
+   private final static String RADIUS_KEY = "radius";
+
 
    private static SharedPreferences mSharedPref;
+   private static volatile DistanceSharedPrefs instance;
 
-   private static volatile MySharedPrefs instance;
+   private DistanceSharedPrefs() {}
 
-   private MySharedPrefs() {}
-
-   public static MySharedPrefs getInstance() {
-      MySharedPrefs result = instance;
+   public static DistanceSharedPrefs getInstance() {
+      DistanceSharedPrefs result = instance;
       if (result != null) {
          return result;
       }
-      synchronized (MySharedPrefs.class) {
+      synchronized (DistanceSharedPrefs.class) {
          if (instance == null) {
-            instance = new MySharedPrefs();
+            instance = new DistanceSharedPrefs();
             init(App.getContext());
          }
          return instance;
       }
    }
 
-   public static void init(Context context)
-   {
+   public static void init(Context context) {
       if(mSharedPref == null)
          mSharedPref = context.getSharedPreferences(context.getPackageName(), Activity.MODE_PRIVATE);
    }
@@ -42,5 +43,13 @@ public class MySharedPrefs {
       SharedPreferences.Editor prefsEditor = mSharedPref.edit();
       prefsEditor.putString(key, value);
       prefsEditor.apply();
+   }
+
+   public void setRadius(String radius) {
+      putString(RADIUS_KEY, radius);
+   }
+
+   public String getRadius() {
+      return getString(RADIUS_KEY, "1000");
    }
 }

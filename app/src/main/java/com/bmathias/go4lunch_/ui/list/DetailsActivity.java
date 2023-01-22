@@ -58,8 +58,6 @@ public class DetailsActivity extends AppCompatActivity {
         this.setupFab(placeId);
         this.setupRecyclerView();
         setContentView(view);
-
-        createNotificationChannel();
     }
 
     @Override
@@ -116,6 +114,7 @@ public class DetailsActivity extends AppCompatActivity {
                 } else {
                     binding.floatingActionButton.setImageResource(R.drawable.ic_baseline_check_24);
                     detailsViewModel.updateSelectedRestaurant(placeId, placeName);
+                    createNotificationChannel();
                     setupNotification(placeId);
                     fabIsClicked.set(true);
                 }
@@ -172,6 +171,10 @@ public class DetailsActivity extends AppCompatActivity {
 
         this.detailsViewModel.getRestaurantDetails().observe(this, restaurant -> {
 
+            if(restaurant == null) {
+                return;
+            }
+
             AtomicBoolean likeIsClicked = new AtomicBoolean(restaurant.getCurrentUserFavorite());
             if (restaurant.getCurrentUserFavorite()) {
                 likeIsClicked.set(true);
@@ -191,7 +194,6 @@ public class DetailsActivity extends AppCompatActivity {
                 }
                 tintViewDrawable(binding.restaurantDetailsLike, likeIsClicked.get());
             });
-
         });
     }
 
@@ -243,7 +245,6 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = String.valueOf(R.string.app_name);
@@ -260,21 +261,38 @@ public class DetailsActivity extends AppCompatActivity {
     private void setupNotification(String placeId) {
         Toast.makeText(this, "Notification set !", Toast.LENGTH_LONG).show();
 
-        // For testing purpose, we fire the alarm 10 seconds after the user selected at restaurant
+        // For testing purpose, we fire the alarm 10 seconds after the user selected a restaurant
         /*long timeAtButtonClick = System.currentTimeMillis();
         long tenSecondsInMillis = 1000 * 10;
+
+        Intent intent = new Intent(DetailsActivity.this, NotificationReceiver.class);
+        intent.putExtra("placeId", placeId);
+        int ALARM1_ID = 10000;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast
+                (DetailsActivity.this, ALARM1_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, timeAtButtonClick + tenSecondsInMillis, pendingIntent);*/
 
         // For real use, the alarm will be fired everyday at noon if the requirement are met (user have a selected restaurant)
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 10);
+        calendar.set(Calendar.HOUR_OF_DAY, 16);
+        calendar.set(Calendar.MINUTE, 20);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Calendar cur = Calendar.getInstance();
+
+        if (cur.after(calendar)) {
+            calendar.add(Calendar.DATE, 1);
+        }
 
         Intent intent = new Intent(DetailsActivity.this, NotificationReceiver.class);
         intent.putExtra("placeId", placeId);
         int ALARM1_ID = 10000;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(DetailsActivity.this, ALARM1_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast
+                (DetailsActivity.this, ALARM1_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
