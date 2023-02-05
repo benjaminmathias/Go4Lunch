@@ -19,6 +19,7 @@ public class ChatMessage implements Serializable {
         this.messageTime = sentAt;
     }
 
+    @SuppressWarnings("unused")
     public ChatMessage() {
     }
 
@@ -34,6 +35,7 @@ public class ChatMessage implements Serializable {
         return body;
     }
 
+    @SuppressWarnings("unused")
     public void setBody(String body) {
         this.body = body;
     }
@@ -42,14 +44,17 @@ public class ChatMessage implements Serializable {
         return senderId;
     }
 
+    @SuppressWarnings("unused")
     public void setSenderId(String senderId) {
         this.senderId = senderId;
     }
 
+    @SuppressWarnings("unused")
     public String getReceiverId() {
         return receiverId;
     }
 
+    @SuppressWarnings("unused")
     public void setReceiverId(String receiverId) {
         this.receiverId = receiverId;
     }
@@ -58,6 +63,7 @@ public class ChatMessage implements Serializable {
         return messageTime;
     }
 
+    @SuppressWarnings("unused")
     public void setMessageTime(Date messageTime) {
         this.messageTime = messageTime;
     }

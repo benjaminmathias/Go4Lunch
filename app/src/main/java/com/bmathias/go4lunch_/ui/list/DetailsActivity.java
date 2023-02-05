@@ -1,6 +1,7 @@
 package com.bmathias.go4lunch_.ui.list;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ import com.bmathias.go4lunch_.viewmodel.DetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -77,7 +80,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void setupDetailsViewModel(String placeId) {
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.detailsViewModel = new ViewModelProvider(this, viewModelFactory).get(DetailsViewModel.class);
-        this.detailsViewModel.observeRestaurantDetails(placeId);
+        this.detailsViewModel.observeRestaurantsDetails(placeId);
         this.detailsViewModel.getSpecificUsersFromDatabase(placeId);
     }
 
@@ -171,7 +174,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         this.detailsViewModel.getRestaurantDetails().observe(this, restaurant -> {
 
-            if(restaurant == null) {
+            if (restaurant == null) {
                 return;
             }
 
@@ -258,43 +261,41 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private void setupNotification(String placeId) {
+
+        if (detailsViewModel.retrieveNotificationsPreferences()){
         Toast.makeText(this, "Notification set !", Toast.LENGTH_LONG).show();
 
-        // For testing purpose, we fire the alarm 10 seconds after the user selected a restaurant
-        /*long timeAtButtonClick = System.currentTimeMillis();
-        long tenSecondsInMillis = 1000 * 10;
 
-        Intent intent = new Intent(DetailsActivity.this, NotificationReceiver.class);
-        intent.putExtra("placeId", placeId);
-        int ALARM1_ID = 10000;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast
-                (DetailsActivity.this, ALARM1_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAtButtonClick + tenSecondsInMillis, pendingIntent);*/
-
-        // For real use, the alarm will be fired everyday at noon if the requirement are met (user have a selected restaurant)
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
-        calendar.set(Calendar.MINUTE, 20);
+        calendar.set(Calendar.HOUR_OF_DAY, 17);
+        calendar.set(Calendar.MINUTE, 40);
         calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
 
-        Calendar cur = Calendar.getInstance();
-
-        if (cur.after(calendar)) {
-            calendar.add(Calendar.DATE, 1);
+        if (calendar.getTime().compareTo(new Date()) < 0) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
         Intent intent = new Intent(DetailsActivity.this, NotificationReceiver.class);
         intent.putExtra("placeId", placeId);
-        int ALARM1_ID = 10000;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast
-                (DetailsActivity.this, ALARM1_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getBroadcast(this,
+                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(this,
+                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+            Log.d("Receiver", "Alarm set !");
+        }
+    } else {
+            Toast.makeText(this, "You need to change your notification settings to be notified !", Toast.LENGTH_SHORT).show();
+        }
     }
 }

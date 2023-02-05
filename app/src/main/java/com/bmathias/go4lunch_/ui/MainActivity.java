@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
     private void signOutFirebase() {
         firebaseAuth.signOut();
+        googleSignInClient.signOut();
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -22,7 +23,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -93,12 +93,13 @@ public class AuthActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(FacebookException error) {
+            public void onError(@NonNull FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
             }
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void signIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -159,9 +160,7 @@ public class AuthActivity extends AppCompatActivity {
     private void signInWithAuthCredential(AuthCredential googleAuthCredential) {
         authViewModel.signWithAuthCredential(googleAuthCredential);
         authViewModel.authenticatedUserLiveData.observe(this, authenticatedUser -> {
-            if (authenticatedUser == null) {
-                // TODO: Display error message
-            } else {
+            if (authenticatedUser != null) {
                 goToMainActivity();
                 snackBarMessage(authenticatedUser.getUserName());
             }

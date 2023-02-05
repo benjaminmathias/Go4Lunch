@@ -21,9 +21,4 @@ public class MapUtils {
         Log.d("RestaurantRepository", "Distance = " + Math.round(locationA.distanceTo(locationB)));
         return Math.round(locationA.distanceTo(locationB));
     }
-
-    public static float getDistance2(Location locationA, Location locationB) {
-        Log.d("RestaurantRepository", "Distance = " + Math.round(locationA.distanceTo(locationB)));
-        return Math.round(locationA.distanceTo(locationB));
-    }
 }

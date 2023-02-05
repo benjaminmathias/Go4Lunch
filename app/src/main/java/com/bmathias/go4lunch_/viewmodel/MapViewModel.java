@@ -13,6 +13,7 @@ import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.utils.LocationService;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,12 +34,9 @@ public class MapViewModel extends ViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>();
     public LiveData<String> error = _error;
 
-    private final MutableLiveData<List<RestaurantItem>> restaurants = new MutableLiveData<>();
-
     private Disposable disposable;
 
     public MutableLiveData<UserLocation> userLocationLiveData = new MutableLiveData<>();
-
 
     public MapViewModel(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
@@ -46,25 +44,19 @@ public class MapViewModel extends ViewModel {
     }
 
     // RESTAURANTS
-    public LiveData<Boolean> loadRestaurants(String query){
-        //  _showProgress.postValue(true);
+    public LiveData<List<RestaurantItem>> getRestaurants(String query) {
         return Transformations.map(restaurantRepository.getRestaurantsObservable(query), result -> {
-            //  _showProgress.postValue(false);
 
             if (result.isSuccess()) {
                 Log.e(TAG, "success");
-                restaurants.postValue(result.getData());
-                return true;
+                _error.postValue(null);
+                return result.getData();
             } else {
                 _error.postValue(result.getError().getMessage());
                 Log.e(TAG, result.getError().getMessage());
-                return false;
+                return Collections.emptyList();
             }
         });
-    }
-
-    public LiveData<List<RestaurantItem>> getRestaurants() {
-        return restaurants;
     }
 
     // LOCATION
@@ -76,13 +68,13 @@ public class MapViewModel extends ViewModel {
                         userLocationLiveData.postValue(userLocation));
     }
 
-    public LiveData<UserLocation> getUserLocation(){
+    public LiveData<UserLocation> getUserLocation() {
         return userLocationLiveData;
     }
 
     @Override
     protected void onCleared() {
-        if(!disposable.isDisposed()){
+        if (!disposable.isDisposed()) {
             disposable.dispose();
         }
         super.onCleared();

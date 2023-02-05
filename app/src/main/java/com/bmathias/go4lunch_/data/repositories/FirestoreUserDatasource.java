@@ -63,7 +63,7 @@ public class FirestoreUserDatasource implements UserDatasource {
 
     // Retrieve a list of all known favorites restaurants IDs by users
     @Override
-    public Observable<List<String>> getNonDistinctFavoritedRestaurantIds() {
+    public Observable<List<String>> getNonDistinctFavoriteRestaurantIds() {
         BehaviorSubject<List<String>> restaurantLikesObservable = BehaviorSubject.create();
 
         likedRestaurantsRef.whereNotEqualTo("restaurantId", null)

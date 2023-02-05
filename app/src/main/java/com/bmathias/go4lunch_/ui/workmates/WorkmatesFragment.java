@@ -36,7 +36,6 @@ public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnUs
         this.setupRecyclerView();
         this.setupViewModel();
         observeLiveData();
-        loadUsers();
         return binding.getRoot();
     }
 
@@ -44,12 +43,6 @@ public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnUs
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.workmatesViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmatesViewModel.class);
         this.adapter.setRecyclerViewWorkmatesViewModel(workmatesViewModel);
-    }
-
-    private void loadUsers() {
-        this.workmatesViewModel.getDataUsersFromDatabase().observe(getViewLifecycleOwner(), aBoolean -> {
-
-        });
     }
 
     private void observeLiveData() {

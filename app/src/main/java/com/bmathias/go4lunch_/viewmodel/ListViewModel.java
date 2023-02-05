@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.bmathias.go4lunch_.data.model.RestaurantItem;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ListViewModel extends ViewModel {
@@ -24,30 +25,24 @@ public class ListViewModel extends ViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>();
     public LiveData<String> error = _error;
 
-    private final MutableLiveData<List<RestaurantItem>> restaurants = new MutableLiveData<>();
-
     public ListViewModel(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public LiveData<Boolean> loadRestaurants(String query) {
+    public LiveData<List<RestaurantItem>> getRestaurants(String query){
         _showProgress.postValue(true);
         return Transformations.map(restaurantRepository.getRestaurantsObservable(query), result -> {
             _showProgress.postValue(false);
 
             if (result.isSuccess()) {
                 Log.e(TAG, "success");
-                restaurants.postValue(result.getData());
-                return true;
+                _error.postValue(null);
+                return result.getData();
             } else {
-                _error.postValue(result.getError().getMessage());
                 Log.e(TAG, result.getError().getMessage());
-                return false;
+                _error.postValue(result.getError().getMessage());
+                return Collections.emptyList();
             }
         });
-    }
-
-    public LiveData<List<RestaurantItem>> getRestaurants() {
-        return restaurants;
     }
 }

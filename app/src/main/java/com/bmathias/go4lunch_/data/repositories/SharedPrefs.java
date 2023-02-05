@@ -6,24 +6,25 @@ import android.content.SharedPreferences;
 
 import com.bmathias.go4lunch_.utils.App;
 
-public class DistanceSharedPrefs {
+public class SharedPrefs {
 
    private final static String RADIUS_KEY = "radius";
 
+   private final static String NOTIFICATION_KEY = "notification";
 
    private static SharedPreferences mSharedPref;
-   private static volatile DistanceSharedPrefs instance;
+   private static volatile SharedPrefs instance;
 
-   private DistanceSharedPrefs() {}
+   private SharedPrefs() {}
 
-   public static DistanceSharedPrefs getInstance() {
-      DistanceSharedPrefs result = instance;
+   public static SharedPrefs getInstance() {
+      SharedPrefs result = instance;
       if (result != null) {
          return result;
       }
-      synchronized (DistanceSharedPrefs.class) {
+      synchronized (SharedPrefs.class) {
          if (instance == null) {
-            instance = new DistanceSharedPrefs();
+            instance = new SharedPrefs();
             init(App.getContext());
          }
          return instance;
@@ -51,5 +52,23 @@ public class DistanceSharedPrefs {
 
    public String getRadius() {
       return getString(RADIUS_KEY, "1000");
+   }
+
+   public Boolean getBoolean(String key, Boolean defValue) {
+      return mSharedPref.getBoolean(key, defValue);
+   }
+
+   public void putBoolean(String key, Boolean value) {
+      SharedPreferences.Editor prefsEditor = mSharedPref.edit();
+      prefsEditor.putBoolean(key, value);
+      prefsEditor.apply();
+   }
+
+   public void setNotificationsPreferences(Boolean value){
+      putBoolean(NOTIFICATION_KEY, value);
+   }
+
+   public Boolean getNotificationsPreferences() {
+      return getBoolean(NOTIFICATION_KEY, true);
    }
 }

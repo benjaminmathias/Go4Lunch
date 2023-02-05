@@ -55,13 +55,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Nullable
     @Override
+    @SuppressWarnings("deprecation")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(inflater, container, false);
         setHasOptionsMenu(true);
         requireActivity().setTitle(R.string.list_fragment_name);
         this.setupViewModel();
-        observeLiveData();
-        loadRestaurants(null);
 
         return binding.getRoot();
     }
@@ -78,6 +77,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.toolbar, menu);
@@ -90,7 +90,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 googleMap.clear();
-                loadRestaurants(query);
+                observeLiveData(query);
                 return false;
             }
 
@@ -103,12 +103,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // Reset the map when the user delete his search
         ImageView clearButton = searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         clearButton.setOnClickListener(v -> {
-            if(searchView.getQuery().length() == 0) {
+            if (searchView.getQuery().length() == 0) {
                 searchView.setIconified(true);
             } else {
                 searchView.setQuery(null, false);
                 googleMap.clear();
-                loadRestaurants(null);
+                observeLiveData(null);
             }
         });
 
@@ -118,21 +118,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void setupViewModel() {
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory();
         this.mapViewModel = new ViewModelProvider(this, viewModelFactory).get(MapViewModel.class);
-    }
-
-    private void loadRestaurants(String query){
-        this.mapViewModel.loadRestaurants(query).observe(getViewLifecycleOwner(), aBoolean -> {
-        });
-    }
-
-    private void observeLiveData(){
-        mapViewModel.error.observe(getViewLifecycleOwner(), error -> {
-
-        });
-
-        mapViewModel.showProgress.observe(getViewLifecycleOwner(), isVisible -> {
-
-        });
     }
 
     @Override
@@ -162,7 +147,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
-        mapViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurantItems -> {
+        observeLiveData(null);
+    }
+
+    private void observeLiveData(String query) {
+        mapViewModel.getRestaurants(query).observe(getViewLifecycleOwner(), restaurantItems -> {
             // Add markers for each restaurant with a tag
             for (RestaurantItem restaurantItem : restaurantItems) {
                 if (restaurantItem.getNumberOfPeopleEating() == 0) {

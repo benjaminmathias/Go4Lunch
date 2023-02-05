@@ -8,6 +8,14 @@ public class FakeConfigRepository implements ConfigRepository {
 
     @Override
     public void setRadius(String radius) {
+    }
 
+    @Override
+    public Boolean getNotificationsPreferences() {
+        return true;
+    }
+
+    @Override
+    public void setNotificationsPreferences(Boolean value){
     }
 }

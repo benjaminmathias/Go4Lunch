@@ -16,16 +16,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Objects;
 
 public class CurrentUserRepository {
-
    private static volatile CurrentUserRepository instance;
-
    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
    private final CollectionReference usersRef;
-
    private CurrentUserRepository(FirebaseFirestore firebaseFirestore) {
       usersRef = firebaseFirestore.collection(USERS);
    }
-
    public static CurrentUserRepository getInstance(FirebaseFirestore firebaseFirestore) {
       CurrentUserRepository result = instance;
       if (result != null) {
@@ -41,16 +37,21 @@ public class CurrentUserRepository {
 
    public String getCurrentUserId() {
       FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-      assert firebaseUser != null;
-      return firebaseUser.getUid();
+      if (firebaseUser != null) {
+         return firebaseUser.getUid();
+      }
+      return null;
    }
-
    public LiveData<User> getCurrentUser() {
       MutableLiveData<User> authenticatedUserInFirebaseLiveData = new MutableLiveData<>();
-      getUserFromDatabase(getCurrentUserId(), authenticatedUserInFirebaseLiveData);
+      String currentUserId = getCurrentUserId();
+      if (currentUserId == null) {
+         authenticatedUserInFirebaseLiveData.setValue(null);
+      } else {
+         getUserFromDatabase(currentUserId, authenticatedUserInFirebaseLiveData);
+      }
       return authenticatedUserInFirebaseLiveData;
    }
-
    private void getUserFromDatabase(String userId, MutableLiveData<User> authenticatedUserInFirebaseLiveData) {
       usersRef.document(userId).get().addOnCompleteListener(userTask -> {
          if (userTask.isSuccessful()) {
@@ -58,8 +59,6 @@ public class CurrentUserRepository {
             if(document.exists()) {
                User user = document.toObject(User.class);
                authenticatedUserInFirebaseLiveData.setValue(user);
-            } else {
-               // TODO : create firebase user
             }
          } else {
             logErrorMessage(Objects.requireNonNull(userTask.getException()).getMessage());

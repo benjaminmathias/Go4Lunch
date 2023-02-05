@@ -16,8 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class RestaurantMapper {
-    private RestaurantMapper() {}
-    
+    private RestaurantMapper() {
+    }
+
     public static RestaurantDetails apiToDetails(
             RestaurantDetailsApiModel restaurantDetailsApiModel,
             String photoBaseUrl,
@@ -28,27 +29,27 @@ public class RestaurantMapper {
                 .withAddress(restaurantDetailsApiModel.getFormattedAddress());
 
         if (restaurantDetailsApiModel.getName() != null) {
-            builder.withName(restaurantDetailsApiModel.getName());
+            builder = builder.withName(restaurantDetailsApiModel.getName());
         }
 
         if (restaurantDetailsApiModel.getPlaceId() != null) {
-            builder.withPlaceId(restaurantDetailsApiModel.getPlaceId());
+            builder = builder.withPlaceId(restaurantDetailsApiModel.getPlaceId());
         }
         if (restaurantDetailsApiModel.getInternationalPhoneNumber() != null) {
-            builder.withPhoneNumber(restaurantDetailsApiModel.getFormattedPhoneNumber());
+            builder = builder.withPhoneNumber(restaurantDetailsApiModel.getFormattedPhoneNumber());
         }
 
         if (restaurantDetailsApiModel.getWebsite() != null) {
-            builder.withWebsite(restaurantDetailsApiModel.getWebsite());
+            builder = builder.withWebsite(restaurantDetailsApiModel.getWebsite());
         }
 
         if (restaurantDetailsApiModel.getPhotos() != null && !restaurantDetailsApiModel.getPhotos().isEmpty()) {
             String photoReference = restaurantDetailsApiModel.getPhotos().get(0).getPhotoReference();
             String photoUrl = photoBaseUrl + photoReference + "&key=" + mapsApiKey;
-            builder.withPhotoUrl(photoUrl);
+            builder = builder.withPhotoUrl(photoUrl);
         }
 
-        builder.withIsCurrentUserFavorite(isCurrentUserFavorite);
+        builder = builder.withIsCurrentUserFavorite(isCurrentUserFavorite);
 
         return builder.build();
     }
@@ -82,46 +83,52 @@ public class RestaurantMapper {
             Double userLatitude,
             Double userLongitude
     ) {
+        boolean isOpened = false;
+        if (restaurantAPI.getOpeningHours() != null) {
+            isOpened = restaurantAPI.getOpeningHours().getOpenNow();
+        }
+
+
         RestaurantItem.Builder builder = new RestaurantItem.Builder()
                 .withName(restaurantAPI.getName())
                 .withAddress(restaurantAPI.getVicinity())
-                .withPlaceId(restaurantAPI.getPlaceId());
+                .withPlaceId(restaurantAPI.getPlaceId())
+                .withIsOpen(isOpened);
 
         if (restaurantAPI.getGeometry() != null) {
-            builder.withLongitude(restaurantAPI.getGeometry().getLocation().getLng());
-            builder.withLatitude(restaurantAPI.getGeometry().getLocation().getLat());
-            builder.withDistance(Math.round(getDistance(
+            builder = builder.withLongitude(restaurantAPI.getGeometry().getLocation().getLng());
+            builder = builder.withLatitude(restaurantAPI.getGeometry().getLocation().getLat());
+            builder = builder.withDistance(Math.round(getDistance(
                     restaurantAPI.getGeometry().getLocation().getLat(),
                     restaurantAPI.getGeometry().getLocation().getLng(),
                     userLatitude,
                     userLongitude))
             );
         }
-
-        if (restaurantAPI.getOpeningHours() != null) {
-            builder.withIsOpen(restaurantAPI.getOpeningHours().getOpenNow());
+       /*
+        if (restaurantAPI.getOpeningHours() != null){
+            builder = builder.withIsOpen(restaurantAPI.getOpeningHours().getOpenNow());
         } else {
-            builder.withIsOpen(false);
-        }
+            builder = builder.withIsOpen(false);
+        }*/
 
         if (restaurantAPI.getPhotos() != null && !restaurantAPI.getPhotos().isEmpty()) {
             String photoReference = restaurantAPI.getPhotos().get(0).getPhotoReference();
             String photoUrl = photoBaseUrl + photoReference + "&key=" + BuildConfig.MAPS_API_KEY;
-            builder.withPhoto(photoUrl);
+            builder = builder.withPhoto(photoUrl);
         }
 
         if (eatingAtRestaurant != null) {
             int numberOfPeopleEating = Collections.frequency(eatingAtRestaurant, restaurantAPI.getPlaceId());
-            builder.withIsSomeoneEating(numberOfPeopleEating);
+            builder = builder.withIsSomeoneEating(numberOfPeopleEating);
         }
 
         if (likedRestaurants != null) {
             int numberOfFavorites = Collections.frequency(likedRestaurants, restaurantAPI.getPlaceId());
-            builder.withNumberOfFavorites(numberOfFavorites);
+            builder = builder.withNumberOfFavorites(numberOfFavorites);
             Log.d(TAG, "Number of likes for " + restaurantAPI.getName() + " = " + numberOfFavorites);
         }
 
-        RestaurantItem restaurant = builder.build();
-        return restaurant;
+        return builder.build();
     }
 }

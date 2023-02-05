@@ -19,11 +19,9 @@ public class User implements Serializable {
 
     private String selectedRestaurantName;
 
-    @Exclude
-    public boolean isAuthenticated;
 
     @Exclude
-    public boolean isNew, isCreated;
+    public boolean  isCreated;
 
 
     public User() {
@@ -50,39 +48,19 @@ public class User implements Serializable {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getPhotoUrl() {
         return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
     }
 
     public String getUserEmail() {
         return userEmail;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
     public String getSelectedRestaurantId() {
         return selectedRestaurantId;
     }
 
-    public void setSelectedRestaurantId(String selectedRestaurantId) {
-        this.selectedRestaurantId = selectedRestaurantId;
-    }
-
     public String getSelectedRestaurantName() {
         return selectedRestaurantName;
-    }
-
-    public void setSelectedRestaurantName(String selectedRestaurantName) {
-        this.selectedRestaurantName = selectedRestaurantName;
     }
 }

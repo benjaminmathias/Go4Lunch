@@ -8,7 +8,6 @@ import com.bmathias.go4lunch_.data.repositories.AuthRepository;
 import com.bmathias.go4lunch_.data.repositories.ConfigRepository;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
-import com.bmathias.go4lunch_.data.repositories.SplashRepository;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
 import com.bmathias.go4lunch_.viewmodel.AuthViewModel;
 import com.bmathias.go4lunch_.viewmodel.DetailsViewModel;
@@ -24,35 +23,33 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
    private final RestaurantRepository restaurantDatasource;
    private final AuthRepository authDatasource;
    private final CurrentUserRepository currentUserDatasource;
-   private final SplashRepository splashDatasource;
    private final UsersRepository usersDatasource;
    private final ConfigRepository configRepository;
 
    public ViewModelFactory(RestaurantRepository restaurantDatasource,
                            AuthRepository authDatasource,
                            CurrentUserRepository currentUserDatasource,
-                           SplashRepository splashDatasource,
                            UsersRepository usersDatasource,
                            ConfigRepository configRepository) {
       this.restaurantDatasource = restaurantDatasource;
       this.authDatasource = authDatasource;
       this.currentUserDatasource = currentUserDatasource;
-      this.splashDatasource = splashDatasource;
       this.usersDatasource = usersDatasource;
       this.configRepository = configRepository;
    }
 
    @NonNull
    @Override
+   @SuppressWarnings("unchecked")
    public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
       if(aClass.isAssignableFrom(ListViewModel.class)){
          return (T) new ListViewModel(restaurantDatasource);
       } else if(aClass.isAssignableFrom(DetailsViewModel.class)){
-         return (T) new DetailsViewModel(restaurantDatasource, currentUserDatasource, usersDatasource);
+         return (T) new DetailsViewModel(restaurantDatasource, currentUserDatasource, usersDatasource, configRepository);
       } else if (aClass.isAssignableFrom(AuthViewModel.class)){
          return (T) new AuthViewModel(authDatasource);
       } else if (aClass.isAssignableFrom(SplashViewModel.class)){
-         return (T) new SplashViewModel(splashDatasource);
+         return (T) new SplashViewModel(currentUserDatasource);
       } else if (aClass.isAssignableFrom(WorkmatesViewModel.class)){
          return (T) new WorkmatesViewModel(usersDatasource, currentUserDatasource);
       } else if (aClass.isAssignableFrom(MainViewModel.class)){

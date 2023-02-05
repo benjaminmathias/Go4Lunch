@@ -19,6 +19,7 @@ public class ChatViewModelFactory implements ViewModelProvider.Factory {
 
    @NonNull
    @Override
+   @SuppressWarnings("unchecked")
    public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
       if (aClass.isAssignableFrom(ChatViewModel.class)){
          return (T) new ChatViewModel(chatDatasource, userId);

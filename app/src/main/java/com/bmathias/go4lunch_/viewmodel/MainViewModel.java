@@ -7,7 +7,7 @@ import com.bmathias.go4lunch_.data.model.User;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 
 public class MainViewModel extends ViewModel {
-    private CurrentUserRepository currentUserRepository;
+    private final CurrentUserRepository currentUserRepository;
     public LiveData<User> currentUser;
 
     public MainViewModel(CurrentUserRepository currentUserRepository) {

@@ -69,7 +69,7 @@ public class RestaurantRepositoryTest {
         Observable<UserLocation> locationObservable = Observable.just(new UserLocation(3.0, 0.0));
         when(locationService.retrieveLocation()).thenReturn(locationObservable);
         when(userDatasource.getNonDistinctSelectedRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
-        when(userDatasource.getNonDistinctFavoritedRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
+        when(userDatasource.getNonDistinctFavoriteRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
         when(placesApiService.getRestaurants(anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(Observable.error(new TimeoutException("I'm sorry")));
 
@@ -85,7 +85,7 @@ public class RestaurantRepositoryTest {
         Observable<UserLocation> locationObservable = Observable.just(new UserLocation(3.0, 0.0));
         when(locationService.retrieveLocation()).thenReturn(locationObservable);
         when(userDatasource.getNonDistinctSelectedRestaurantIds()).thenReturn(Observable.error(new TimeoutException("Distinct Selected Restaurant error")));
-        when(userDatasource.getNonDistinctFavoritedRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
+        when(userDatasource.getNonDistinctFavoriteRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
         RestaurantsApiResult restaurantsApiResult = new RestaurantsApiResult();
         restaurantsApiResult.setResults(Collections.emptyList());
         when(placesApiService.getRestaurants(anyString(), anyString(), anyString(), anyString(), anyString()))
@@ -103,7 +103,7 @@ public class RestaurantRepositoryTest {
         Observable<UserLocation> locationObservable = Observable.just(new UserLocation(3.0, 0.0));
         when(locationService.retrieveLocation()).thenReturn(locationObservable);
         when(userDatasource.getNonDistinctSelectedRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
-        when(userDatasource.getNonDistinctFavoritedRestaurantIds()).thenReturn(Observable.error(new TimeoutException("Distinct Favorite Restaurant error")));
+        when(userDatasource.getNonDistinctFavoriteRestaurantIds()).thenReturn(Observable.error(new TimeoutException("Distinct Favorite Restaurant error")));
         RestaurantsApiResult restaurantsApiResult = new RestaurantsApiResult();
         restaurantsApiResult.setResults(Collections.emptyList());
         when(placesApiService.getRestaurants(anyString(), anyString(), anyString(), anyString(), anyString()))
@@ -133,7 +133,7 @@ public class RestaurantRepositoryTest {
         Observable<UserLocation> locationObservable = Observable.just(new UserLocation(3.0, 0.0));
         when(locationService.retrieveLocation()).thenReturn(locationObservable);
         when(userDatasource.getNonDistinctSelectedRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
-        when(userDatasource.getNonDistinctFavoritedRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
+        when(userDatasource.getNonDistinctFavoriteRestaurantIds()).thenReturn(Observable.just(Collections.emptyList()));
         RestaurantsApiResult restaurantsApiResult = new RestaurantsApiResult();
         restaurantsApiResult.setResults(Collections.emptyList());
         when(placesApiService.getRestaurants(anyString(), anyString(), anyString(), anyString(), anyString()))

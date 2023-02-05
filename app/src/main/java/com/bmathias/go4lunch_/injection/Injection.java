@@ -7,10 +7,9 @@ import com.bmathias.go4lunch_.data.repositories.ChatRepository;
 import com.bmathias.go4lunch_.data.repositories.ConfigRepository;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.DefaultConfigRepository;
+import com.bmathias.go4lunch_.data.repositories.SharedPrefs;
 import com.bmathias.go4lunch_.data.repositories.FirestoreUserDatasource;
-import com.bmathias.go4lunch_.data.repositories.DistanceSharedPrefs;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
-import com.bmathias.go4lunch_.data.repositories.SplashRepository;
 import com.bmathias.go4lunch_.data.repositories.UserDatasource;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
 import com.bmathias.go4lunch_.utils.App;
@@ -27,7 +26,6 @@ public class Injection {
                 provideRestaurantRepository(),
                 provideAuthRepository(),
                 provideCurrentUserRepository(),
-                provideSplashRepository(),
                 provideUserRepository(),
                 provideConfigRepository());
     }
@@ -60,7 +58,7 @@ public class Injection {
         return PlacesApiService.retrofit.create(PlacesApiService.class);
     }
 
-    public static LocationService provideLocationService(){
+    public static LocationService provideLocationService() {
         return LocationService.getInstance(App.getContext());
     }
 
@@ -71,11 +69,6 @@ public class Injection {
     public static AuthRepository provideAuthRepository() {
         return AuthRepository.getInstance();
     }
-
-    public static SplashRepository provideSplashRepository() {
-        return SplashRepository.getInstance(FirebaseFirestore.getInstance());
-    }
-
     public static UsersRepository provideUserRepository() {
         return UsersRepository.getInstance(FirebaseFirestore.getInstance());
     }
@@ -84,10 +77,11 @@ public class Injection {
         return ChatRepository.getInstance(FirebaseFirestore.getInstance(), provideCurrentUserRepository());
     }
 
-    public static DistanceSharedPrefs provideSharedPrefs() {return DistanceSharedPrefs.getInstance();}
+    public static SharedPrefs provideSharedPrefs() {
+        return SharedPrefs.getInstance();
+    }
 
     public static ConfigRepository provideConfigRepository() {
         return new DefaultConfigRepository(provideSharedPrefs());
     }
-
 }

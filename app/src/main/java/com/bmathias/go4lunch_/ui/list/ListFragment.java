@@ -2,20 +2,17 @@ package com.bmathias.go4lunch_.ui.list;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.appcompat.widget.SearchView;
-
 import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -37,20 +34,19 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
 
     @Nullable
     @Override
+    @SuppressWarnings("deprecation")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentListBinding.inflate(inflater, container, false);
-
         setHasOptionsMenu(true);
         requireActivity().setTitle(R.string.list_fragment_name);
         this.setupRecyclerView();
         this.setupViewModel();
-        observeLiveData();
-        loadRestaurants(null);
-
+        observeLiveData(null);
         return binding.getRoot();
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.toolbar, menu);
@@ -62,14 +58,14 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                loadRestaurants(query);
+                observeLiveData(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 // TODO : remove when demo
-              /*  mHandler.removeCallbacksAndMessages(null);
+               /* mHandler.removeCallbacksAndMessages(null);
                 mHandler.postDelayed(() -> {
                     loadRestaurants(newText);
                     Log.d("onQueryTextChange", "New autocomplete request !");
@@ -82,11 +78,9 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.search) {
-            return true;
-        }
-        return false;
+        return item.getItemId() == R.id.search;
     }
 
     private void setupViewModel() {
@@ -94,14 +88,9 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
         this.listViewModel = new ViewModelProvider(this, viewModelFactory).get(ListViewModel.class);
     }
 
-    private void loadRestaurants(String query) {
-        this.listViewModel.loadRestaurants(query).observe(getViewLifecycleOwner(), aBoolean -> {
 
-        });
-    }
-
-    private void observeLiveData() {
-        listViewModel.getRestaurants().observe(getViewLifecycleOwner(), restaurants -> {
+    private void observeLiveData(String query) {
+        listViewModel.getRestaurants(query).observe(getViewLifecycleOwner(), restaurants -> {
             adapter.setRestaurantItems(restaurants);
             if (adapter.getItemCount() == 0) {
                 binding.emptyView.getRoot().setVisibility(View.VISIBLE);
@@ -112,11 +101,13 @@ public class ListFragment extends Fragment implements ListAdapter.OnRestaurantLi
         });
 
         listViewModel.error.observe(getViewLifecycleOwner(), error -> {
-            binding.emptyView.getRoot().setVisibility(View.VISIBLE);
-            binding.emptyView.title.setText(R.string.empty_dataset_error);
-            binding.emptyView.subTitle.setText(R.string.empty_dataset_error_description);
-            binding.fragmentListRecyclerView.setVisibility(View.GONE);
-            binding.progressbar.setVisibility(View.GONE);
+            if(error != null) {
+                binding.emptyView.getRoot().setVisibility(View.VISIBLE);
+                binding.emptyView.title.setText(R.string.empty_dataset_error);
+                binding.emptyView.subTitle.setText(R.string.empty_dataset_error_description);
+                binding.fragmentListRecyclerView.setVisibility(View.GONE);
+                binding.progressbar.setVisibility(View.GONE);
+            }
         });
 
         listViewModel.showProgress.observe(getViewLifecycleOwner(), isVisible -> binding.progressbar.setVisibility(isVisible ? View.VISIBLE : View.GONE));

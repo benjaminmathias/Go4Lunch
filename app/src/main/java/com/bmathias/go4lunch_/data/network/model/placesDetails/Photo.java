@@ -1,7 +1,6 @@
 
 package com.bmathias.go4lunch_.data.network.model.placesDetails;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,9 +9,7 @@ public class Photo {
     @SerializedName("height")
     @Expose
     private Integer height;
-    @SerializedName("html_attributions")
-    @Expose
-    private List<String> htmlAttributions = null;
+
     @SerializedName("photo_reference")
     @Expose
     private String photoReference;
@@ -26,14 +23,6 @@ public class Photo {
 
     public void setHeight(Integer height) {
         this.height = height;
-    }
-
-    public List<String> getHtmlAttributions() {
-        return htmlAttributions;
-    }
-
-    public void setHtmlAttributions(List<String> htmlAttributions) {
-        this.htmlAttributions = htmlAttributions;
     }
 
     public String getPhotoReference() {

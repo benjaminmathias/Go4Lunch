@@ -3,18 +3,20 @@ package com.bmathias.go4lunch_.utils;
 import static com.bmathias.go4lunch_.utils.Constants.TAG;
 import static com.bmathias.go4lunch_.utils.Constants.USERS;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.bmathias.go4lunch_.R;
 import com.bmathias.go4lunch_.data.model.User;
-import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.ui.list.DetailsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -25,15 +27,15 @@ import java.util.Objects;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
+    private static final String CHANNEL_ID = "10000";
+
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
     private final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+
     private final CollectionReference usersRef = rootRef.collection(USERS);
-    /*private final CurrentUserRepository currentUserRepository;
 
-    public NotificationReceiver(CurrentUserRepository currentUserRepository) {
-        this.currentUserRepository = currentUserRepository;
-    }*/
-
+    @SuppressLint({"UnsafeProtectedBroadcastReceiver", "UnspecifiedImmutableFlag"})
     @Override
     public void onReceive(Context context, final Intent intent) {
 
@@ -58,24 +60,43 @@ public class NotificationReceiver extends BroadcastReceiver {
                     notificationIntent.putExtra("placeId", placeId);
                     notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+                    PendingIntent notificationPendingIntent;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        notificationPendingIntent = PendingIntent.getActivity(context,
+                                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-                    // new NotificationCompat.Builder(context, "notifyGo4Lunch")
+                    } else {
+                        notificationPendingIntent = PendingIntent.getActivity(context,
+                                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notifyGo4Lunch")
                             .setSmallIcon(R.drawable.ic_go4lunch_icon)
                             .setContentTitle(context.getResources().getString(R.string.notification_title))
                             .setContentText(context.getResources().getString(R.string.notification_text_1) + restaurantName + context.getResources().getString(R.string.notification_text_2))
-                            .setContentIntent(pendingIntent)
+                            .setContentIntent(notificationPendingIntent)
                             .setAutoCancel(true)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                            .setWhen(System.currentTimeMillis())
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    notificationManager.notify(1, builder.build());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        builder.setChannelId(CHANNEL_ID);
+                    }
+
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(
+                                CHANNEL_ID,
+                                "NotificationDemo",
+                                NotificationManager.IMPORTANCE_DEFAULT
+                        );
+                        notificationManager.createNotificationChannel(channel);
+                    }
+                    notificationManager.notify(0, builder.build());
                     Log.d("NotificationReceiver", "Notification fired !");
                 });
-
     }
 }
+
 

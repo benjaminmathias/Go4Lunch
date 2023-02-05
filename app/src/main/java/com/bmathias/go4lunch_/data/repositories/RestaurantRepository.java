@@ -29,8 +29,6 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class RestaurantRepository {
 
@@ -47,9 +45,14 @@ public class RestaurantRepository {
 
     private static volatile RestaurantRepository instance;
 
+    @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal"})
     private final CurrentUserRepository currentUserRepository;
+
+    @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal"})
     private final CollectionReference usersRef;
+    @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal"})
     private final CollectionReference likedRestaurantsRef;
+
     private final UserDatasource userDatasource;
 
     private static final String type = "restaurant";
@@ -142,7 +145,7 @@ public class RestaurantRepository {
         return Observable.zip(
                 getRestaurantsFromApiObservable(query, userLocation),
                 userDatasource.getNonDistinctSelectedRestaurantIds(),
-                userDatasource.getNonDistinctFavoritedRestaurantIds(),
+                userDatasource.getNonDistinctFavoriteRestaurantIds(),
                 (restaurantsFromApi, numberOfPeopleEating, numberOfFavorites) ->
                         RestaurantMapper.apisToItems(
                                 restaurantsFromApi,
@@ -168,7 +171,9 @@ public class RestaurantRepository {
     }
 
     // Retrieve Restaurant
+
     @SuppressLint("CheckResult")
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public LiveData<DataResult<List<RestaurantItem>>> getRestaurantsObservable(String query) {
         MutableLiveData<DataResult<List<RestaurantItem>>> _restaurants = new MutableLiveData<>();
         Observable<UserLocation> userLocationObservable = mLocationService.retrieveLocation();
@@ -202,6 +207,7 @@ public class RestaurantRepository {
 
     // Retrieve RestaurantDetails and convert to our own model
     @SuppressLint("CheckResult")
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public LiveData<DataResult<RestaurantDetails>> getRestaurantDetailsObservable(String placeId) {
 
         MutableLiveData<DataResult<RestaurantDetails>> _restaurantDetails = new MutableLiveData<>();

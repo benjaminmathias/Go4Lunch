@@ -1,7 +1,5 @@
 package com.bmathias.go4lunch_.data.mappers;
 
-import static org.mockito.ArgumentMatchers.anyString;
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.bmathias.go4lunch_.BuildConfig;
@@ -29,6 +27,7 @@ public class RestaurantMapperTest {
 
     private final RestaurantApi restaurantApiBase1 = new RestaurantApi();
     private final RestaurantApi restaurantApiBase2 = new RestaurantApi();
+
 
     private final List<Photo> photoPlaces = new ArrayList<>();
 
@@ -116,8 +115,32 @@ public class RestaurantMapperTest {
     }
 
     @Test
-    public void convertSingleRestaurantApiToRestaurantItemSuccess() {
+    public void convertSingleRestaurantApiToRestaurantItemAllNullSuccess() {
+        RestaurantApi restaurantApiBaseNull = new RestaurantApi();
 
+        restaurantApiBaseNull.setName(null);
+        restaurantApiBaseNull.setPlaceId(null);
+        restaurantApiBaseNull.setVicinity(null);
+        restaurantApiBaseNull.setGeometry(null);
+        restaurantApiBaseNull.setOpeningHours(null);
+        restaurantApiBaseNull.setPhotos(null);
+
+        RestaurantItem convertedRestaurant =
+                RestaurantMapper.apiToItem(restaurantApiBaseNull, photoBaseUrl, eatingAt, likedRestaurants, userLatitude, userLongitude);
+
+        Assert.assertNull(convertedRestaurant.getName());
+        Assert.assertNull(convertedRestaurant.getPlaceId());
+        Assert.assertNull(convertedRestaurant.getAddress());
+        Assert.assertNull(convertedRestaurant.getLatitude());
+        Assert.assertNull(convertedRestaurant.getLongitude());
+        Assert.assertFalse(convertedRestaurant.getIsOpen());
+        Assert.assertNull(convertedRestaurant.getPhoto());
+        Assert.assertEquals(0, convertedRestaurant.getNumberOfPeopleEating());
+        Assert.assertEquals(0, convertedRestaurant.getNumberOfFavorites());
+    }
+
+    @Test
+    public void convertSingleRestaurantApiToRestaurantItemSuccess() {
         RestaurantItem convertedRestaurant =
                 RestaurantMapper.apiToItem(restaurantApiBase1, photoBaseUrl, eatingAt, likedRestaurants, userLatitude, userLongitude);
 
@@ -133,18 +156,32 @@ public class RestaurantMapperTest {
     }
 
     @Test
-    public void convertRestaurantApiListToRestaurantItemListAssertionFail() {
-        List<RestaurantItem> listConverted =
-                RestaurantMapper.apisToItems(restaurantApiList, photoBaseUrl, eatingAt, likedRestaurants, userLatitude, userLongitude);
+    public void convertRestaurantDetailsApiModelToRestaurantDetailsSuccess() {
+        com.bmathias.go4lunch_.data.network.model.placesDetails.Photo photo = new com.bmathias.go4lunch_.data.network.model.placesDetails.Photo();
+        photo.setPhotoReference(photoReference);
+        photoPlacesDetails.add(photo);
 
-        Assert.assertEquals(2, listConverted.size());
-        Assert.assertNotEquals("test2name", listConverted.get(0).getName());
-        Assert.assertNotEquals("test1name", listConverted.get(1).getName());
+        restaurantDetailsApiModel1.setName("detailsTest1");
+        restaurantDetailsApiModel1.setPlaceId("12345");
+        restaurantDetailsApiModel1.setFormattedAddress("detailsTestAddress1");
+        restaurantDetailsApiModel1.setFormattedPhoneNumber("detailsTestPhoneNumber1");
+        restaurantDetailsApiModel1.setInternationalPhoneNumber("detailsTestInterPhoneNumber1");
+        restaurantDetailsApiModel1.setWebsite("detailsTestWebsite1");
+        restaurantDetailsApiModel1.setPhotos(photoPlacesDetails);
+
+        RestaurantDetails restaurantDetailsConverted =
+                RestaurantMapper.apiToDetails(restaurantDetailsApiModel1, photoBaseUrl, false, "1234");
+
+        Assert.assertEquals("12345", restaurantDetailsConverted.getPlaceId());
+        Assert.assertEquals("detailsTest1", restaurantDetailsConverted.getName());
+        Assert.assertEquals("detailsTestAddress1", restaurantDetailsConverted.getAddress());
+        Assert.assertEquals("detailsTestPhoneNumber1", restaurantDetailsConverted.getPhoneNumber());
+        Assert.assertEquals("detailsTestWebsite1", restaurantDetailsConverted.getWebsite());
+        Assert.assertTrue(photoPlacesDetails.get(0).getPhotoReference(), restaurantDetailsConverted.getPhotoUrl().contains("testphoto"));
     }
 
     @Test
-    public void convertRestaurantDetailsApiModelToRestaurantDetailsSuccess() {
-
+    public void convertRestaurantDetailsApiModelToRestaurantDetailsSuccessWithNull() {
         com.bmathias.go4lunch_.data.network.model.placesDetails.Photo photo = new com.bmathias.go4lunch_.data.network.model.placesDetails.Photo();
         photo.setPhotoReference(photoReference);
         photoPlacesDetails.add(photo);
@@ -152,11 +189,10 @@ public class RestaurantMapperTest {
         restaurantDetailsApiModel1.setName("detailsTest1");
         restaurantDetailsApiModel1.setPlaceId("12345");
         restaurantDetailsApiModel1.setFormattedAddress("detailsTestAddress1");
-        restaurantDetailsApiModel1.setFormattedPhoneNumber("detailsTestPhoneNumber1");
-        restaurantDetailsApiModel1.setInternationalPhoneNumber("detailsTestInterPhoneNumber1");
-        restaurantDetailsApiModel1.setWebsite("detailsTestWebsite1");
+        restaurantDetailsApiModel1.setFormattedPhoneNumber(null);
+        restaurantDetailsApiModel1.setInternationalPhoneNumber(null);
+        restaurantDetailsApiModel1.setWebsite(null);
         restaurantDetailsApiModel1.setPhotos(photoPlacesDetails);
-
 
         RestaurantDetails restaurantDetailsConverted =
                 RestaurantMapper.apiToDetails(restaurantDetailsApiModel1, photoBaseUrl, false, "1234");
@@ -164,43 +200,33 @@ public class RestaurantMapperTest {
         Assert.assertEquals("12345", restaurantDetailsConverted.getPlaceId());
         Assert.assertEquals("detailsTest1", restaurantDetailsConverted.getName());
         Assert.assertEquals("detailsTestAddress1", restaurantDetailsConverted.getAddress());
-        Assert.assertEquals("detailsTestPhoneNumber1", restaurantDetailsConverted.getPhoneNumber());
-        Assert.assertEquals("detailsTestWebsite1", restaurantDetailsConverted.getWebsite());
+        Assert.assertNull(restaurantDetailsConverted.getPhoneNumber());
+        Assert.assertNull(restaurantDetailsConverted.getWebsite());
         Assert.assertTrue(photoPlacesDetails.get(0).getPhotoReference(), restaurantDetailsConverted.getPhotoUrl().contains("testphoto"));
     }
 
-
-   /* @Test
-    public void convertRestaurantDetailsApiModelToRestaurantDetailsNull() {
-
+    @Test
+    public void convertRestaurantDetailsApiModelToRestaurantDetailsSuccessAllNull() {
         com.bmathias.go4lunch_.data.network.model.placesDetails.Photo photo = new com.bmathias.go4lunch_.data.network.model.placesDetails.Photo();
         photo.setPhotoReference(photoReference);
         photoPlacesDetails.add(photo);
 
-        restaurantDetailsApiModel1.setName("detailsTest1");
-        restaurantDetailsApiModel1.setPlaceId("12345");
-        restaurantDetailsApiModel1.setFormattedAddress("detailsTestAddress1");
-        restaurantDetailsApiModel1.setFormattedPhoneNumber("detailsTestPhoneNumber1");
-        restaurantDetailsApiModel1.setInternationalPhoneNumber("detailsTestInterPhoneNumber1");
-        restaurantDetailsApiModel1.setWebsite("detailsTestWebsite1");
-        restaurantDetailsApiModel1.setPhotos(photoPlacesDetails);
-
+        restaurantDetailsApiModel1.setName(null);
+        restaurantDetailsApiModel1.setPlaceId(null);
+        restaurantDetailsApiModel1.setFormattedAddress(null);
+        restaurantDetailsApiModel1.setFormattedPhoneNumber(null);
+        restaurantDetailsApiModel1.setInternationalPhoneNumber(null);
+        restaurantDetailsApiModel1.setWebsite(null);
+        restaurantDetailsApiModel1.setPhotos(null);
 
         RestaurantDetails restaurantDetailsConverted =
                 RestaurantMapper.apiToDetails(restaurantDetailsApiModel1, photoBaseUrl, false, "1234");
 
-        Assert.assertEquals("12345", restaurantDetailsConverted.getPlaceId());
-        Assert.assertEquals("detailsTest1", restaurantDetailsConverted.getName());
-        Assert.assertEquals("detailsTestAddress1", restaurantDetailsConverted.getAddress());
-        Assert.assertEquals("detailsTestPhoneNumber1", restaurantDetailsConverted.getPhoneNumber());
-        Assert.assertEquals("detailsTestWebsite1", restaurantDetailsConverted.getWebsite());
-        Assert.assertTrue(photoPlacesDetails.get(0).getPhotoReference(), restaurantDetailsConverted.getPhotoUrl().contains("testphoto"));
-    }*/
-
-    // TODO : test avec valeurs NULL
-
-
-
-
-
+        Assert.assertNull(restaurantDetailsConverted.getPlaceId());
+        Assert.assertNull(restaurantDetailsConverted.getName());
+        Assert.assertNull( restaurantDetailsConverted.getAddress());
+        Assert.assertNull(restaurantDetailsConverted.getPhoneNumber());
+        Assert.assertNull(restaurantDetailsConverted.getWebsite());
+        Assert.assertNull(restaurantDetailsConverted.getPhotoUrl());
+    }
 }

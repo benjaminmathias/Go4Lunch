@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,7 +18,7 @@ import com.bmathias.go4lunch_.injection.Injection;
 import com.bmathias.go4lunch_.injection.ViewModelFactory;
 import com.bmathias.go4lunch_.viewmodel.SettingsViewModel;
 
-public class SettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class SettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     private ActivitySettingsBinding binding;
 
@@ -31,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
 
         setupViewModel();
         setupSpinner();
+        setupCheckbox();
     }
 
     private void setupViewModel() {
@@ -53,10 +56,9 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
         Log.d("Settings Activity", "SharedPreferences selected : " + this.settingsViewModel.readRadiusValue());
     }
 
-    private void selectSpinnerValue(Spinner spinner, String myString)
-    {
-        for(int i = 0; i < spinner.getCount(); i++){
-            if(spinner.getItemAtPosition(i).toString().equals(myString)){
+    private void selectSpinnerValue(Spinner spinner, String myString) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
                 spinner.setSelection(i);
                 break;
             }
@@ -65,6 +67,28 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
+
+    private void setupCheckbox() {
+        binding.notificationsSettingsCheckbox.setChecked(this.settingsViewModel.readNotificationPreferenceValue());
+        binding.notificationsSettingsCheckbox.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+        if (buttonView.getId() == R.id.notifications_settings_checkbox) {
+            if (buttonView.isChecked()) {
+                this.settingsViewModel.setNotificationPreference(true);
+                Log.d("CheckBox Value", "true");
+                Toast.makeText(this, "True", Toast.LENGTH_SHORT).show();
+            } else {
+                this.settingsViewModel.setNotificationPreference(false);
+                Log.d("CheckBox Value", "false");
+                Toast.makeText(this, "False", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 }

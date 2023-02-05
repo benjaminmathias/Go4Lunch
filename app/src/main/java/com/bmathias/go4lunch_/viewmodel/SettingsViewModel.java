@@ -18,6 +18,13 @@ public class SettingsViewModel extends ViewModel {
 
     public String readRadiusValue() {
         return configRepository.getRadius();
+    }
 
+    public void setNotificationPreference(Boolean value){
+        configRepository.setNotificationsPreferences(value);
+    }
+
+    public Boolean readNotificationPreferenceValue(){
+        return configRepository.getNotificationsPreferences();
     }
 }

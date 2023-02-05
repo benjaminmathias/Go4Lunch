@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.bmathias.go4lunch_.data.model.ChatMessage;
 import com.bmathias.go4lunch_.data.repositories.ChatRepository;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ChatViewModel extends ViewModel {
@@ -21,37 +22,33 @@ public class ChatViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> _showProgress = new MutableLiveData<>();
     public LiveData<Boolean> showProgress = _showProgress;
-    public LiveData<String> error;
 
-    private final MutableLiveData<List<ChatMessage>> messages = new MutableLiveData<>();
+    private final MutableLiveData<String> _error = new MutableLiveData<>();
+    public LiveData<String> error = _error;
 
     public ChatViewModel(ChatRepository chatRepository, String userId) {
         this.chatRepository = chatRepository;
         this.userId = userId;
-        loadMessages();
     }
 
-    public void loadMessages() {
+    public LiveData<List<ChatMessage>> getMessages() {
         _showProgress.postValue(true);
-        error = Transformations.map(chatRepository.getChatMessages(userId), result -> {
+        return Transformations.map(chatRepository.getChatMessages(userId), result -> {
             _showProgress.postValue(false);
 
             if (result.isSuccess()) {
                 Log.e(TAG, "success");
-                messages.postValue(result.getData());
-                return null;
+                _error.postValue(null);
+                return result.getData();
             } else {
                 Log.e(TAG, result.getError().getMessage());
-                return result.getError().getMessage();
+                _error.postValue(result.getError().getMessage());
+                return Collections.emptyList();
             }
         });
     }
 
     public void addMessage(String textMessage){
         chatRepository.createMessage(textMessage, userId);
-    }
-
-    public LiveData<List<ChatMessage>> getMessages(){
-        return messages;
     }
 }

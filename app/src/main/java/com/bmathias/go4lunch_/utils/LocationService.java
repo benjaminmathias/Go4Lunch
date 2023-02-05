@@ -24,6 +24,7 @@ public class LocationService {
     private final BehaviorSubject<UserLocation> latestLocation = BehaviorSubject.create();
     private boolean hasSettingUp = false;
 
+    @SuppressLint("StaticFieldLeak")
     private static volatile LocationService instance;
 
     public Context context;
@@ -64,13 +65,13 @@ public class LocationService {
             if (location != null) {
                 try {
                     // Get phone location
-                    Geocoder geocoder = new Geocoder(fusedLocationProviderClient.getApplicationContext(), Locale.getDefault());
+                    Geocoder geocoder = new Geocoder(this.context, Locale.getDefault());
                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
                     double latitude = addresses.get(0).getLatitude();
                     double longitude = addresses.get(0).getLongitude();
 
-                    // Valeur du publish
+                    // Publish value
                     Log.d("LocationHelper", latitude + "," + longitude);
 
                     UserLocation userLocation = new UserLocation(latitude, longitude);

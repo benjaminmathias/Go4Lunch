@@ -8,7 +8,7 @@ public interface UserDatasource {
 
     Observable<List<String>> getNonDistinctSelectedRestaurantIds();
 
-    Observable<List<String>> getNonDistinctFavoritedRestaurantIds();
+    Observable<List<String>> getNonDistinctFavoriteRestaurantIds();
 
     Observable<Boolean> getCurrentUserFavoriteObservable(String placeId);
 

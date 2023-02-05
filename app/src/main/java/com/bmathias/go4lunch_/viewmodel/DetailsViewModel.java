@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.bmathias.go4lunch_.data.model.RestaurantDetails;
 import com.bmathias.go4lunch_.data.model.User;
+import com.bmathias.go4lunch_.data.repositories.ConfigRepository;
 import com.bmathias.go4lunch_.data.repositories.CurrentUserRepository;
 import com.bmathias.go4lunch_.data.repositories.RestaurantRepository;
 import com.bmathias.go4lunch_.data.repositories.UsersRepository;
@@ -16,11 +17,11 @@ import java.util.List;
 
 public class DetailsViewModel extends ViewModel {
 
-    private static final String TAG = "DetailsViewModel";
-
     private final RestaurantRepository restaurantRepository;
     private final UsersRepository usersRepository;
     private final CurrentUserRepository currentUserRepository;
+
+    private final ConfigRepository configRepository;
 
     public LiveData<User> currentUser;
     private LiveData<List<User>> users;
@@ -33,16 +34,18 @@ public class DetailsViewModel extends ViewModel {
 
     private LiveData<RestaurantDetails> restaurantDetails;
 
-    public DetailsViewModel(RestaurantRepository restaurantRepository, CurrentUserRepository currentUserRepository, UsersRepository usersRepository) {
+    public DetailsViewModel(RestaurantRepository restaurantRepository, CurrentUserRepository currentUserRepository, UsersRepository usersRepository, ConfigRepository configRepository) {
         this.restaurantRepository = restaurantRepository;
         this.currentUserRepository = currentUserRepository;
         this.usersRepository = usersRepository;
+        this.configRepository = configRepository;
     }
 
-    public void observeRestaurantDetails(String placeId) {
+    public void observeRestaurantsDetails(String placeId) {
         restaurantDetails = Transformations.map(restaurantRepository.getRestaurantDetailsObservable(placeId), result -> {
             _showProgress.postValue(false);
             if (result.isSuccess()) {
+                _error.postValue(null);
                 return result.getData();
             } else {
                 _error.postValue(result.getError().getMessage());
@@ -81,5 +84,9 @@ public class DetailsViewModel extends ViewModel {
 
     public void deleteFavoriteRestaurant(String placeId){
         restaurantRepository.removeFavoriteRestaurant(placeId);
+    }
+
+    public Boolean retrieveNotificationsPreferences(){
+        return configRepository.getNotificationsPreferences();
     }
 }

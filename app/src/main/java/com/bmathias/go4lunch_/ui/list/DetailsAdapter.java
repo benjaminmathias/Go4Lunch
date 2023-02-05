@@ -41,6 +41,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.ViewHold
       return new DetailsAdapter.ViewHolder(ActivityDetailsItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
    }
 
+   @SuppressLint("SetTextI18n")
    @Override
    public void onBindViewHolder(@NonNull DetailsAdapter.ViewHolder holder, int position) {
 
