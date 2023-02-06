@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.bmathias.go4lunch_">
+    package="com.bmathias.go4lunch">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name="com.bmathias.go4lunch_.utils.App"
+        android:name="com.bmathias.go4lunch.utils.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,11 +28,11 @@
             android:value="@string/facebook_client_token" />
 
         <activity
-            android:name=".ui.workmates.ChatActivity"
+            android:name="com.bmathias.go4lunch.ui.workmates.ChatActivity"
             android:exported="false"
             android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
         <activity
-            android:name="com.bmathias.go4lunch_.ui.SettingsActivity"
+            android:name="com.bmathias.go4lunch.ui.SettingsActivity"
             android:exported="false" />
 
         <meta-data
@@ -40,7 +40,7 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name="com.bmathias.go4lunch_.ui.SplashActivity"
+            android:name="com.bmathias.go4lunch.ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,23 +49,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bmathias.go4lunch_.ui.MainActivity"
+            android:name="com.bmathias.go4lunch.ui.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
         <activity
-            android:name="com.bmathias.go4lunch_.ui.list.DetailsActivity"
+            android:name="com.bmathias.go4lunch.ui.list.DetailsActivity"
             android:exported="false"
-            android:parentActivityName="com.bmathias.go4lunch_.ui.MainActivity"
+            android:parentActivityName="com.bmathias.go4lunch.ui.MainActivity"
             android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
         <activity
-            android:name="com.bmathias.go4lunch_.ui.AuthActivity"
+            android:name="com.bmathias.go4lunch.ui.AuthActivity"
             android:exported="false"
             android:noHistory="true"
             android:theme="@style/Theme.Go4Lunch_.NoActionBar" />
 
         <!-- NOTIFICATION SERVICE -->
         <receiver
-            android:name="com.bmathias.go4lunch_.utils.WakeUpAlarmReceiver"
+            android:name="com.bmathias.go4lunch.utils.WakeUpAlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -77,7 +77,13 @@
         </receiver>
 
         <receiver
-            android:name="com.bmathias.go4lunch_.utils.NotificationReceiver"/>
+            android:name="com.bmathias.go4lunch.utils.NotificationReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

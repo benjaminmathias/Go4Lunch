@@ -46,11 +46,11 @@
 
     <!-- SPLASH ACTIVITY -->
     <string name="splash_dialog_message">"Cette application a besoin de votre position pour fonctionner. Souhaitez-vous partager votre position ? "</string>
-    <string name="splash_dialog_message_warning">Vous devenez autoriser le partage de votre position pour utiliser cette application !</string>
+    <string name="splash_dialog_message_warning">Vous devez autoriser le partage de votre position pour utiliser cette application !</string>
     <string name="splash_dialog_settings_error">impossible d\'ouvrir les paramètres</string>
 
     <!-- SETTINGS ACTIVITY -->
-    <string name="settings_distance_text">Distance des restaurants (en mètres)</string>
+    <string name="settings_distance_text">Distance des restaurants (en mètres) :</string>
 
     <!-- LOGIN ACTIVITY -->
     <string name="login_app_description">Trouver un lieu où déjeuner et invitez vos collègues !</string>
@@ -58,7 +58,7 @@
     <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
     <string name="error_no_internet">Aucune connexion internet !</string>
     <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
-    <string name="connection_succeed">Authentification réussie !</string>
+    <string name="connection_success">Authentification réussie !</string>
     <string name="button_login_text_logged">Afficher le profil</string>
     <string name="button_login_text_not_logged">Connexion</string>
     <string name="login_with_google">Se connecter avec Google</string>
@@ -69,8 +69,9 @@
     <!-- Facebook Application ID, prefixed by 'fb'. Enables Chrome Custom tabs. -->
 
     <!-- DRAWER -->
+    <string name="settings_notification_text">Autoriser les notifications à midi :</string>
     <string name="info_no_email_found">Pas d\'email</string>
-    <string name="info_no_username_found">Pas de pseudo</string>
+    <string name="info_no_username_found">Pas de prénom</string>
     <string name="popup_message_informations_account">Souhaitez-vous vous déconnecter ou supprimer votre compte ?</string>
     <string name="popup_message_choice_disconnect">Se déconnecter</string>
     <string name="popup_message_choice_delete">Supprimer le compte</string>
@@ -100,6 +101,9 @@
     <string name="messages_error">Impossible d\'afficher les messages</string>
     <string name="message_hint">Envoyer un Chat</string>
     <string name="drawer_menu_restaurant_error">Vous n\'avez pas choisi de restaurant !</string>
+    <string name="login_snackbar_hi">Bonjour&#160;</string>
+    <string name="login_snackbar_exclamation_mark">!</string>
+    <string name="login_snackbar_account_created">Ton compte a été crée !</string>
 
 
 </resources>

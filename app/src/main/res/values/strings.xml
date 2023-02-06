@@ -64,14 +64,17 @@
     <!-- LOGIN ACTIVITY -->
     <string name="login_app_description">Find a nice restaurant and invite your co-workers for lunch!</string>
     <string name="error_not_connected">You must log in !</string>
-    <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
+    <string name="error_authentication_canceled">Authentification cancelled</string>
     <string name="error_no_internet">No internet !</string>
-    <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
-    <string name="connection_succeed">Authentification réussie !</string>
+    <string name="error_unknown_error">An unknow error happened</string>
+    <string name="connection_success">Authentication success !</string>
     <string name="button_login_text_logged">Afficher le profil</string>
     <string name="button_login_text_not_logged">Connexion</string>
     <string name="login_with_google">Sign in with Google</string>
     <string name="login_with_facebook">Sign in with Facebook</string>
+    <string name="login_snackbar_hi">Hi </string>
+    <string name="login_snackbar_exclamation_mark">!</string>
+    <string name="login_snackbar_account_created">Your account was successfully created !</string>
 
     <!-- SPLASH ACTIVITY -->
     <string name="splash_dialog_message">This app needs you to allow location permission in order to function. Will you allow it ?</string>
@@ -80,7 +83,8 @@
 
 
     <!-- SETTINGS ACTIVITY -->
-    <string name="settings_distance_text">Restaurants distance (in meters)</string>
+    <string name="settings_distance_text">Restaurants distance (in meters) :</string>
+    <string name="settings_notification_text">Allow notification at noon :</string>
 
     <!-- ... -->
 
