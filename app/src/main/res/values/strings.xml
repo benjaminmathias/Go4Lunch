@@ -64,11 +64,11 @@
     <!-- LOGIN ACTIVITY -->
     <string name="login_app_description">Find a nice restaurant and invite your co-workers for lunch!</string>
     <string name="error_not_connected">You must log in !</string>
-    <string name="error_authentication_canceled">Authentification cancelled</string>
+    <string name="error_authentication_canceled">Authentication cancelled</string>
     <string name="error_no_internet">No internet !</string>
-    <string name="error_unknown_error">An unknow error happened</string>
+    <string name="error_unknown_error">An unknown error happened</string>
     <string name="connection_success">Authentication success !</string>
-    <string name="button_login_text_logged">Afficher le profil</string>
+    <string name="button_login_text_logged">Show profile</string>
     <string name="button_login_text_not_logged">Connexion</string>
     <string name="login_with_google">Sign in with Google</string>
     <string name="login_with_facebook">Sign in with Facebook</string>

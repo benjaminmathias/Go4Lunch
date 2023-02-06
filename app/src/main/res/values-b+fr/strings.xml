@@ -15,7 +15,7 @@
     <string name="drawer_menu_lunch">Votre déjeuner</string>
     <string name="drawer_menu_settings">Paramètres</string>
     <string name="drawer_menu_logout">Se déconnecter</string>
-    <string name="drawer_menu_logout_dialog_message">Voulez vous vous déconnecter ?</string>
+    <string name="drawer_menu_logout_dialog_message">Souhaitez-vous vous déconnecter ?</string>
 
     <!-- List Fragment -->
     <string name="list_restaurant_closed">Fermé</string>
@@ -45,7 +45,7 @@
     <string name="notification_text_2">&#160;, c\'est maintenant !</string>
 
     <!-- SPLASH ACTIVITY -->
-    <string name="splash_dialog_message">"Cette application a besoin de votre position pour fonctionner. Souhaitez-vous partager votre position ? "</string>
+    <string name="splash_dialog_message">"Cette application a besoin de votre position pour fonctionner. Souhaitez-vous partager votre position ?"</string>
     <string name="splash_dialog_message_warning">Vous devez autoriser le partage de votre position pour utiliser cette application !</string>
     <string name="splash_dialog_settings_error">impossible d\'ouvrir les paramètres</string>
 
@@ -64,10 +64,6 @@
     <string name="login_with_google">Se connecter avec Google</string>
     <string name="login_with_facebook">Se connecter avec Facebook</string>
 
-
-    <!-- ... -->
-    <!-- Facebook Application ID, prefixed by 'fb'. Enables Chrome Custom tabs. -->
-
     <!-- DRAWER -->
     <string name="settings_notification_text">Autoriser les notifications à midi :</string>
     <string name="info_no_email_found">Pas d\'email</string>
@@ -85,7 +81,6 @@
         <item>5000</item>
     </string-array>
 
-
     <!-- Channel -->
     <string name="default_notification_channel_id">1234</string>
     <string name="msg_token_fmt">Token FCM</string>
@@ -102,7 +97,7 @@
     <string name="message_hint">Envoyer un Chat</string>
     <string name="drawer_menu_restaurant_error">Vous n\'avez pas choisi de restaurant !</string>
     <string name="login_snackbar_hi">Bonjour&#160;</string>
-    <string name="login_snackbar_exclamation_mark">!</string>
+    <string name="login_snackbar_exclamation_mark">&#160;!</string>
     <string name="login_snackbar_account_created">Ton compte a été crée !</string>
 
 
