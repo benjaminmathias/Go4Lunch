@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     @Override
     protected void onResume() {
         super.onResume();
+        mainViewModel.getUserFromDatabase();
         updateUIWithUserData();
     }
 

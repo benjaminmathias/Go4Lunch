@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.google.gson.examples.android.model.** { *; }
+
+# Application classes that will be kept
+-keep class com.bmathias.go4lunch.data.model.** { *; }
+-keep class com.bmathias.go4lunch.data.mappers.** { *; }
+-keep class com.bmathias.go4lunch.data.network.** { *; }

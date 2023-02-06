@@ -80,11 +80,9 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
             if (buttonView.isChecked()) {
                 this.settingsViewModel.setNotificationPreference(true);
                 Log.d("CheckBox Value", "true");
-                Toast.makeText(this, "True", Toast.LENGTH_SHORT).show();
             } else {
                 this.settingsViewModel.setNotificationPreference(false);
                 Log.d("CheckBox Value", "false");
-                Toast.makeText(this, "False", Toast.LENGTH_SHORT).show();
             }
         }
     }

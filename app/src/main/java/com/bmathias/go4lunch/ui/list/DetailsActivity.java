@@ -71,10 +71,20 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            startActivity(new Intent(DetailsActivity.this, MainActivity.class));
-            finish();
+            onBackPressed();
         }
         return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private void configureToolbar() {
@@ -131,6 +141,7 @@ public class DetailsActivity extends AppCompatActivity {
                 }
             });
         });
+
     }
 
     private void setupDetailsView() {
