@@ -7,10 +7,10 @@ plugins {
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\Ben\\.android\\android_keystore.jks')
-            storePassword 'mdp1234'
-            keyAlias 'key0'
-            keyPassword 'mdp1234'
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
         }
 
     }
