@@ -24,12 +24,12 @@ Go4Lunch est une application mobile permettant aux collaborateurs d’une entrep
   <img src="https://github.com/user-attachments/assets/738fa021-e57f-4108-addb-c588d15627ac" width="300" />
 </p>
 
-### 📍 Sélection du restaurant
+### 🗺️ Affichage sur carte & liste
 <p float="left">
   <img src="https://github.com/user-attachments/assets/d7d086b2-4edb-4792-8ca9-167021acba87" width="300" />
 </p>
 
-### 🗺️ Affichage sur carte
+### 🍴 Details du restaurant
 <p float="left">
   <img src="https://github.com/user-attachments/assets/2bfbcb4c-8d22-4ced-9e64-180c2325e962" width="300" />
 </p>
